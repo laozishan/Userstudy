@@ -1,0 +1,2760 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>MedMCQ Expert Review Prototype - Paediatric Respiratory</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=DM+Serif+Display:ital@0;1&display=swap');
+:root{
+  --bg:#f5f3ef;--surface:#fff;--surface2:#faf9f7;--border:#e8e4dd;--border2:#d4cfc7;
+  --text:#1a1814;--text2:#6b6560;--text3:#9c9590;
+  --accent:#2d5f8a;--accent-light:#eaf1f8;
+  --correct:#1a6b3c;--correct-bg:#edf7f2;--correct-border:#a3d9b8;
+  --reject:#8a2d2d;--reject-bg:#f8eaea;
+  --purple:#7b4da0;--purple-bg:#f3edff;
+  --warn:#c45e2a;--warn-bg:#fff0e6;
+  --nav-h:58px
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);font-size:14px;line-height:1.6;overflow-x:hidden;overflow-y:auto}
+
+/* ══ SETUP PAGE ══ */
+#setupPage{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 20px}
+.setup-logo{font-family:'DM Serif Display',serif;font-size:32px;margin-bottom:4px}.setup-logo span{color:var(--accent);font-style:italic}
+.setup-sub{font-size:12px;color:var(--text3);text-transform:uppercase;letter-spacing:.9px;font-weight:700;margin-bottom:36px}
+.setup-card{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:36px 40px;width:min(540px,96vw);box-shadow:0 4px 24px rgba(0,0,0,.07)}
+.setup-title{font-size:22px;font-weight:800;margin-bottom:6px}
+.setup-desc{font-size:13px;color:var(--text2);margin-bottom:28px}
+.field{margin-bottom:22px}
+.field-label{font-size:11px;text-transform:uppercase;letter-spacing:.8px;font-weight:800;color:var(--text3);margin-bottom:8px}
+.select-box{width:100%;border:1px solid var(--border2);border-radius:10px;padding:10px 14px;font-family:inherit;font-size:13px;background:var(--surface);color:var(--text);appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='8'%3E%3Cpath d='M1 1l6 6 6-6' stroke='%239c9590' stroke-width='1.8' fill='none'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;cursor:pointer}
+.diff-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.diff-btn{padding:12px 10px;border:1.5px solid var(--border);border-radius:12px;font-family:inherit;cursor:pointer;background:var(--surface);text-align:center;transition:.15s}
+.diff-btn:hover{border-color:var(--accent)}
+.diff-btn.active{border-color:var(--accent);background:var(--accent-light)}
+.diff-btn strong{display:block;font-size:13px;font-weight:800;margin-bottom:3px}
+.diff-btn span{font-size:11px;color:var(--text3)}
+.start-mode{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:8px}
+.mode-btn{padding:12px 14px;border:1.5px solid var(--border);border-radius:12px;font-family:inherit;cursor:pointer;background:var(--surface);text-align:left;transition:.15s;display:flex;align-items:center;gap:10px}
+.mode-btn:hover{border-color:var(--accent)}
+.mode-btn.active{border-color:var(--accent);background:var(--accent-light)}
+.mode-icon{font-size:20px;flex-shrink:0}
+.mode-btn strong{display:block;font-size:12px;font-weight:800}
+.mode-btn span{font-size:11px;color:var(--text2)}
+.go-btn{width:100%;padding:14px;background:var(--accent);color:#fff;border:none;border-radius:12px;font-family:inherit;font-size:15px;font-weight:800;cursor:pointer;margin-top:8px;transition:.15s}
+.go-btn:hover{background:#234d72}
+.divider{height:1px;background:var(--border);margin:20px 0}
+
+/* ══ TOP NAV ══ */
+#appPage{display:none}
+.topnav{position:sticky;top:0;z-index:10;background:var(--surface);border-bottom:1px solid var(--border);height:var(--nav-h);display:flex;align-items:center;padding:0 22px;gap:18px}
+.nav-logo{font-family:'DM Serif Display',serif;font-size:18px;white-space:nowrap}.nav-logo span{color:var(--accent);font-style:italic}
+.nav-divider{width:1px;height:22px;background:var(--border);flex-shrink:0}
+.task-tabs{display:flex;gap:6px;flex:1}
+.nav-tab{padding:6px 14px;border:1px solid var(--border);border-radius:999px;font-family:inherit;font-size:12px;font-weight:700;cursor:pointer;background:var(--surface2);color:var(--text2);transition:.14s;white-space:nowrap;display:flex;align-items:center;gap:7px}
+.nav-tab:hover{border-color:var(--accent);color:var(--accent)}
+.nav-tab.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+.pill{font-size:10px;border-radius:20px;padding:2px 8px;font-weight:800;white-space:nowrap}
+.pill.text{background:#fff3cd;color:#8a5a00}
+.pill.kg{background:#e9ddff;color:#6540a0}
+.pill.both{background:#eaf1f8;color:#2d5f8a}
+.nav-tab.active .pill.text{background:rgba(255,255,255,.3);color:#fff}
+.nav-tab.active .pill.kg{background:rgba(255,255,255,.3);color:#fff}
+.nav-tab.active .pill.both{background:rgba(255,255,255,.3);color:#fff}
+.nav-meta{display:flex;align-items:center;gap:10px;flex-shrink:0}
+.meta-chip{font-size:11px;color:var(--text2);background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:4px 10px;white-space:nowrap}
+.bank-btn{padding:6px 13px;border:1px solid var(--border);border-radius:999px;font-family:inherit;font-size:12px;font-weight:700;cursor:pointer;background:var(--surface2);color:var(--text2);display:flex;align-items:center;gap:7px;transition:.14s}
+.bank-btn:hover{border-color:var(--accent);color:var(--accent)}
+.bank-count{font-size:10px;font-weight:900;color:var(--accent);background:var(--accent-light);border-radius:999px;padding:2px 7px}
+.back-nav-btn{padding:5px 12px;border:1px solid var(--border);border-radius:8px;font-family:inherit;font-size:11px;font-weight:700;cursor:pointer;background:var(--surface2);color:var(--text2);transition:.14s}
+.back-nav-btn:hover{border-color:var(--accent);color:var(--accent)}
+
+/* ══ MAIN LAYOUT ══ */
+.app-body{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.45fr);gap:0;height:calc(100vh - var(--nav-h));overflow:hidden;min-height:0}
+.left-col{overflow-y:auto;border-right:1px solid var(--border);background:var(--bg);padding:16px;display:flex;flex-direction:column;gap:12px;height:100%;min-height:0;overscroll-behavior:contain}
+.right-col{overflow-y:auto;background:var(--bg);height:100%;min-height:0;overscroll-behavior:contain}
+
+/* Left col cards */
+.lcard{background:var(--surface);border:1px solid var(--border);border-radius:16px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.04);flex:0 0 auto}
+
+/* Vignette */
+.vignette-section{padding:18px 20px 16px}
+.card-label{font-size:10px;text-transform:uppercase;letter-spacing:.9px;font-weight:800;color:var(--text3);margin-bottom:10px}
+.source-badge{display:inline-flex;align-items:center;gap:6px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:4px 10px;font-size:11px;color:var(--text2);margin-bottom:10px}
+.source-badge strong{color:var(--text)}
+.vignette{font-size:13px;line-height:1.9}
+.hl-core{background:#fff8db;padding:1px 3px;border-radius:4px;border:1.5px solid transparent;transition:.16s ease}
+.hl-core.linkable{cursor:default}
+.hl-core.active-link{background:#fff3cd;border-color:#c48a1d;box-shadow:0 0 0 2px rgba(196,138,29,.14)}
+.hl-core.click-focus{background:#ffe7bf;border-color:#d97706;box-shadow:0 0 0 2px rgba(217,119,6,.14)}
+.vignette-flash{outline:2px solid #7aa7d9 !important;outline-offset:2px;transition:outline .15s}
+
+/* Question section */
+.question-section{padding:16px 20px 14px}
+.stem{font-weight:700;margin-bottom:12px;font-size:13px}
+.option{display:flex;gap:10px;align-items:flex-start;padding:9px 11px;border:1px solid transparent;border-radius:10px;margin-bottom:7px;cursor:pointer;transition:.12s}
+.option:hover{background:var(--surface2);border-color:var(--border)}
+.option.correct{background:var(--correct-bg);border-color:var(--correct-border)}
+.letter{width:24px;height:24px;border-radius:50%;border:1.5px solid var(--border2);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;flex-shrink:0}
+.correct .letter{background:var(--correct);border-color:var(--correct);color:white}
+.badge{font-size:10px;font-weight:800;border-radius:20px;padding:2px 8px;background:var(--correct);color:white;margin-left:auto}
+.difficulty{margin-top:12px;padding-top:12px;border-top:1px solid var(--border);display:flex;gap:10px;align-items:center}
+.diff-chip{font-size:11px;font-weight:800;border-radius:20px;padding:3px 10px;background:var(--warn-bg);color:var(--warn)}
+.diff-chip.easy{background:#edf7f2;color:#1a6b3c}
+.diff-chip.medium{background:#fff3cd;color:#8a5a00}
+.diff-chip.hard{background:var(--warn-bg);color:var(--warn)}
+
+/* Actions */
+.actions-section{padding:12px 20px;background:var(--surface2);border-top:1px solid var(--border);display:flex;gap:10px;align-items:center;flex-wrap:wrap;position:sticky;bottom:0;z-index:6;box-shadow:0 -4px 12px rgba(0,0,0,.04)}
+.btn{border:none;border-radius:10px;padding:9px 18px;font-family:inherit;font-weight:800;cursor:pointer;font-size:12px;transition:.13s}
+.btn.accept{background:var(--correct);color:white}
+.btn.accept:hover{background:#145530}
+.btn.reject{background:white;color:var(--reject);border:1.5px solid var(--reject)}
+.btn.reject:hover{background:var(--reject-bg)}
+.btn.edit-btn{background:white;color:var(--text2);border:1px solid var(--border)}
+.btn.edit-btn:hover{border-color:var(--accent);color:var(--accent)}
+
+/* Edit panel */
+.edit-section{padding:16px 20px;border-top:1px solid var(--border);background:var(--surface2);overflow:visible}
+.edit-section.hidden{display:none}
+.textarea{width:100%;min-height:70px;border:1px solid var(--border2);border-radius:9px;padding:9px 11px;font-family:inherit;resize:vertical;margin-bottom:10px;font-size:12px}
+.edit-input{width:100%;border:1px solid var(--border2);border-radius:9px;padding:9px 11px;font-family:inherit;margin-bottom:10px;background:white;font-size:12px}
+.edit-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+
+/* ══ KG PANEL (RIGHT COL) ══ */
+.kg-panel{padding:16px 18px;display:flex;flex-direction:column;gap:14px;min-height:100%}
+.kg-panel-head{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:14px 18px;min-height:66px;box-shadow:0 1px 4px rgba(0,0,0,.04)}
+.kg-panel-title{font-size:12px;font-weight:900;text-transform:uppercase;letter-spacing:.7px;color:var(--text3);white-space:nowrap}
+.kg-hint{font-size:12px;color:var(--text3);font-style:italic;max-width:620px}
+.kg-hint:empty{display:none}
+
+/* Text explanation in right col (Task 1) */
+.right-text-panel{background:var(--surface);border:1px solid var(--border);border-radius:16px;overflow:hidden}
+.right-text-panel-head{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.right-text-panel-title{font-size:12px;font-weight:800;color:var(--text2)}
+.explain-btn{padding:6px 14px;border:1.5px solid var(--accent);border-radius:999px;font-family:inherit;font-size:11px;font-weight:800;cursor:pointer;background:white;color:var(--accent);transition:.13s;display:flex;align-items:center;gap:6px}
+.explain-btn:hover{background:var(--accent-light)}
+.explain-btn.active{background:var(--accent);color:white}
+.right-text-body{padding:16px 18px;display:none}
+.right-text-body.open{display:block}
+.why{background:var(--correct-bg);border:1px solid var(--correct-border);border-radius:12px;padding:13px 15px;margin-bottom:14px}
+.why-title{font-weight:800;color:var(--correct);margin-bottom:8px;font-size:12px}
+.evidence-list{margin:6px 0 0 16px}
+.evidence-list li{margin-bottom:5px;font-size:12px}
+.distractor-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.dc{border:1px solid var(--border);border-radius:12px;padding:11px;background:var(--surface2)}
+.dc h4{font-size:11px;margin-bottom:5px;font-weight:800}
+.dc p{font-size:11px;color:var(--text2);margin-bottom:5px}
+.reasoning-board{border:1px solid var(--border);border-radius:14px;background:#fff;overflow:hidden;position:relative;box-shadow:0 1px 4px rgba(0,0,0,.04)}
+.reasoning-board svg .kg-node rect,.reasoning-board svg .kg-node text{transition:.16s ease}
+.reasoning-board svg .evidence-node{cursor:pointer}
+.reasoning-board svg .kg-node.active rect{stroke-width:3;filter:drop-shadow(0 4px 10px rgba(0,0,0,.10))}
+.reasoning-board svg .evidence-node.active rect{fill:#fff3cd}
+.reasoning-board svg .kg-node.active text{font-weight:800}
+.reasoning-board svg .kg-node.graph-selected rect{stroke:#111!important;stroke-width:3.2!important;filter:drop-shadow(0 5px 14px rgba(0,0,0,.16))}
+.reasoning-board svg .kg-edge.graph-selected path:nth-child(2){stroke:#111!important;stroke-width:3.2!important}
+.reasoning-board svg .kg-node.llm-generated rect{stroke-dasharray:5 3}
+.provenance-note{font-size:11px;color:var(--text3);display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.prov-key{display:inline-flex;align-items:center;gap:5px}
+.prov-dot{width:8px;height:8px;border-radius:999px;display:inline-block}
+.prov-dot.case{background:#1a6b3c}.prov-dot.casekg{background:#4b7f52}.prov-dot.llm{background:#7b4da0}.prov-dot.kg{background:#2d5f8a}
+/* Hoverable edges/nodes for task 3 */
+.reasoning-board svg .interactive-edge{cursor:pointer}
+.reasoning-board svg .interactive-node{cursor:pointer}
+.reasoning-board svg .kg-node{cursor:grab}
+.reasoning-board svg .kg-node.dragging{cursor:grabbing}
+.reasoning-board svg .kg-node .provenance-badge{transition:opacity .14s ease;pointer-events:none}
+.reasoning-board svg .kg-node:hover .provenance-badge,
+.reasoning-board svg .kg-node.dragging .provenance-badge{opacity:.18}
+
+
+.reasoning-board svg .kg-node,.reasoning-board svg .kg-edge{transition:opacity .18s ease}
+.reasoning-board.focus-active svg .kg-node{opacity:.18}
+.reasoning-board.focus-active svg .kg-edge{opacity:.12}
+.reasoning-board.focus-active svg .kg-node.neighbor-node{opacity:.44}
+.reasoning-board.focus-active svg .kg-edge.neighbor-edge{opacity:.38}
+.reasoning-board.focus-active svg .kg-node.focus-node{opacity:1}
+.reasoning-board.focus-active svg .kg-edge.focus-edge{opacity:1}
+.reasoning-board.focus-active svg .kg-node.focus-node rect{stroke-width:3.2;filter:drop-shadow(0 5px 14px rgba(45,95,138,.18))}
+
+/* KG Tooltip */
+.kg-tooltip{position:fixed;z-index:100;background:#1a1814;color:#fff;border-radius:10px;padding:10px 13px;font-size:12px;line-height:1.5;max-width:260px;pointer-events:none;box-shadow:0 8px 28px rgba(0,0,0,.22);transition:opacity .12s;opacity:0}
+.kg-tooltip.visible{opacity:1}
+.kg-tooltip-title{font-weight:800;font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:#aaa;margin-bottom:5px}.kg-tooltip-title:empty{display:none}.provenance-note{display:none !important}
+.kg-tooltip-body{font-size:12px;line-height:1.5;color:#f0ede8}
+
+/* Exclude cards */
+.exclude-wrap{margin-top:4px}
+.exclude-section-title{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.7px;color:var(--text3);margin-bottom:10px;display:block}
+.exclude-section-title span{display:block;margin-top:3px;font-size:10px;text-transform:none;letter-spacing:0;color:var(--text3);font-weight:700;line-height:1.45}
+.exclude-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.exclude-card{border:1px solid var(--border);border-radius:12px;background:#fff;padding:10px;display:flex;align-items:center;gap:8px;cursor:pointer;transition:.14s;position:relative}
+.exclude-card:hover{border-color:var(--accent-light);box-shadow:0 3px 10px rgba(45,95,138,.08)}
+.exclude-cue{flex:1;border-radius:10px;padding:8px 10px;font-size:11px;line-height:1.35;font-weight:700;text-align:center;background:#edf7f2;border:2px solid #1a6b3c;color:#174a2d}
+.exclude-arrow{font-size:10px;font-weight:800;color:#7d746b;white-space:nowrap}
+.exclude-target{flex:1;border-radius:10px;padding:8px 10px;font-size:11px;line-height:1.35;font-weight:700;text-align:center;background:#eef4fb;border:2px solid #2d5f8a;color:#234a6d}
+.mini-distractor-card{border:1px solid var(--border);border-radius:12px;background:#fff;overflow:hidden;cursor:pointer;transition:.14s}
+.mini-distractor-card:hover{border-color:var(--accent);box-shadow:0 4px 14px rgba(45,95,138,.10)}
+.mini-distractor-head{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 10px;border-bottom:1px solid var(--border);background:var(--surface2)}
+.mini-distractor-title{font-size:13px;font-weight:900;color:var(--text)}
+.mini-distractor-chip{font-size:11px;font-weight:900;border-radius:999px;background:var(--reject-bg);color:var(--reject);padding:2px 8px;white-space:nowrap}
+.mini-distractor-svg{width:100%;height:250px;display:block;background:#fff}
+.mini-evidence-node{cursor:pointer}
+.mini-evidence-node rect{transition:.12s}
+.mini-evidence-node:hover rect{stroke-width:2.4}
+.mini-expected-node{cursor:pointer}
+.mini-expected-node rect{transition:.12s}
+.mini-expected-node:hover rect{stroke-width:2.4}
+.mini-distractor-node{cursor:pointer}
+.mini-distractor-node rect{transition:.12s}
+.mini-distractor-node:hover rect{stroke-width:2.4}
+
+.mini-edge{pointer-events:none}.mini-edge path{transition:.14s}.mini-edge-label rect{fill:#fff;stroke:var(--border);stroke-width:.7;opacity:.96}.mini-edge-label text{font-size:8.6px;font-weight:900;font-family:'DM Sans',sans-serif;letter-spacing:.1px}
+
+/* path text */
+.path-text{font-size:11px;color:var(--text3);font-style:italic}
+.explain-control{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;gap:12px;box-shadow:0 1px 4px rgba(0,0,0,.04)}
+.explain-control-title{font-size:12px;font-weight:800;color:var(--text2)}
+.explain-control-sub{font-size:11px;color:var(--text3);margin-top:2px}
+
+/* Task 3 support mode switch */
+.task3-support-switch{display:none;background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:12px 16px;align-items:center;justify-content:space-between;gap:12px;box-shadow:0 1px 4px rgba(0,0,0,.04)}
+.task3-support-left{min-width:210px}
+.task3-support-title{font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:.7px;color:var(--text3)}
+.task3-support-sub{font-size:11px;color:var(--text3);margin-top:2px}
+.task3-support-buttons{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+.support-mode-btn{border:1px solid var(--border);border-radius:999px;background:var(--surface2);color:var(--text2);padding:7px 12px;font-family:inherit;font-size:11px;font-weight:900;cursor:pointer;transition:.14s}
+.support-mode-btn:hover{border-color:var(--accent);color:var(--accent)}
+.support-mode-btn.active{background:var(--accent);border-color:var(--accent);color:#fff}
+.clue-review-panel{display:none;background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:12px 16px;box-shadow:0 1px 4px rgba(0,0,0,.04)}
+.clue-review-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:10px}
+.clue-review-title{font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:.7px;color:var(--text3)}
+.clue-review-sub{font-size:11px;color:var(--text3);margin-top:2px;line-height:1.45}
+.clue-review-count{font-size:10px;font-weight:900;border:1px solid var(--border);background:var(--surface2);border-radius:999px;padding:4px 9px;color:var(--text2);white-space:nowrap}
+.clue-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.clue-card{border:1px solid var(--border);background:var(--surface2);border-radius:12px;padding:9px 10px;display:grid;grid-template-columns:18px minmax(0,1fr);gap:8px;cursor:pointer;transition:.14s}
+.clue-card:hover{border-color:var(--accent);box-shadow:0 3px 10px rgba(45,95,138,.08)}
+.clue-card.selected{background:#fff1f1;border-color:#d9a7a7}
+.clue-card input{accent-color:var(--reject);margin-top:2px}
+.clue-name{font-size:12px;font-weight:900;color:var(--text);line-height:1.35}
+.clue-meta{display:flex;gap:6px;flex-wrap:wrap;margin-top:4px}
+.clue-tag{font-size:9.5px;font-weight:900;border-radius:999px;padding:2px 6px;background:#fff;border:1px solid var(--border);color:var(--text3);text-transform:uppercase;letter-spacing:.3px}
+.clue-tag.remove{background:var(--reject-bg);border-color:#d9a7a7;color:var(--reject)}
+.clue-tag.keep{background:var(--correct-bg);border-color:var(--correct-border);color:var(--correct)}
+.clue-note{font-size:11px;color:var(--text3);margin-top:8px;line-height:1.45}
+.hl-core.remove-selected{background:#ffe2e2;border-color:#c24141;box-shadow:0 0 0 2px rgba(194,65,65,.12)}
+/* In-graph controls */
+.reasoning-board{position:relative}
+.graph-toolbar{position:absolute;top:14px;right:16px;z-index:8;display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end;pointer-events:auto}
+.graph-toolbar-left{left:16px;right:auto;justify-content:flex-start}
+.graph-tool-btn{border:1px solid var(--border);background:rgba(255,255,255,.94);border-radius:999px;padding:8px 12px;font-family:inherit;font-size:11px;font-weight:900;color:var(--text2);cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.06);transition:.14s}
+.graph-tool-btn:hover{border-color:var(--accent);color:var(--accent)}
+.graph-tool-btn.active{background:var(--accent);border-color:var(--accent);color:#fff}
+.graph-tool-btn.danger:hover{border-color:var(--reject);color:var(--reject);background:var(--reject-bg)}
+.graph-toggle{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--border);background:rgba(255,255,255,.94);border-radius:999px;padding:7px 11px;font-family:inherit;font-size:11px;font-weight:900;color:var(--text2);cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.06);user-select:none;transition:.14s}
+.graph-toggle:hover{border-color:var(--accent);color:var(--accent)}
+.graph-toggle.active{background:var(--accent-light);border-color:var(--accent);color:var(--accent)}
+.graph-toggle-dot{width:24px;height:14px;border-radius:999px;background:#d8d2ca;position:relative;display:inline-block;transition:.14s}
+.graph-toggle-dot::after{content:'';position:absolute;top:2px;left:2px;width:10px;height:10px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.18);transition:.14s}
+.graph-toggle.active .graph-toggle-dot{background:var(--accent)}
+.graph-toggle.active .graph-toggle-dot::after{left:12px}
+.mode-toggle-wrap{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+.custom-confirm-body{font-size:13px;color:var(--text2);line-height:1.6;margin-top:12px}
+.custom-confirm-list{margin-top:10px;border:1px solid var(--border);border-radius:12px;background:var(--surface2);padding:10px 12px;color:var(--text);font-weight:800;font-size:12px}
+
+@media (max-width: 980px){.task3-support-switch{align-items:flex-start;flex-direction:column}.task3-support-buttons{justify-content:flex-start}.clue-grid{grid-template-columns:1fr}.clue-review-head{flex-direction:column}.clue-review-count{align-self:flex-start}}
+.delayed-panel{display:none}
+.delayed-panel.open{display:block}
+
+/* Modals */
+.toast{position:fixed;right:24px;bottom:24px;background:var(--correct);color:#fff;padding:11px 17px;border-radius:10px;font-weight:700;display:none;box-shadow:0 8px 30px rgba(0,0,0,.18);z-index:99;font-size:13px}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.38);display:none;align-items:center;justify-content:center;z-index:20}
+.modal.open{display:flex}
+.modal-box{background:#fff;width:500px;border-radius:18px;padding:22px;box-shadow:0 20px 60px rgba(0,0,0,.2)}
+.modal-title{font-weight:900;font-size:16px}
+.issue{display:flex;gap:10px;border-bottom:1px solid var(--border);padding:10px 0;cursor:pointer}
+.issue input{accent-color:var(--reject);margin-top:3px}
+.issue strong{display:block;font-size:13px}
+.issue span{font-size:11px;color:var(--text3)}
+.modal-footer{display:flex;justify-content:flex-end;gap:10px;margin-top:18px}
+.bank-modal-box{width:min(720px,92vw);max-height:78vh;overflow:auto}
+.bank-card{border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:12px;background:var(--surface2)}
+.bank-card h4{font-size:13px;margin-bottom:6px}
+.bank-card p{font-size:12px;color:var(--text2);margin-bottom:8px}
+.bank-actions{display:flex;gap:8px}
+.picker-modal{position:fixed;inset:0;background:rgba(0,0,0,.38);display:none;align-items:center;justify-content:center;z-index:50}
+.picker-modal.open{display:flex}
+.picker-box{background:#fff;width:min(660px,94vw);max-height:80vh;border-radius:18px;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(0,0,0,.2)}
+.picker-head{padding:18px 22px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+.picker-head strong{font-size:16px;font-weight:900}
+.picker-search{margin:14px 22px 0;border:1px solid var(--border2);border-radius:9px;padding:9px 12px;font-family:inherit;width:calc(100% - 44px)}
+.picker-list{flex:1;overflow-y:auto;padding:14px 22px}
+.picker-card{border:1.5px solid var(--border);border-radius:12px;padding:16px;margin-bottom:10px;cursor:pointer;transition:.15s}
+.picker-card:hover{border-color:var(--accent)}
+.picker-card.selected{border-color:var(--accent);background:var(--accent-light)}
+.picker-card-title{font-weight:800;font-size:13px;margin-bottom:4px}
+.picker-card-meta{font-size:11px;color:var(--text3);display:flex;gap:12px;margin-bottom:6px}
+.picker-card-preview{font-size:12px;color:var(--text2)}
+.picker-footer{padding:16px 22px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:10px}
+.label{font-size:11px;text-transform:uppercase;letter-spacing:.8px;font-weight:800;color:var(--text3);margin-bottom:6px}
+.study-note{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:10px 12px;color:var(--text2);font-size:12px}
+.task-flow-note{background:#fff7ed;border:1px solid #fed7aa;color:#7c2d12;border-radius:12px;padding:10px 12px;font-size:12px;margin-top:10px}
+
+/* KG disabled state */
+.kg-disabled-msg{display:flex;align-items:center;justify-content:center;height:220px;color:var(--text3);font-size:13px;font-style:italic;border:1px dashed var(--border2);border-radius:14px}
+
+
+
+
+/* ══ THINK-ALOUD + KG UNDERSTANDING ADDITIONS ══ */
+.think-guide{background:linear-gradient(135deg,#fff,#f7fbff);border:1px solid var(--border);border-radius:14px;padding:13px 16px;box-shadow:0 1px 4px rgba(0,0,0,.04)}
+.think-guide-title{font-size:12px;font-weight:900;color:var(--accent);margin-bottom:5px;display:flex;align-items:center;gap:7px}
+.think-guide p{font-size:12px;color:var(--text2);line-height:1.55;margin:0}
+.think-prompts{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+.think-prompt{border:1px solid var(--border);background:var(--surface2);border-radius:10px;padding:8px 10px;font-size:11px;color:var(--text2);line-height:1.35}
+.kg-understanding-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px;align-items:start}
+.kg-side-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.04)}
+.kg-side-head{padding:11px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:8px}
+.kg-side-title{font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:.7px;color:var(--text3)}
+.kg-side-body{padding:13px 14px;font-size:12px;color:var(--text2);line-height:1.55}
+.node-name{font-weight:900;color:var(--text);font-size:14px;margin-bottom:4px}
+.node-role{display:inline-flex;border-radius:999px;background:var(--accent-light);color:var(--accent);font-size:10px;font-weight:900;padding:2px 8px;margin-bottom:9px;text-transform:uppercase;letter-spacing:.45px}
+.node-section{margin-top:10px;padding-top:10px;border-top:1px solid var(--border)}
+.node-section strong{display:block;font-size:11px;color:var(--text);margin-bottom:5px;text-transform:uppercase;letter-spacing:.55px}
+.node-section ul{margin-left:16px}.node-section li{margin-bottom:4px}
+.coverage-row{display:grid;grid-template-columns:18px minmax(0,1fr);gap:8px;border-bottom:1px solid var(--border);padding:8px 0;cursor:pointer;transition:.12s}
+.coverage-row:last-child{border-bottom:none}
+.coverage-row:hover{background:var(--surface2);margin-left:-6px;margin-right:-6px;padding-left:6px;padding-right:6px;border-radius:8px}
+.coverage-check{width:18px;height:18px;border-radius:50%;background:var(--correct-bg);border:1.5px solid var(--correct-border);color:var(--correct);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:900;margin-top:1px}
+.coverage-phrase{font-weight:800;color:var(--text);font-size:12px;line-height:1.35}.coverage-map{font-size:11px;color:var(--text3);margin-top:2px}
+.surrounding-chip-row{display:flex;flex-wrap:wrap;gap:6px;margin-top:5px}
+.surrounding-chip{font-size:10.5px;font-weight:750;background:var(--surface2);border:1px solid var(--border);color:var(--text2);border-radius:999px;padding:3px 8px}
+.mini-graph-note{font-size:11px;color:var(--text3);font-style:italic;margin-top:6px}
+.mini-graph-footer-hint{font-size:11px;color:var(--text3);font-style:italic;margin-top:10px;padding:8px 2px 0;border-top:1px solid var(--border)}
+@media (max-width: 980px){.kg-understanding-grid{grid-template-columns:1fr}.think-prompts{grid-template-columns:1fr}}
+
+/* Expert review panel */
+.expert-review-panel{background:var(--surface);border:1px solid var(--border);border-radius:14px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.04)}
+.expert-review-head{padding:12px 14px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;gap:10px}
+.expert-review-title{font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:.7px;color:var(--text3)}
+.review-status{font-size:10px;font-weight:900;border-radius:999px;padding:3px 8px;background:var(--surface2);border:1px solid var(--border);color:var(--text2);white-space:nowrap}
+.review-status.accepted{background:var(--correct-bg);border-color:var(--correct-border);color:var(--correct)}
+.review-status.revise{background:#fff3cd;border-color:#e3c66c;color:#8a5a00}
+.review-status.rejected{background:var(--reject-bg);border-color:#d9a7a7;color:var(--reject)}
+.expert-review-body{padding:13px 14px;font-size:12px;color:var(--text2);line-height:1.55}
+.review-empty{color:var(--text3);font-style:italic}
+.review-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+.review-field label{display:block;font-size:10px;text-transform:uppercase;letter-spacing:.65px;font-weight:900;color:var(--text3);margin-bottom:5px}
+.review-input,.review-select,.review-textarea{width:100%;border:1px solid var(--border2);border-radius:9px;padding:8px 10px;font-family:inherit;font-size:12px;background:#fff;color:var(--text)}
+.review-textarea{min-height:62px;resize:vertical}
+.inline-edit-wrap{display:flex;flex-direction:column;gap:10px}.inline-option-row{display:flex;align-items:center;gap:10px;margin-bottom:10px}.inline-option-letter{width:26px;height:26px;border-radius:999px;border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;color:var(--text2);background:#fff;flex:0 0 auto}.inline-edit-meta{display:grid;grid-template-columns:1fr 140px;gap:12px;align-items:end;margin-top:8px}.inline-edit-label{font-size:11px;font-weight:800;color:var(--text2);text-transform:uppercase;letter-spacing:.08em;margin:2px 0 6px}
+
+.review-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.review-mini-btn{border:1px solid var(--border);border-radius:9px;background:#fff;padding:7px 10px;font-family:inherit;font-size:11px;font-weight:850;cursor:pointer;color:var(--text2)}
+.review-mini-btn:hover{border-color:var(--accent);color:var(--accent)}
+.review-mini-btn.good{background:var(--correct-bg);border-color:var(--correct-border);color:var(--correct)}
+.review-mini-btn.warn{background:#fff3cd;border-color:#e3c66c;color:#8a5a00}
+.review-mini-btn.bad{background:var(--reject-bg);border-color:#d9a7a7;color:var(--reject)}
+.audit-row{display:grid;grid-template-columns:110px minmax(0,1fr);gap:10px;border-top:1px solid var(--border);padding-top:9px;margin-top:9px}
+.audit-row:first-child{border-top:none;padding-top:0;margin-top:0}
+.audit-label{font-size:10px;text-transform:uppercase;letter-spacing:.6px;font-weight:900;color:var(--text3)}
+.audit-value{color:var(--text);font-weight:650}
+.actions-section.editing{position:static;box-shadow:none}
+.edit-section{scroll-margin-bottom:24px}
+
+/* ══ RESPONSIVE FIXES ══ */
+@media (max-height: 780px){
+  .left-col{padding:12px;gap:10px}
+  .vignette-section,.question-section{padding:12px 16px}
+  .vignette{line-height:1.75;font-size:12.5px}
+  .option{padding:7px 9px;margin-bottom:5px}
+  .difficulty{margin-top:8px;padding-top:8px}
+  .actions-section{padding:10px 16px}
+}
+@media (max-width: 980px){
+  :root{--nav-h:92px}
+  .topnav{height:auto;min-height:var(--nav-h);padding:8px 12px;gap:8px;flex-wrap:wrap;align-content:center}
+  .nav-divider{display:none}
+  .task-tabs{order:3;flex-basis:100%;overflow-x:auto;padding-bottom:2px}
+  .nav-meta{margin-left:auto;gap:6px}
+  .meta-chip{display:none}
+  .nav-tab{padding:6px 10px;font-size:11px}
+  .bank-btn,.back-nav-btn{font-size:11px;padding:5px 9px}
+  .app-body{display:block;height:calc(100dvh - var(--nav-h));overflow-y:auto}
+  .left-col,.right-col{overflow:visible;border-right:none;padding:12px}
+  .right-col{padding-top:0}
+  .lcard{border-radius:14px}
+  .btn{flex:1;min-width:115px;padding:10px 12px}
+  .kg-panel{padding:12px 0;min-height:0}
+  .reasoning-board{overflow-x:auto}
+  .reasoning-board svg{min-width:760px}
+  .exclude-grid,.distractor-grid{grid-template-columns:1fr}
+}
+@media (max-width: 620px){
+  .setup-card{padding:24px 20px}
+  .diff-row,.start-mode,.edit-grid{grid-template-columns:1fr}
+  .source-badge{font-size:10px}
+  .question-section{padding-bottom:10px}
+  .actions-section{gap:8px;padding:10px 12px}
+  .btn{min-width:0;font-size:11px}
+  .explain-control{align-items:flex-start;flex-direction:column}
+  .explain-btn{width:100%;justify-content:center}
+}
+
+</style>
+</head>
+<body>
+<div class="toast" id="toast"></div>
+<div class="kg-tooltip" id="kgTooltip">
+  <div class="kg-tooltip-title" id="kgTooltipTitle"></div>
+  <div class="kg-tooltip-body" id="kgTooltipBody"></div>
+</div>
+
+<!-- Reject Modal -->
+<div class="modal" id="rejectModal">
+  <div class="modal-box">
+    <div style="display:flex;justify-content:space-between;align-items:center"><div class="modal-title">Reject with feedback</div><button class="btn" onclick="closeReject()" style="background:var(--surface2);border:1px solid var(--border)">×</button></div>
+    <div class="label" style="margin-top:16px">Select issues</div>
+    <label class="issue"><input type="checkbox"><div><strong>Too obvious</strong><span>The answer is immediately clear without reasoning.</span></div></label>
+    <label class="issue"><input type="checkbox"><div><strong>Distractor too weak</strong><span>One or more alternatives are easy to eliminate.</span></div></label>
+    <label class="issue"><input type="checkbox"><div><strong>Missing key information</strong><span>The case lacks information needed for review.</span></div></label>
+    <label class="issue"><input type="checkbox"><div><strong>Unclear explanation</strong><span>The reasoning path is hard to follow.</span></div></label>
+    <div class="modal-footer"><button class="btn" onclick="closeReject()" style="background:var(--surface2);border:1px solid var(--border)">Cancel</button><button class="btn reject" onclick="submitReject()">Submit feedback</button></div>
+  </div>
+</div>
+
+<!-- Regenerate Modal -->
+<div class="modal" id="regenerateModal">
+  <div class="modal-box">
+    <div style="display:flex;justify-content:space-between;align-items:center"><div class="modal-title">Regenerate this question</div><button class="btn" onclick="closeRegenerate()" style="background:var(--surface2);border:1px solid var(--border)">×</button></div>
+    <div class="label" style="margin-top:16px">Problem category</div>
+    <label class="issue"><input type="checkbox" value="answer_cue_stacking"><div><strong>Correct-answer cue stacking</strong><span>Too many classic croup clues are stacked in one vignette: toddler age, viral prodrome, barky cough, stridor, and hoarseness.</span></div></label>
+    <label class="issue"><input type="checkbox" value="direct_answer_cue"><div><strong>Direct answer cue</strong><span>The item points too directly to croup through the steeple sign and the final parent question.</span></div></label>
+    <label class="issue"><input type="checkbox" value="explicit_negative_exclusion"><div><strong>Explicit negative distractor elimination</strong><span>Negative findings such as no drooling or dysphagia make competing diagnoses too easy to reject.</span></div></label>
+    <div class="label" style="margin-top:16px">Additional notes (optional)</div>
+    <textarea class="review-textarea" id="regenerateFreeText" placeholder="Any additional notes for the revised question or KG?"></textarea>
+    <div class="study-note" id="selectedClueSummary" style="margin-top:14px"></div>
+    <div class="modal-footer"><button class="btn" onclick="closeRegenerate()" style="background:var(--surface2);border:1px solid var(--border)">Cancel</button><button class="btn accept" onclick="applyRegenerate()">Generate revised version</button></div>
+  </div>
+</div>
+
+<!-- Custom Confirmation Modal -->
+<div class="modal" id="customConfirmModal">
+  <div class="modal-box">
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:12px">
+      <div class="modal-title" id="customConfirmTitle">Confirm action</div>
+      <button class="btn" onclick="closeCustomConfirm()" style="background:var(--surface2);border:1px solid var(--border)">×</button>
+    </div>
+    <div class="custom-confirm-body" id="customConfirmBody"></div>
+    <div class="custom-confirm-list" id="customConfirmList" style="display:none"></div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeCustomConfirm()" style="background:var(--surface2);border:1px solid var(--border)">Cancel</button>
+      <button class="btn reject" id="customConfirmPrimaryBtn">Confirm</button>
+    </div>
+  </div>
+</div>
+
+<!-- Bank Modal -->
+<div class="modal" id="bankModal">
+  <div class="modal-box bank-modal-box">
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:12px">
+      <div class="modal-title">Accepted question bank</div>
+      <button class="btn" onclick="closeBank()" style="background:var(--surface2);border:1px solid var(--border)">×</button>
+    </div>
+    <div id="bankList" style="margin-top:16px"></div>
+    <div class="modal-footer"><button class="btn" onclick="closeBank()" style="background:var(--surface2);border:1px solid var(--border)">Close</button></div>
+  </div>
+</div>
+
+<!-- Question Picker Modal -->
+<div class="picker-modal" id="pickerModal">
+  <div class="picker-box">
+    <div class="picker-head"><strong>Select a question</strong><button class="btn" onclick="closePicker()" style="background:var(--surface2);border:1px solid var(--border)">×</button></div>
+    <input class="picker-search" id="pickerSearch" placeholder="Search a question" oninput="filterPicker(this.value)"/>
+    <div class="picker-list" id="pickerList"></div>
+    <div class="picker-footer">
+      <button class="btn" onclick="closePicker()" style="background:var(--surface2);border:1px solid var(--border)">Cancel</button>
+      <button class="btn accept" id="pickerConfirmBtn" onclick="confirmPicker()" disabled style="opacity:.45">Confirm</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ SETUP PAGE ══ -->
+<div id="setupPage">
+  <div class="setup-logo">Med<span>MCQ</span></div>
+  <div class="setup-sub">User study prototype · Question Setup</div>
+  <div class="setup-card">
+    <div class="setup-title">Question Setup</div>
+    <div class="setup-desc">Configure your medical education question parameters</div>
+    <div class="field">
+      <div class="field-label">Domain</div>
+      <select class="select-box" id="setupDomain"><option value="pediatrics" selected>Pediatrics</option></select>
+    </div>
+    <div class="field">
+      <div class="field-label">Topic</div>
+      <select class="select-box" id="setupTopic"><option value="respiratory_system" selected>Respiratory System</option></select>
+    </div>
+    <div class="field">
+      <div class="field-label">Difficulty Level</div>
+      <div class="diff-row">
+        <button class="diff-btn active" id="diff-easy" onclick="selectDiff('easy')"><strong>Easy</strong><span>Basic concepts</span></button>
+        <button class="diff-btn" id="diff-medium" onclick="selectDiff('medium')"><strong>Medium</strong><span>Clinical reasoning</span></button>
+        <button class="diff-btn" id="diff-hard" onclick="selectDiff('hard')"><strong>Hard</strong><span>Complex cases</span></button>
+      </div>
+    </div>
+    <div class="divider"></div>
+    <div class="field">
+      <div class="field-label">Start from</div>
+      <div class="start-mode">
+        <button class="mode-btn active" id="mode-new" onclick="selectMode('new')">
+          <span class="mode-icon">✦</span>
+          <div><strong>Generate a new question</strong><span>AI generates fresh MCQ from KG</span></div>
+        </button>
+        <button class="mode-btn" id="mode-existing" onclick="selectMode('existing')">
+          <span class="mode-icon">📂</span>
+          <div><strong>Modify an existing question</strong><span>Edit from question bank</span></div>
+        </button>
+      </div>
+    </div>
+    <button class="go-btn" onclick="startStudy()">Generate question</button>
+  </div>
+</div>
+
+<!-- ══ APP PAGE ══ -->
+<div id="appPage">
+  <!-- TOP NAV -->
+  <nav class="topnav">
+    <div class="nav-logo">Med<span>MCQ</span></div>
+    <div class="nav-divider"></div>
+    <div class="task-tabs">
+      <button class="nav-tab active" id="navTab1" onclick="loadTask(1)">Task 1 <span class="pill text">Text only</span></button>
+      <button class="nav-tab" id="navTab2" onclick="loadTask(2)">Task 2 <span class="pill kg">KG ± hover</span></button>
+      <button class="nav-tab" id="navTab3" onclick="loadTask(3)">Task 3 <span class="pill both">Regenerate</span></button>
+    </div>
+    <div class="nav-meta">
+      <span class="meta-chip" id="navChip">Explanation: Text only</span>
+      <button class="bank-btn" onclick="openBank()">Question bank <span class="bank-count" id="navBankCount">0</span></button>
+      <button class="back-nav-btn" onclick="goSetup()">← Setup</button>
+    </div>
+  </nav>
+
+  <!-- MAIN BODY -->
+  <div class="app-body" id="vignetteCard">
+    <!-- LEFT COLUMN -->
+    <div class="left-col">
+      <!-- Vignette card -->
+      <div class="lcard">
+        <div class="vignette-section" id="vignetteSection">
+          <div class="card-label">Clinical vignette</div>
+          <div id="sourceTag"></div>
+          <div class="vignette" id="vignette"></div>
+        </div>
+      </div>
+
+      <!-- Question card -->
+      <div class="lcard">
+        <div class="question-section">
+          <div class="card-label">Question</div>
+          <div class="stem" id="stem"></div>
+          <div id="options"></div>
+          <div class="difficulty">
+            <span style="font-size:12px;color:var(--text2)">Difficulty</span>
+            <span class="diff-chip easy" id="diffChip">Easy</span>
+          </div>
+        </div>
+        <!-- Actions -->
+        <div class="actions-section" id="actionsSection"></div>
+        <!-- Edit Panel -->
+          <div class="edit-section hidden" id="editSection">
+          <div class="card-label">Revision notes &amp; edits</div>
+          <div class="label">Question stem</div>
+          <textarea class="textarea" id="editStem"></textarea>
+          <div class="label">Clinical vignette</div>
+          <textarea class="textarea" id="editVignette" style="min-height:110px"></textarea>
+          <div class="edit-grid">
+            <div><div class="label">Option A</div><input class="edit-input" id="editA"></div>
+            <div><div class="label">Option B</div><input class="edit-input" id="editB"></div>
+            <div><div class="label">Option C</div><input class="edit-input" id="editC"></div>
+            <div><div class="label">Option D</div><input class="edit-input" id="editD"></div>
+            <div><div class="label">Option E</div><input class="edit-input" id="editE"></div>
+          </div>
+          <div class="label">Correct answer</div>
+          <select class="edit-input" id="editCorrect"><option>A</option><option>B</option><option>C</option><option>D</option><option>E</option></select>
+          <div style="margin-top:12px;display:flex;gap:10px">
+            <button class="btn accept" onclick="saveEdits()">Save revision</button>
+            <button class="btn edit-btn" onclick="toggleEdit(false)">Cancel</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT COLUMN: KG + Text explanation -->
+    <div class="right-col">
+      <div class="kg-panel">
+        <div class="kg-panel-head">
+          <div class="kg-panel-title" id="kgPanelTitle">Knowledge graph · Reasoning support</div>
+          <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;justify-content:flex-end">
+            <div class="kg-hint" id="kgHint">Click nodes to reveal nearby knowledge</div>
+            <button class="explain-btn" id="kgHeaderExplainBtn" onclick="toggleHeaderExplain()" style="display:none">Hide explanation</button>
+          </div>
+        </div>
+        <div class="task3-support-switch" id="task3SupportSwitch">
+          <div class="task3-support-left">
+            <div class="task3-support-title">Task 3 support mode</div>
+            <div class="task3-support-sub" id="task3SupportSub">Review the question, then use Regenerate if you want to inspect a revised version. Node hover explains the clinical clues; edges are labels only.</div>
+          </div>
+          <div class="mode-toggle-wrap">
+            <button class="support-mode-btn" id="supportModeText" onclick="setTask3SupportMode('text')">Text</button>
+            <button class="support-mode-btn" id="supportModeKg" onclick="setTask3SupportMode('kg')">KG</button>
+          </div>
+        </div>
+        <div id="kgBoard" class="reasoning-board"></div>
+        <div class="provenance-note" id="kgProvenanceNote" style="display:none">
+          <span class="prov-key"><span class="prov-dot case"></span>CASE: original vignette evidence</span>
+          <span class="prov-key"><span class="prov-dot casekg"></span>KG node: vignette phrase already matches KG concept</span>
+          <span class="prov-key"><span class="prov-dot kg"></span>KG: mapped/base knowledge node</span>
+          <span class="prov-key llm-prov"><span class="prov-dot llm"></span>LLM: hover text explains the edge</span>
+        </div>
+        <div class="right-text-panel delayed-panel" id="kgTextPanel">
+          <div class="right-text-panel-head">
+            <div class="right-text-panel-title">Text explanation</div>
+          </div>
+          <div class="right-text-body open">
+            <div class="why" id="kgTextWhy"></div>
+            <div class="distractor-grid" id="kgTextDistractors"></div>
+          </div>
+        </div>
+        <div class="path-text" id="pathText"></div>
+        <div class="exclude-wrap" id="kgExcludeWrap" style="display:none">
+          <div class="exclude-section-title" id="miniGraphTitle">Distractor mini graphs</div>
+          <div class="exclude-grid" id="kgExcludeCards"></div>
+          <div class="mini-graph-footer-hint" id="miniGraphHint">Hover nodes for concise clinical rationale. Edges are color-coded only.</div>
+        </div>
+        <!-- Text explanation panel (Task 1 only, in right col) -->
+        <div class="right-text-panel" id="rightTextPanel" style="display:none">
+          <div class="right-text-panel-head">
+            <div class="right-text-panel-title">Reasoning support — Text explanation</div>
+            <button class="explain-btn" id="explainBtn" onclick="toggleTextExplain()">Hide explanation</button>
+          </div>
+          <div class="right-text-body" id="rightTextBody">
+            <div class="why" id="textWhy"></div>
+            <div class="distractor-grid" id="textDistractors"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════════════════════════════
+// SETUP LOGIC
+// ══════════════════════════════════════════════════════════════
+let selectedDiff='easy', selectedMode='new', selectedPickerTask=null;
+
+function selectDiff(d){selectedDiff=d;['easy','medium','hard'].forEach(x=>document.getElementById('diff-'+x).classList.remove('active'));document.getElementById('diff-'+d).classList.add('active');}
+function selectMode(m){selectedMode=m;['new','existing'].forEach(x=>document.getElementById('mode-'+x).classList.remove('active'));document.getElementById('mode-'+m).classList.add('active');if(m==='existing')openPicker();}
+function startStudy(){document.getElementById('setupPage').style.display='none';document.getElementById('appPage').style.display='block';loadTask(selectedPickerTask||1);}
+function goSetup(){document.getElementById('appPage').style.display='none';document.getElementById('setupPage').style.display='flex';}
+
+const pickerQuestions=[
+  {id:1,title:'A 2-year-old boy with seal-bark cough and stridor',domain:'Paediatrics',date:'2026-01-12',vignette:'A 2-year-old boy is brought to the emergency department with sudden onset noisy breathing overnight after two days of runny nose and low-grade fever.',stem:'What is the most likely diagnosis?'},
+  {id:2,title:'A 14-month-old boy with poor weight gain and greasy stools',domain:'Paediatrics',date:'2026-01-18',vignette:'A 14-month-old boy with poor weight gain, persistent wet cough, three episodes of pneumonia, and bulky pale greasy stools.',stem:'What is the most likely diagnosis?'},
+  {id:3,title:'A 7-year-old boy with lifelong wet cough and ear infections',domain:'Paediatrics',date:'2026-02-04',vignette:'A 7-year-old boy with a wet, mucus-like cough since infancy, neonatal respiratory distress, and recurrent ear infections requiring ear tubes. Growth is normal.',stem:'What is the most likely diagnosis?'},
+];
+
+function openPicker(){renderPicker(pickerQuestions);document.getElementById('pickerModal').classList.add('open');}
+function closePicker(){document.getElementById('pickerModal').classList.remove('open');if(!selectedPickerTask){selectedMode='new';document.getElementById('mode-new').classList.add('active');document.getElementById('mode-existing').classList.remove('active');}}
+function renderPicker(qs){document.getElementById('pickerList').innerHTML=qs.map(q=>`<div class="picker-card ${selectedPickerTask===q.id?'selected':''}" onclick="selectPicker(${q.id})"><div class="picker-card-title">${q.title}</div><div class="picker-card-meta"><span>${q.domain}</span><span>${q.date}</span></div>${selectedPickerTask===q.id?`<div class="picker-card-preview">${q.vignette}</div>`:''}</div>`).join('');}
+function selectPicker(id){selectedPickerTask=id;const btn=document.getElementById('pickerConfirmBtn');btn.disabled=false;btn.style.opacity='1';renderPicker(pickerQuestions);}
+function filterPicker(val){renderPicker(pickerQuestions.filter(p=>p.title.toLowerCase().includes(val.toLowerCase())||p.vignette.toLowerCase().includes(val.toLowerCase())));}
+function confirmPicker(){closePicker();}
+
+// ══════════════════════════════════════════════════════════════
+// TASK DATA
+// ══════════════════════════════════════════════════════════════
+const tasks={
+1:{
+  title:'Task 1 — Textual explanation only',chip:'Explanation: Text only',
+  condition:'Primary ciliary dyskinesia · Chronic wet cough · text explanation only',mode:'text',
+  difficulty:'Easy',target:'Primary ciliary dyskinesia',source:"Nelson's Essentials · Chronic Wet Cough",correct:'C',
+  question_stem:'What is the most likely diagnosis?',
+  vignette:'A 7-year-old boy is brought to clinic for a persistent cough. His parents report that he has had a wet, mucus-like cough for as long as they can remember, often worsening in the mornings. He was born at term but experienced respiratory distress shortly after birth, requiring a brief stay in the NICU. Throughout early childhood, he had recurrent ear infections necessitating multiple sets of ear tubes. On examination, his growth parameters are at the 50th percentile. Auscultation reveals mild hyperinflation and coarse crackles over both lung fields. He has no history of fatty stools.',
+  options:{A:'Cystic fibrosis',B:'Humoral immunodeficiency',C:'Primary ciliary dyskinesia',D:'Gastroesophageal reflux',E:'Asthma'},
+  supporting:[
+    {phrase:'wet, mucus-like cough for as long as they can remember',why:'A lifelong wet cough from birth indicates a fundamental defect in airway clearance — the hallmark of a primary mucociliary disorder.'},
+    {phrase:'respiratory distress shortly after birth, requiring a brief stay in the NICU',why:'Neonatal respiratory distress in a term infant is a characteristic early presentation of PCD; cilia are responsible for clearing lung fluid after delivery.'},
+    {phrase:'recurrent ear infections necessitating multiple sets of ear tubes',why:'Recurrent otitis media requiring tympanostomy tubes reflects ciliary dysfunction in the Eustachian tube — a distinctive PCD pattern.'},
+    {phrase:'growth parameters are at the 50th percentile',why:'Normal growth contrasts with cystic fibrosis, where pancreatic insufficiency causes failure to thrive. PCD does not affect exocrine function.'},
+    {phrase:'no history of fatty stools',why:'Absence of steatorrhoea confirms normal pancreatic exocrine function, effectively excluding cystic fibrosis.'},
+  ],
+  distractors:[
+    {letter:'A',disease:'Cystic fibrosis',plausible:'CF causes chronic wet cough, recurrent pneumonia, and can present in early childhood.',incorrect:'CF typically presents with failure to thrive and steatorrhoea. This child has normal growth and no fatty stools. Neonatal respiratory distress followed by recurrent otitis media is the PCD pattern.'},
+    {letter:'B',disease:'Humoral immunodeficiency',plausible:'Causes recurrent infections including otitis media and respiratory infections.',incorrect:'Does not explain neonatal respiratory distress in a term infant, nor the lifelong wet cough suggestive of a structural clearance defect.'},
+    {letter:'D',disease:'Gastroesophageal reflux',plausible:'Can cause chronic cough in children through laryngeal irritation or aspiration.',incorrect:'GERD does not explain neonatal respiratory distress or recurrent otitis media requiring ear tubes.'},
+    {letter:'E',disease:'Asthma',plausible:'Common cause of chronic cough and hyperinflation in childhood.',incorrect:'Asthma does not account for neonatal respiratory distress, recurrent otitis media requiring tubes, or a consistently productive wet cough since birth.'},
+  ]
+},
+2:{
+  title:'Task 2 — Knowledge graph explanation only',chip:'Explanation: KG only',
+  condition:'Cystic fibrosis · Chronic wet cough · KG explanation only',mode:'kg',
+  difficulty:'Medium',target:'Cystic fibrosis',source:"Nelson's Essentials · Chronic Wet Cough",correct:'B',
+  question_stem:'What is the most likely diagnosis?',
+  vignette:'A 14-month-old boy is brought to the clinic by his parents due to poor weight gain and a persistent cough. Despite eating well, his weight has remained stagnant for the past four months. He has had three episodes of pneumonia requiring antibiotics since infancy and frequently has a wet-sounding cough. His parents describe his stools as bulky, pale, and unusually greasy. On examination, he appears thin. Mild digital clubbing is noted, and auscultation reveals diffuse crackles. His parents report no history of ear infections or hearing problems.',
+  options:{A:'Primary ciliary dyskinesia',B:'Cystic fibrosis',C:'Humoral immunodeficiency',D:'Gastroesophageal reflux with aspiration',E:'Asthma'},
+  supporting:[
+    {phrase:'poor weight gain',why:'Failure to thrive despite adequate oral intake indicates malabsorption — a hallmark of cystic fibrosis pancreatic insufficiency.'},
+    {phrase:'bulky, pale, and unusually greasy',why:'Steatorrhoea directly reflects exocrine pancreatic insufficiency, which occurs in ~85% of CF patients.'},
+    {phrase:'three episodes of pneumonia requiring antibiotics since infancy',why:'Recurrent lower respiratory tract infections reflect impaired mucociliary clearance due to viscous mucus in the CF airways.'},
+    {phrase:'wet-sounding cough',why:'Chronic productive cough indicates ongoing airway secretion retention — a key feature of CF lung disease.'},
+    {phrase:'Mild digital clubbing',why:'Digital clubbing is a sign of chronic hypoxaemia and lung disease, common in established CF.'},
+  ],
+  distractors:[
+    {letter:'A',disease:'Primary ciliary dyskinesia',plausible:'PCD causes chronic wet cough and recurrent pneumonia via impaired mucociliary clearance.',incorrect:'PCD does not affect the pancreas; it does not cause steatorrhoea or failure to thrive. The greasy stools and poor weight gain with normal intake specifically point away from PCD.'},
+    {letter:'C',disease:'Humoral immunodeficiency',plausible:'Can cause recurrent sinopulmonary infections in childhood.',incorrect:'Does not explain steatorrhoea, failure to thrive, or digital clubbing.'},
+    {letter:'D',disease:'GERD with aspiration',plausible:'Chronic aspiration can cause recurrent cough and pneumonia in infants.',incorrect:'GERD does not cause steatorrhoea or digital clubbing. Weight issues in GERD relate to feeding avoidance, not malabsorption.'},
+    {letter:'E',disease:'Asthma',plausible:'Chronic cough and recurrent respiratory symptoms are common in paediatric asthma.',incorrect:'Asthma does not produce steatorrhoea, failure to thrive, recurrent bacterial pneumonia, or digital clubbing.'},
+  ],
+  kgData:{
+    evidence:[
+      {id:'ev1',label:'Failure to thrive',short:'Failure to thrive',phrase:'poor weight gain'},
+      {id:'ev2',label:'Steatorrhea',short:'Steatorrhea',phrase:'bulky, pale, and unusually greasy'},
+      {id:'ev3',label:'Recurrent lower\nrespiratory infections',short:'Recurrent LRTIs',phrase:'three episodes of pneumonia requiring antibiotics since infancy',hiddenInMain:true},
+      {id:'ev4',label:'Chronic productive\ncough',short:'Chronic productive cough',phrase:'wet-sounding cough',hiddenInMain:true},
+      {id:'ev5',label:'Mild digital clubbing',short:'Digital clubbing',phrase:'Mild digital clubbing',hiddenInMain:true},
+      {id:'ev6',label:'No ear/hearing\ninvolvement',short:'No ear/hearing involvement',phrase:'no history of ear infections or hearing problems',hiddenInMain:true},
+    ],
+    findings:[
+      {id:'cf1',label:'Failure to thrive',nodeType:'sign',from:['ev1'],
+        tooltip:'Failure to thrive fits pancreatic malabsorption: calories are lost despite adequate intake because digestive enzyme delivery is impaired.'},
+      {id:'cf2',label:'Steatorrhea',nodeType:'symptom',from:['ev2'],
+        tooltip:'Bulky, greasy stools indicate steatorrhea. This points to fat malabsorption from exocrine pancreatic insufficiency rather than a purely respiratory disorder.'},
+      {id:'cf3',label:'Recurrent lower\nrespiratory infections',nodeType:'history',from:['ev3'],
+        mergedEvidence:'ev3',
+        tooltip:'Repeated pneumonia alone could fit PCD or humoral immunodeficiency. The combination with steatorrhoea and failure to thrive makes CF the only unifying explanation.'},
+      {id:'cf4',label:'Chronic productive\ncough',nodeType:'symptom',from:['ev4'],
+        mergedEvidence:'ev4',
+        tooltip:'Wet/productive cough indicates retained airway secretions. In CF, thick mucus is hard to clear and becomes a nidus for recurrent infection.'},
+      {id:'cf5',label:'Digital clubbing',nodeType:'sign',from:['ev5'],
+        mergedEvidence:'ev5',
+        tooltip:'Digital clubbing is a red flag for chronic suppurative lung disease. It should push the reasoning away from uncomplicated asthma.'},
+    ],
+    mechs:[
+      {id:'m1',label:'Exocrine pancreatic\ninsufficiency',nodeType:'mechanism',from:['cf1','cf2'],
+        tooltip:'Thick secretions obstruct pancreatic ducts, limiting pancreatic enzyme delivery. The downstream chain is fat malabsorption → steatorrhea → poor weight gain.'},
+      {id:'m2',label:'Impaired mucociliary\nclearance',nodeType:'mechanism',from:['cf3','cf4'],
+        tooltip:'Thick airway mucus impairs mucociliary clearance. Retained secretions predispose to recurrent infection and chronic structural airway damage.'},
+      {id:'m3',label:'Chronic lung disease',nodeType:'disorder',from:['cf5'],
+        tooltip:'Clubbing links the recurrent infection and crackles to chronic lung disease. It is not expected in uncomplicated asthma or reflux.'},
+    ],
+    dx:{id:'dx',label:'Cystic fibrosis',nodeType:'diagnosis',from:['m1','m2','m3'],
+      tooltip:'The strongest CF synthesis is multi-system: pancreatic insufficiency explains greasy stools and poor growth, while impaired airway clearance explains recurrent pneumonia, wet cough, crackles, and clubbing.'},
+    excludeCards:[
+      {cue:'Recurrent pneumonia + wet cough',target:'Primary ciliary dyskinesia',supports:['ev3','ev4'],against:['ev2','ev6'],
+        expected:'Neonatal RD\nrecurrent otitis media',
+        expectedExplanation:'PCD often has neonatal respiratory distress and recurrent otitis media. These expected PCD clues are not established in the vignette.',
+        explanation:'PCD is plausible because recurrent pneumonia and chronic wet cough can result from impaired mucociliary clearance. It is ruled out by the separate gastrointestinal malabsorption pattern, which PCD does not cause.'},
+      {cue:'Greasy stools + poor weight gain',target:'Humoral immunodeficiency',supports:['ev3'],against:['ev2','ev1'],
+        expected:'Low immunoglobulins\npoor vaccine response',
+        expectedExplanation:'Humoral immunodeficiency would be supported by antibody-defect clues such as low immunoglobulins or poor vaccine response. These are not established in the vignette.',
+        explanation:'Humoral immunodeficiency can cause recurrent sinopulmonary infection, but it does not explain steatorrhoea or failure to thrive despite eating well. Those GI clues point to pancreatic insufficiency rather than antibody failure.'},
+      {cue:'Recurrent pneumonia + greasy stools',target:'GERD with aspiration',supports:['ev3'],against:['ev2'],
+        expected:'Reflux / choking\nwith feeds',
+        expectedExplanation:'GERD with aspiration would be supported by reflux, choking, or cough during feeds. These expected clues are not established in the vignette.',
+        explanation:'GERD with aspiration may explain recurrent respiratory symptoms, but it does not cause bulky greasy stools. The presence of steatorrhoea shifts the explanation toward cystic fibrosis with pancreatic insufficiency.'},
+      {cue:'Digital clubbing + recurrent pneumonia',target:'Asthma',supports:['ev4'],against:['ev5','ev2'],
+        expected:'Episodic wheeze\ntrigger history',
+        expectedExplanation:'Asthma would be supported by episodic wheeze or a trigger history. These expected asthma clues are not established in the vignette.',
+        explanation:'Asthma can cause cough and wheeze, but digital clubbing and recurrent bacterial pneumonia indicate chronic suppurative lung disease. Those findings are not typical for uncomplicated asthma.'},
+    ]
+  }
+},
+3:{
+  title:'Task 3 — Question refinement',chip:'Explanation: KG support',
+  condition:'Croup · question refinement task',mode:'both',regenerated:false,
+  difficulty:'Easy',target:'Croup',source:"Nelson's Essentials · Acute Stridor",correct:'C',
+  question_stem:'What is the most likely diagnosis?',
+  vignette:'A 2-year-old boy is brought to the emergency department because of noisy breathing. For the past two days, he has had a runny nose, low-grade fever, and mild sore throat. His parents report that his cough sounds exactly like a “seal bark.” On examination, he has inspiratory stridor, a hoarse voice, and subglottic edema on neck radiograph with a classic steeple sign. He is alert, playful, and sitting comfortably in his mother’s lap. He has no drooling, no difficulty swallowing, is able to drink water normally, and shows no signs of epiglottitis. His parents ask whether this could be croup.',
+  options:{A:'Epiglottitis',B:'Bacterial tracheitis',C:'Croup',D:'Foreign body aspiration',E:'Retropharyngeal abscess'},
+  supporting:[
+    {phrase:'2-year-old boy',why:'Croup is most common in toddlers, whose narrow subglottic airway is more easily obstructed by edema.'},
+    {phrase:'runny nose, low-grade fever, and mild sore throat',why:'A mild viral prodrome fits viral laryngotracheobronchitis.'},
+    {phrase:'sounds exactly like a “seal bark.”',why:'A barky cough is a classic symptom of croup and reflects laryngeal/subglottic narrowing.'},
+    {phrase:'inspiratory stridor, a hoarse voice',why:'Stridor and hoarseness localize the process to the upper airway, especially the laryngeal/subglottic region.'},
+    {phrase:'classic steeple sign',why:'The steeple sign reflects subglottic narrowing on neck radiograph and supports croup.'},
+    {phrase:'alert, playful, and sitting comfortably',why:'A well, non-toxic appearance fits uncomplicated croup more than severe bacterial causes of stridor.'},
+    {phrase:'no drooling, no difficulty swallowing',why:'Normal swallowing and absence of drooling make epiglottitis and retropharyngeal abscess less likely.'},
+  ],
+  distractors:[
+    {letter:'A',disease:'Epiglottitis',plausible:'Fever and stridor overlap with acute upper-airway obstruction.',incorrect:'The item explicitly gives no drooling/dysphagia and even states no epiglottitis, making the distractor artificially weak.'},
+    {letter:'B',disease:'Bacterial tracheitis',plausible:'Can cause fever, stridor, and airway obstruction.',incorrect:'Non-toxic appearance and low-grade fever undercut the usual severe bacterial pattern.'},
+    {letter:'D',disease:'Foreign body aspiration',plausible:'Toddler with noisy breathing can raise concern for aspiration.',incorrect:'The URI prodrome, barky cough, and steeple sign overdetermine croup.'},
+    {letter:'E',disease:'Retropharyngeal abscess',plausible:'Fever and upper-airway symptoms may overlap.',incorrect:'No dysphagia/drooling plus barky cough make this too easy to reject.'},
+  ],
+  kgData:{
+    evidence:[
+      {id:'ev_age',label:'Toddler age\n(2 years)',short:'Toddler age',phrase:'2-year-old boy'},
+      {id:'ev_uri',label:'Viral URI\nprodrome',short:'Viral URI prodrome',phrase:'runny nose, low-grade fever, and mild sore throat'},
+      {id:'ev_bark',label:'Seal-bark\ncough',short:'Seal-bark cough',phrase:'sounds exactly like a “seal bark.”'},
+      {id:'ev_stridor',label:'Stridor +\nhoarseness',short:'Stridor + hoarseness',phrase:'inspiratory stridor, a hoarse voice'},
+      {id:'ev_steeple',label:'Classic\nsteeple sign',short:'Classic steeple sign',phrase:'classic steeple sign'},
+      {id:'ev_well',label:'Non-toxic\nappearance',short:'Non-toxic appearance',phrase:'alert, playful, and sitting comfortably'},
+      {id:'ev_swallow',label:'No drooling\nor dysphagia',short:'No drooling/dysphagia',phrase:'no drooling, no difficulty swallowing'},
+    ],
+    findings:[
+      {id:'cf_age',label:'Peak age for\ncroup',nodeType:'demographic',from:['ev_age'],tooltip:'In toddlers, the subglottic airway is relatively narrow. Even modest viral edema can create audible upper-airway obstruction.'},
+      {id:'cf_viral',label:'Viral upper respiratory\nprodrome',nodeType:'history',from:['ev_uri'],tooltip:'Croup usually begins after a short viral URI. This timing separates it from abrupt choking and from primary bacterial airway infection.'},
+      {id:'cf_bark',label:'Seal-bark\ncough',nodeType:'symptom',from:['ev_bark'],tooltip:'A barky cough comes from turbulent airflow through a narrowed laryngeal/subglottic airway, not from lower-airway wheeze.'},
+      {id:'cf_stridor',label:'Inspiratory stridor\n+ hoarseness',nodeType:'sign',from:['ev_stridor'],tooltip:'Inspiratory stridor points to extrathoracic upper-airway obstruction. Hoarseness places the process near the vocal cords or subglottis.'},
+      {id:'cf_steeple',label:'Steeple sign\non radiograph',nodeType:'sign',from:['ev_steeple'],tooltip:'The steeple sign is tapering of the subglottic air column caused by mucosal edema below the vocal cords.'},
+      {id:'cf_well',label:'Non-toxic\nappearance',nodeType:'sign',from:['ev_well'],hiddenInMain:true,tooltip:'A well-appearing child with stridor is more consistent with viral croup than epiglottitis or bacterial tracheitis.'},
+      {id:'cf_swallow',label:'No drooling\n/ dysphagia',nodeType:'exclusion',from:['ev_swallow'],hiddenInMain:true,tooltip:'Drooling and dysphagia suggest supraglottic or deep-neck obstruction. Their absence shifts reasoning toward subglottic croup.'},
+    ],
+    mechs:[
+      {id:'m_croup',label:'Subglottic\nedema',nodeType:'mechanism',from:['cf_viral','cf_stridor'],tooltip:'This is the central mechanism: viral inflammation below the vocal cords narrows the airway and produces stridor, hoarseness, and barky cough.'},
+    ],
+    dx:{id:'dx',label:'Croup',nodeType:'diagnosis',from:['cf_age','cf_bark','cf_steeple','m_croup'],tooltip:'Viral subglottic obstruction is the unifying mechanism. Consider whether the vignette provides more evidence than necessary to reach this conclusion.'},
+    excludeCards:[
+      {target:'Epiglottitis',supports:['ev_stridor'],against:['ev_swallow','ev_well'],expected:'Drooling / dysphagia\ntoxic child',expectedExplanation:'Expected epiglottitis pattern: toxic child, drooling, dysphagia, tripod posture, high fever.',explanation:'Epiglottitis stays on the differential for acute stridor, but absent drooling and a well appearance make it less likely here.'},
+      {target:'Bacterial tracheitis',supports:['ev_stridor'],against:['ev_well'],expected:'High fever\ntoxic appearance',expectedExplanation:'Expected bacterial tracheitis pattern: high fever, toxic/anxious appearance, more severe airway illness.',explanation:'Bacterial tracheitis can cause stridor, but it usually presents with higher fever and a more toxic appearance.'},
+      {target:'Foreign body aspiration',supports:['ev_stridor'],against:['ev_uri','ev_bark'],expected:'Choking episode\nabrupt onset',expectedExplanation:'Expected aspiration pattern: abrupt onset after choking, often without viral prodrome.',explanation:'Foreign body aspiration is less likely because the history fits a viral upper-airway process rather than abrupt choking.'},
+      {target:'Retropharyngeal abscess',supports:['ev_uri'],against:['ev_swallow','ev_bark'],expected:'Dysphagia\nneck stiffness\nmuffled voice',expectedExplanation:'Expected retropharyngeal abscess pattern: dysphagia, drooling, neck stiffness/torticollis, muffled voice.',explanation:'Retropharyngeal abscess is less likely because normal swallowing and a barky cough do not fit a deep-neck infection pattern.'},
+    ]
+  },
+},
+};
+
+const task3ImprovedTemplate={
+  title:'Task 3 — Regenerated question review',chip:'Regenerated version · KG support',
+  condition:'Croup · regenerated item · expert-selected support mode',mode:'both',regenerated:true,
+  difficulty:'Medium',target:'Croup',source:"Nelson's Essentials · Acute Stridor",correct:'C',
+  question_stem:'What is the most likely diagnosis?',
+  vignette:'A 2-year-old boy is brought to the emergency department because of noisy breathing that worsened overnight. He has had two days of nasal congestion and a mild fever. His parents report that his cough became harsher during the night. On examination, he is alert and sitting upright in his mother’s lap. His temperature is 38.1°C. He has inspiratory stridor at rest, a hoarse voice, and mild subcostal retractions. He is able to swallow and has no drooling. Lung auscultation is otherwise clear.',
+  options:{A:'Epiglottitis',B:'Bacterial tracheitis',C:'Croup',D:'Foreign body aspiration',E:'Retropharyngeal abscess'},
+  supporting:[
+    {phrase:'2-year-old boy',why:'Croup is most common in toddlers, whose subglottic airway is narrow.'},
+    {phrase:'two days of nasal congestion and a mild fever',why:'A short viral prodrome supports viral laryngotracheobronchitis.'},
+    {phrase:'inspiratory stridor at rest, a hoarse voice',why:'Stridor and hoarseness indicate upper-airway narrowing around the laryngeal/subglottic region.'},
+    {phrase:'able to swallow and has no drooling',why:'Normal swallowing and no drooling argue against epiglottitis.'},
+  ],
+  distractors:[
+    {letter:'A',disease:'Epiglottitis',plausible:'Fever and stridor can occur in epiglottitis.',incorrect:'Epiglottitis usually causes toxic appearance, drooling, dysphagia, and high fever; this child can swallow and is not drooling.'},
+    {letter:'B',disease:'Bacterial tracheitis',plausible:'Can follow viral URI and cause fever with stridor.',incorrect:'Bacterial tracheitis usually causes high fever, toxic appearance, and severe illness, which are not present.'},
+    {letter:'D',disease:'Foreign body aspiration',plausible:'Can cause acute noisy breathing or stridor in toddlers.',incorrect:'A two-day viral prodrome and fever make croup more likely; no choking episode is described.'},
+    {letter:'E',disease:'Retropharyngeal abscess',plausible:'Can cause fever and upper-airway symptoms.',incorrect:'Expected findings include dysphagia, neck stiffness/torticollis, and muffled voice; these are absent.'},
+  ],
+  kgData:{
+    evidence:[
+      {id:'ev_age',label:'Toddler age\n(2 years)',short:'Toddler age',phrase:'2-year-old boy'},
+      {id:'ev_uri',label:'Viral upper respiratory\nprodrome',short:'Viral URI prodrome',phrase:'two days of nasal congestion and a mild fever'},
+      {id:'ev_cough_night',label:'Harsher cough\nat night',short:'Harsher cough at night',phrase:'his cough became harsher during the night'},
+      {id:'ev_stridor_voice',label:'Inspiratory stridor\nand hoarseness',short:'Inspiratory stridor + hoarseness',phrase:'inspiratory stridor at rest, a hoarse voice'},
+      {id:'ev_swallow',label:'Absence of drooling\nor dysphagia',short:'Absence of drooling/dysphagia',phrase:'able to swallow and has no drooling'},
+    ],
+    findings:[
+      {id:'cf_age',label:'Peak age for\ncroup',nodeType:'demographic',from:['ev_age'],tooltip:'Toddler age fits the usual croup age range because a young child has a relatively narrow subglottic airway.'},
+      {id:'cf_viral',label:'Viral upper respiratory\nprodrome',nodeType:'history',from:['ev_uri'],tooltip:'A short viral prodrome fits viral laryngotracheobronchitis and favors an infectious upper-airway process.'},
+      {id:'cf_cough',label:'Nocturnal barky\ncough',nodeType:'symptom',from:['ev_cough_night'],tooltip:'A harsher barky cough at night reflects turbulent airflow through a narrowed laryngeal or subglottic airway.'},
+      {id:'cf_upper',label:'Inspiratory upper-airway\nobstruction',nodeType:'sign',from:['ev_stridor_voice'],tooltip:'Inspiratory stridor localizes obstruction to the upper airway, and hoarseness points to laryngeal or subglottic involvement.'},
+    ],
+    mechs:[
+      {id:'m_subglottic',label:'Subglottic edema',nodeType:'mechanism',from:['cf_viral','cf_upper'],tooltip:'Subglottic edema produces stridor, hoarseness, and worsening nocturnal cough. The steeple sign on radiograph is not required for this diagnosis.'},
+    ],
+    dx:{id:'dx',label:'Croup',nodeType:'diagnosis',from:['cf_age','cf_cough','m_subglottic'],tooltip:'Toddler age, a viral prodrome, a barky nocturnal cough, and upper-airway localization together fit croup.'},
+    excludeCards:[
+      {target:'Epiglottitis',supports:['ev_stridor_voice'],against:['ev_swallow'],expected:'Drooling / dysphagia\ntoxic child',expectedExplanation:'Epiglottitis usually causes drooling, dysphagia, toxic appearance, and high fever.',explanation:'Fever and stridor make epiglottitis plausible, but normal swallowing and no drooling argue against it.'},
+      {target:'Bacterial tracheitis',supports:['ev_stridor_voice'],against:['ev_uri'],expected:'High fever\ntoxic appearance\npurulent secretions',expectedExplanation:'Bacterial tracheitis is expected to cause high fever, toxic appearance, and purulent tracheal secretions.',explanation:'A viral prodrome and stridor are plausible, but the child is not severely ill and has only mild fever.'},
+      {target:'Foreign body aspiration',supports:['ev_stridor_voice'],against:['ev_uri'],expected:'Choking episode\nabrupt onset',expectedExplanation:'Foreign body aspiration would usually involve choking or abrupt onset without infectious prodrome.',explanation:'Noisy breathing keeps foreign body aspiration plausible, but the viral prodrome and fever support croup instead.'},
+      {target:'Retropharyngeal abscess',supports:['ev_uri'],against:['ev_swallow'],expected:'Dysphagia\nneck stiffness\nmuffled voice',expectedExplanation:'Retropharyngeal abscess is expected to cause dysphagia, neck stiffness/torticollis, and muffled voice.',explanation:'Fever/upper airway symptoms can make it plausible, but normal swallowing and no neck findings argue against it.'},
+    ]
+  },
+};
+
+function applySemanticEvidenceTypes(){
+  const applyMap=(taskObj,map)=>{
+    if(!taskObj||!taskObj.kgData||!Array.isArray(taskObj.kgData.evidence))return;
+    taskObj.kgData.evidence.forEach(ev=>{ if(map[ev.id]) ev.nodeType=map[ev.id]; });
+  };
+  applyMap(tasks[2],{ev1:'sign',ev2:'symptom',ev3:'history',ev4:'symptom',ev5:'sign',ev6:'history'});
+  applyMap(tasks[3],{ev_age:'demographic',ev_uri:'history',ev_bark:'symptom',ev_stridor:'sign',ev_steeple:'sign',ev_well:'sign',ev_swallow:'exclusion'});
+  applyMap(task3ImprovedTemplate,{ev_age:'demographic',ev_uri:'history',ev_stridor_voice:'sign',ev_swallow:'exclusion'});
+}
+applySemanticEvidenceTypes();
+const originalTasks=JSON.parse(JSON.stringify(tasks));
+
+// ══════════════════════════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════════════════════════
+let currentTask=1;
+let kgExplainOpen=true;
+let editOpen=false;
+let focusedKgNodeId=null;
+let selectedGraphItem=null;
+let kgNodeDragOffsets=JSON.parse(localStorage.getItem('pediatric_mcq_node_drag_offsets_v19')||'{}');
+let miniGraphDragOffsets=JSON.parse(localStorage.getItem('pediatric_mcq_mini_drag_offsets_v26')||'{}');
+let activeMiniDrag=null;
+let suppressNextMiniClick=false;
+let suppressNextGraphClick=false;
+let task3SupportMode='kg';
+let task3SelectedCluesToRemove=new Set();
+let task3ClueEditMode=false
+let explanationVisible=true;
+let revisedTasks=new Set();
+let reviewStore=JSON.parse(localStorage.getItem('resp_mcq_review_store')||'{}');
+let edgeLabelOverrides=JSON.parse(localStorage.getItem('resp_mcq_edge_labels')||'{}');
+
+
+const UI={};
+function initUIRefs(){
+  UI.kgBoard=document.getElementById('kgBoard');
+  UI.kgExcludeWrap=document.getElementById('kgExcludeWrap');
+  UI.pathText=document.getElementById('pathText');
+  UI.rightTextPanel=document.getElementById('rightTextPanel');
+  UI.rightTextBody=document.getElementById('rightTextBody');
+  UI.rightTextPanelHead=UI.rightTextPanel?UI.rightTextPanel.querySelector('.right-text-panel-head'):null;
+  UI.kgTextPanel=document.getElementById('kgTextPanel');
+  UI.task3SupportSwitch=document.getElementById('task3SupportSwitch');
+  UI.kgHeaderExplainBtn=document.getElementById('kgHeaderExplainBtn');
+  UI.explainBtn=document.getElementById('explainBtn');
+  UI.kgHint=document.getElementById('kgHint');
+  UI.kgPanelTitle=document.getElementById('kgPanelTitle');
+  UI.navChip=document.getElementById('navChip');
+}
+initUIRefs();
+function setDisplay(el,value){ if(el) el.style.display=value; }
+function setOpen(el,open){ if(el) el.classList.toggle('open',!!open); }
+function isKgSupportTask(){
+  const t=tasks[currentTask];
+  return !!t && (t.mode==='kg' || t.mode==='both' || currentTask===3);
+}
+function isTask3TextSupport(){ return currentTask===3 && task3SupportMode==='text'; }
+function shouldShowKgBoard(){ return explanationVisible && isKgSupportTask() && !isTask3TextSupport(); }
+function shouldShowTextPanel(){
+  const t=tasks[currentTask];
+  return explanationVisible && !!t && (t.mode==='text' || isTask3TextSupport());
+}
+function getHeaderCopy(){
+  const t=tasks[currentTask];
+  if(!t) return {title:'Reasoning support',hint:''};
+  if(!explanationVisible){
+    const revised=!!t.revised || revisedTasks.has(currentTask);
+    return {
+      title: revised ? 'Reasoning support · disabled after revision' : 'Reasoning support · hidden',
+      hint: revised ? 'Explanation is disabled after revision.' : 'Explanation is hidden. Use “Show explanation” to reopen the support panel.'
+    };
+  }
+  if(currentTask===3){
+    if(task3SupportMode==='text'){
+      return {title:'Text explanation · Question review',hint:'Text support is selected. Switch to KG to view the knowledge graph.'};
+    }
+    return kgExplainOpen
+      ? {title:'Knowledge graph · KG + enriched text support',hint:'KG is selected. Enriched hover text is on; hover over nodes for rationale.'}
+      : {title:'Knowledge graph · KG support',hint:'KG is selected. Use the enriched text switch inside the graph if extra hover reasoning is needed.'};
+  }
+  if(t.mode==='kg'){
+    return kgExplainOpen
+      ? {title:'Knowledge graph · KG review',hint:'Hover explanation is enabled. Move over nodes for concise clinical rationale.'}
+      : {title:'Knowledge graph · KG review',hint:'KG-only condition: review the graph structure without text explanation.'};
+  }
+  if(t.mode==='both'){
+    return kgExplainOpen
+      ? {title:'Knowledge graph · KG explanation',hint:'Hover explanation is enabled. Move over nodes for concise clinical rationale.'}
+      : {title:'Knowledge graph · KG explanation',hint:'Graph is visible without hover text. Turn on hover explanation if needed.'};
+  }
+  return {title:'Reasoning support · Text explanation',hint:'Text-only condition: review the written explanation without the KG.'};
+}
+function updateSupportHeader(){
+  const copy=getHeaderCopy();
+  if(UI.kgPanelTitle) UI.kgPanelTitle.textContent=copy.title;
+  if(UI.kgHint) UI.kgHint.textContent=copy.hint;
+  updateKgExplainControl();
+}
+function renderRightSupportPanel({rerenderGraph=false}={}){
+  const t=tasks[currentTask];
+  if(!t)return;
+  hideTooltip();
+  setDisplay(UI.kgHeaderExplainBtn,'flex');
+  setDisplay(UI.task3SupportSwitch,(currentTask===3 && explanationVisible)?'flex':'none');
+
+  if(!explanationVisible){
+    setDisplay(UI.kgBoard,'none');
+    setDisplay(UI.kgExcludeWrap,'none');
+    setDisplay(UI.pathText,'none');
+    setDisplay(UI.rightTextPanel,'none');
+    setOpen(UI.rightTextBody,false);
+    setOpen(UI.kgTextPanel,false);
+    updateSupportHeader();
+    renderTask3CluePanel();
+    return;
+  }
+
+  const showText=shouldShowTextPanel();
+  const showKg=shouldShowKgBoard();
+  setDisplay(UI.rightTextPanel,showText?'block':'none');
+  setDisplay(UI.rightTextPanelHead,(t.mode==='text' || isTask3TextSupport())?'none':'flex');
+  setOpen(UI.rightTextBody,showText);
+  if(showText){
+    renderTextExplanation();
+    if(UI.explainBtn){
+      UI.explainBtn.textContent='Hide explanation ↑';
+      UI.explainBtn.classList.add('active');
+    }
+  }
+
+  setDisplay(UI.kgBoard,showKg?'block':'none');
+  setDisplay(UI.pathText,showKg?'block':'none');
+  if(!showKg){
+    setDisplay(UI.kgExcludeWrap,'none');
+    setOpen(UI.kgTextPanel,false);
+    if(UI.kgBoard && isTask3TextSupport()){
+      UI.kgBoard.innerHTML='<div class="kg-disabled-msg">Text-only support is selected. Switch to KG to view the knowledge graph.</div>';
+    }
+  }else if(rerenderGraph){
+    renderKG();
+  }
+
+  updateTask3SupportSwitch();
+  renderTask3CluePanel();
+  updateSupportHeader();
+  renderGraphOverlayControls();
+}
+
+const TASK3_CLUE_CANDIDATES=[
+  {id:'ev_age',label:'Toddler age (2 years)',tag:'core clue',recommend:'keep'},
+  {id:'ev_uri',label:'Viral upper respiratory prodrome',tag:'core clue',recommend:'keep'},
+  {id:'ev_bark',label:'Barking / seal-bark cough',tag:'strong clue',recommend:'weaken'},
+  {id:'ev_steeple',label:'Classic steeple sign',tag:'over-explicit test clue',recommend:'remove'},
+  {id:'ev_stridor',label:'Inspiratory stridor + hoarseness',tag:'core clue',recommend:'keep'},
+  {id:'ev_well',label:'Non-toxic appearance',tag:'exclusion clue',recommend:'weaken'},
+  {id:'ev_swallow',label:'No drooling / normal swallowing',tag:'exclusion clue',recommend:'weaken'}
+];
+
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function escReg(s){return s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');}
+function persistReviewState(){
+  localStorage.setItem('resp_mcq_review_store',JSON.stringify(reviewStore));
+  localStorage.setItem('resp_mcq_edge_labels',JSON.stringify(edgeLabelOverrides));
+}
+function dragOffsetKey(id){return `${currentTask}:${id}`;}
+function getDraggableNodePosition(id,cx,cy){
+  const off=kgNodeDragOffsets[dragOffsetKey(id)]||{x:0,y:0};
+  return {cx:cx+(off.x||0),cy:cy+(off.y||0)};
+}
+function setDraggableNodeOffset(id,dx,dy){
+  kgNodeDragOffsets[dragOffsetKey(id)]={x:dx,y:dy};
+  localStorage.setItem('pediatric_mcq_node_drag_offsets_v19',JSON.stringify(kgNodeDragOffsets));
+}
+function miniDragKey(cardIndex,nodeId){return `${currentTask}:mini:${cardIndex}:${nodeId}`;}
+function getMiniDragOffset(cardIndex,nodeId){
+  return miniGraphDragOffsets[miniDragKey(cardIndex,nodeId)]||{x:0,y:0};
+}
+function setMiniDragOffset(cardIndex,nodeId,dx,dy){
+  miniGraphDragOffsets[miniDragKey(cardIndex,nodeId)]={x:dx,y:dy};
+  localStorage.setItem('pediatric_mcq_mini_drag_offsets_v26',JSON.stringify(miniGraphDragOffsets));
+}
+function getDragBaseFromElement(el){
+  return {
+    id:el.getAttribute('data-node'),
+    baseCx:Number(el.getAttribute('data-base-cx')),
+    baseCy:Number(el.getAttribute('data-base-cy')),
+    currentDx:Number(el.getAttribute('data-dx')||0),
+    currentDy:Number(el.getAttribute('data-dy')||0),
+  };
+}
+
+// ══════════════════════════════════════════════════════════════
+// VIGNETTE HIGHLIGHTING
+// ══════════════════════════════════════════════════════════════
+function getEvidenceHighlights(task){
+  const evidence=(task.kgData&&task.kgData.evidence)||[];
+  const source=evidence.length
+    ? evidence
+    : ((task.supporting||[]).map((item,idx)=>({id:`support_${idx}`,phrase:item.phrase})));
+  return source.flatMap(ev=>{
+    const phrases=Array.isArray(ev.phrase)?ev.phrase:(ev.phrase?[ev.phrase]:[]);
+    return phrases.map(p=>({id:ev.id,phrase:p,len:p.length}));
+  }).sort((a,b)=>b.len-a.len);
+}
+
+
+function getTaskDisplayVignette(task){
+  let v=String((task&&task.vignette)||'');
+  if(currentTask!==3 || (tasks[3]||{}).regenerated || !task3SelectedCluesToRemove || task3SelectedCluesToRemove.size===0){
+    return v;
+  }
+  const removed=id=>task3SelectedCluesToRemove.has(id);
+
+  // Task 3 uses a redacted preview: deleting a clue removes the corresponding
+  // surface wording from the vignette, while keeping the original task data intact
+  // for Reset and Regenerate.
+  if(removed('ev_age')){
+    v=v.replace(/^A 2-year-old boy is brought\b/i,'A child is brought');
+    v=v.replace(/\b2-year-old boy\b/gi,'child');
+  }
+  if(removed('ev_uri')){
+    v=v.replace(/\s*For the past two days, he has had a runny nose and a low-grade fever\.\s*/i,' ');
+  }
+
+  const bark=removed('ev_bark');
+  const named=removed('ev_named');
+  if(bark && named){
+    v=v.replace(/\s*His parents say his cough sounds exactly like a “seal bark,” and the clinician notes that this is a classic croup-like cough\.\s*/i,' ');
+  } else if(bark){
+    v=v.replace(/His parents say his cough sounds exactly like a “seal bark,” and the clinician notes that /i,'The clinician notes that ');
+  } else if(named){
+    v=v.replace(/, and the clinician notes that this is a classic croup-like cough/i,'');
+  }
+
+  if(removed('ev_well')){
+    v=v.replace(/\s*On examination, he is alert, playful, and sitting comfortably in his mother’s lap\.\s*/i,' On examination, he is sitting in his mother’s lap. ');
+  }
+  if(removed('ev_stridor')){
+    v=v.replace(/\s*He has inspiratory stridor and a hoarse voice\.\s*/i,' ');
+  }
+  if(removed('ev_swallow')){
+    v=v.replace(/\s*He is not drooling, has no difficulty swallowing, and can drink water normally\.\s*/i,' ');
+  }
+  return v
+    .replace(/\s+([,.;:!?])/g,'$1')
+    .replace(/\s{2,}/g,' ')
+    .replace(/\.\s*\./g,'.')
+    .trim();
+}
+
+function highlight(v,task){
+  let html=esc(v);
+  getEvidenceHighlights(task).forEach(item=>{
+    const pattern=escReg(esc(item.phrase));
+    html=html.replace(new RegExp(pattern,'i'),m=>`<span class="hl-core linkable" data-evid="${item.id}">${m}</span>`);
+  });
+  return html;
+}
+
+function renderCurrentVignette(){
+  const t=tasks[currentTask];
+  const vignetteEl=document.getElementById('vignette');
+  if(!t||!vignetteEl)return;
+  vignetteEl.innerHTML=highlight(getTaskDisplayVignette(t),t);
+  // Rebind span hover events because the vignette DOM is replaced.
+  document.querySelectorAll('.hl-core[data-evid]').forEach(el=>{
+    const evid=el.dataset.evid;
+    el.onmouseenter=()=>setLinkedEvidenceState(evid,true);
+    el.onmouseleave=()=>setLinkedEvidenceState(evid,false);
+  });
+  updateSelectedClueHighlights();
+}
+
+function setLinkedEvidenceState(evid,active){
+  document.querySelectorAll(`.hl-core[data-evid="${evid}"]`).forEach(el=>el.classList.toggle('active-link',active));
+  document.querySelectorAll('.kg-node[data-evid]').forEach(el=>{
+    const evids=(el.dataset.evid||'').split('|').filter(Boolean);
+    if(evids.includes(evid)) el.classList.toggle('active',active);
+  });
+}
+
+function scrollToVignette(evids=[]){
+  const vc=document.getElementById('vignetteSection');
+  if(vc){
+    vc.scrollIntoView({behavior:'smooth',block:'nearest'});
+    vc.classList.add('vignette-flash');
+    setTimeout(()=>vc.classList.remove('vignette-flash'),1200);
+  }
+  evids.forEach(evid=>{
+    document.querySelectorAll(`.hl-core[data-evid="${evid}"]`).forEach(el=>{
+      el.classList.add('active-link','click-focus');
+      setTimeout(()=>el.classList.remove('active-link','click-focus'),1400);
+    });
+  });
+}
+
+function bindEvidenceInteractions(){
+  document.querySelectorAll('.hl-core[data-evid]').forEach(el=>{
+    const evid=el.dataset.evid;
+    el.onmouseenter=()=>setLinkedEvidenceState(evid,true);
+    el.onmouseleave=()=>setLinkedEvidenceState(evid,false);
+  });
+  document.querySelectorAll('.kg-node[data-evid]').forEach(el=>{
+    const evids=(el.dataset.evid||'').split('|').filter(Boolean);
+    el.addEventListener('mouseenter',()=>evids.forEach(evid=>setLinkedEvidenceState(evid,true)));
+    el.addEventListener('mouseleave',()=>evids.forEach(evid=>setLinkedEvidenceState(evid,false)));
+    el.addEventListener('click',()=>scrollToVignette(evids));
+  });
+}
+
+
+// ══════════════════════════════════════════════════════════════
+// TOOLTIP
+// ══════════════════════════════════════════════════════════════
+const tooltip=document.getElementById('kgTooltip');
+const tooltipTitle=document.getElementById('kgTooltipTitle');
+const tooltipBody=document.getElementById('kgTooltipBody');
+
+function cleanTooltipText(text){
+  let t=String(text||'').trim();
+  t=t.replace(/^LLM rationale:\s*/i,'');
+  t=t.replace(/^KG edge:\s*[^.]+\.\s*/i,'');
+  t=t.replace(/^The case [^.]+ maps to the KG concept "[^"]+"\.\s*/i,'');
+  return t;
+}
+function prettyTooltipTitle(title){
+  const raw=String(title||'').trim();
+  if(!raw)return '';
+  const map={
+    demographic:'Demographic',
+    symptom:'Symptom',
+    sign:'Sign',
+    history:'History',
+    course:'Course',
+    anatomy:'Anatomy',
+    mechanism:'Mechanism',
+    disorder:'Disorder',
+    diagnosis:'Diagnosis',
+    risk:'Risk factor',
+    syndrome:'Syndrome',
+    finding:'Finding',
+    pattern:'Anatomy',
+    mech:'Mechanism',
+    dx:'Diagnosis',
+    maps_to:'Maps to',
+    manifestation_of:'Manifestation of',
+    pathophysiology_of:'Pathophysiology of',
+    complication_of:'Complication of',
+    sign_of:'Sign of',
+    finding_of:'Finding of',
+    risk_factor_for:'Risk factor for',
+    predisposes_to:'Predisposes to',
+    supports:'Supports',
+    causes:'Causes',
+    localizes_to:'Localizes to',
+    has_pathophysiology:'Has pathophysiology'
+  };
+  const key=raw.toLowerCase();
+  return map[key] || raw.replace(/_/g,' ').replace(/\b\w/g,c=>c.toUpperCase());
+}
+function showTooltip(e,title,body){
+  tooltipTitle.textContent=prettyTooltipTitle(title);
+  tooltipBody.textContent=cleanTooltipText(body);
+  tooltip.classList.add('visible');
+  moveTooltip(e);
+}
+function moveTooltip(e){
+  const margin=14, tw=260, th=120;
+  let x=e.clientX+margin+20, y=e.clientY-40;
+  if(x+tw>window.innerWidth-10) x=e.clientX-tw-margin;
+  if(y+th>window.innerHeight-10) y=window.innerHeight-th-10;
+  tooltip.style.left=x+'px'; tooltip.style.top=y+'px';
+}
+function hideTooltip(){tooltip.classList.remove('visible');}
+
+// ══════════════════════════════════════════════════════════════
+// LOAD TASK
+// ══════════════════════════════════════════════════════════════
+function loadTask(n){
+  currentTask=n;
+  task3ClueEditMode=false; editOpen=false; focusedKgNodeId=null; selectedGraphItem=null;
+  const t=tasks[n];
+  const isRevised=!!(t&&t.revised) || revisedTasks.has(n);
+  explanationVisible = true;
+  // Task 2 starts in KG-only mode: graph visible, hover text disabled.
+  // Task 3 hover text depends on the selected support mode.
+  kgExplainOpen = (n===2 || n===3) ? false : true;
+  // Nav tabs
+  [1,2,3].forEach(i=>document.getElementById('navTab'+i).classList.remove('active'));
+  document.getElementById('navTab'+n).classList.add('active');
+  document.getElementById('navChip').textContent=t.chip;
+
+  // Vignette + question
+  renderCurrentVignette();
+  document.getElementById('sourceTag').innerHTML=`<div class="source-badge">📖 <strong>${esc(t.source)}</strong></div>`;
+  document.getElementById('stem').textContent=t.question_stem;
+  renderOptions();
+
+  const dc=document.getElementById('diffChip');
+  dc.textContent=t.difficulty; dc.className='diff-chip '+t.difficulty.toLowerCase();
+
+  // Edit section
+  document.getElementById('editSection').classList.add('hidden');
+  document.querySelector('.actions-section')?.classList.remove('editing');
+  renderActions();
+
+  // Right-side support panel is rendered only from the state-derived entry point.
+  renderRightSupportPanel({rerenderGraph:t.mode!=='text'});
+}
+
+function updateKgHint(){
+  updateSupportHeader();
+}
+
+function renderOptions(){
+  const t=tasks[currentTask],el=document.getElementById('options');
+  el.innerHTML='';
+  Object.entries(t.options).forEach(([letter,text])=>{
+    const row=document.createElement('div');
+    row.className='option '+(letter===t.correct?'correct':'');
+    row.onclick=()=>{document.querySelectorAll('.option').forEach(o=>o.style.outline='');row.style.outline='2px solid var(--accent)';};
+    row.innerHTML=`<div class="letter">${letter}</div><div>${esc(text)}</div>${letter===t.correct?'<div class="badge">Correct</div>':''}`;
+    el.appendChild(row);
+  });
+}
+
+function toggleTextExplain(){
+  const body=document.getElementById('rightTextBody');
+  const btn=document.getElementById('explainBtn');
+  const isOpen=body.classList.contains('open');
+  body.classList.toggle('open',!isOpen);
+  btn.textContent=isOpen?'Show explanation ↓':'Hide explanation ↑';
+  btn.classList.toggle('active',!isOpen);
+  updateTextExplainControl();
+}
+
+
+function renderTextExplanation(){
+  const t=tasks[currentTask];
+  const why=document.getElementById('textWhy');
+  why.innerHTML=`<div class="why-title">Why "${esc(t.options[t.correct])}" is correct</div><ul class="evidence-list">${t.supporting.map(e=>`<li><strong>"${esc(e.phrase)}"</strong> — ${esc(e.why)}</li>`).join('')}</ul>`;
+  document.getElementById('textDistractors').innerHTML=t.distractors.map(d=>`<div class="dc"><h4>${esc(d.disease)}</h4><p><strong>Plausible:</strong> ${esc(d.plausible)}</p><p><strong>Why incorrect:</strong> ${esc(d.incorrect)}</p></div>`).join('');
+}
+
+function renderKgTextExplanation(){
+  const t=tasks[currentTask];
+  document.getElementById('kgTextWhy').innerHTML=`<div class="why-title">Why "${esc(t.options[t.correct])}" is correct</div><ul class="evidence-list">${t.supporting.map(e=>`<li><strong>"${esc(e.phrase)}"</strong> — ${esc(e.why)}</li>`).join('')}</ul>`;
+  document.getElementById('kgTextDistractors').innerHTML=t.distractors.map(d=>`<div class="dc"><h4>${esc(d.disease)}</h4><p><strong>Plausible:</strong> ${esc(d.plausible)}</p><p><strong>Why incorrect:</strong> ${esc(d.incorrect)}</p></div>`).join('');
+}
+
+function isCurrentTaskRevised(){
+  const t=tasks[currentTask]||{};
+  return !!t.revised || revisedTasks.has(currentTask);
+}
+
+function updateTextExplainControl(){
+  updateKgExplainControl();
+}
+function toggleHeaderExplain(){
+  explanationVisible=!explanationVisible;
+  applyExplanationVisibility(true);
+}
+
+function updateKgExplainControl(){
+  const btn=document.getElementById('kgHeaderExplainBtn');
+  if(!btn)return;
+  btn.textContent=explanationVisible?'Hide explanation':'Show explanation';
+  btn.classList.toggle('active',explanationVisible);
+  btn.disabled=false;
+  btn.style.opacity='1';
+  btn.style.cursor='pointer';
+  btn.setAttribute('aria-expanded',explanationVisible?'true':'false');
+  btn.setAttribute('aria-label','Toggle explanation visibility');
+}
+
+function toggleKgExplain(){
+  // Kept for backward compatibility with older buttons.
+  toggleHeaderExplain();
+}
+
+function applyExplanationVisibility(shouldRender=false){
+  renderRightSupportPanel({rerenderGraph:!!shouldRender});
+}
+
+// ══════════════════════════════════════════════════════════════
+// EDIT
+// ══════════════════════════════════════════════════════════════
+function autoGrowOneTextarea(el,minH){
+  if(!el)return;
+  const apply=()=>{el.style.height='auto';el.style.height=Math.max(minH||70,el.scrollHeight+4)+'px';};
+  apply();
+  el.oninput=apply;
+}
+
+function renderInlineEditState(){
+  const t=tasks[currentTask];
+  const vignette=document.getElementById('vignette');
+  const stem=document.getElementById('stem');
+  const options=document.getElementById('options');
+  const actions=document.getElementById('actionsSection');
+  if(vignette)vignette.innerHTML=`<div class="inline-edit-wrap"><div class="inline-edit-label">Clinical vignette</div><textarea class="textarea" id="inlineEditVignette" style="min-height:140px">${esc(t.vignette)}</textarea></div>`;
+  if(stem)stem.innerHTML=`<div class="inline-edit-wrap"><div class="inline-edit-label">Question stem</div><textarea class="textarea" id="inlineEditStem" style="min-height:72px">${esc(t.question_stem)}</textarea></div>`;
+  if(options){
+    options.innerHTML=`<div class="inline-edit-wrap">
+  <div class="inline-edit-label">Answer options</div>
+  ${['A','B','C','D','E'].map(l=>`<div class="inline-option-row"><div class="inline-option-letter">${l}</div><input class="edit-input" id="inlineEdit${l}" value="${esc(t.options[l]||'')}"></div>`).join('')}
+  <div class="inline-edit-meta"><div></div><div><div class="inline-edit-label">Correct answer</div><select class="edit-input" id="inlineEditCorrect">${['A','B','C','D','E'].map(l=>`<option ${t.correct===l?'selected':''}>${l}</option>`).join('')}</select></div></div>
+</div>`;
+  }
+  if(actions){
+    actions.innerHTML=`<button class="btn accept" onclick="saveEdits()">Save revision</button><button class="btn edit-btn" onclick="toggleEdit(false)">Cancel</button>`;
+  }
+  autoGrowOneTextarea(document.getElementById('inlineEditVignette'),140);
+  autoGrowOneTextarea(document.getElementById('inlineEditStem'),72);
+}
+
+function toggleEdit(force){
+  editOpen=(force===undefined)?!editOpen:force;
+  document.getElementById('editSection')?.classList.add('hidden');
+  document.querySelector('.actions-section')?.classList.remove('editing');
+  if(editOpen){
+    renderInlineEditState();
+  } else {
+    loadTask(currentTask);
+  }
+}
+
+function saveEdits(){
+  const t=tasks[currentTask];
+  const vignetteEl=document.getElementById('inlineEditVignette');
+  const stemEl=document.getElementById('inlineEditStem');
+  if(vignetteEl)t.vignette=vignetteEl.value;
+  if(stemEl)t.question_stem=stemEl.value;
+  ['A','B','C','D','E'].forEach(l=>{ const el=document.getElementById('inlineEdit'+l); if(el)t.options[l]=el.value; });
+  const correctEl=document.getElementById('inlineEditCorrect');
+  if(correctEl)t.correct=correctEl.value;
+  t.revised=true;
+  revisedTasks.add(currentTask);
+  explanationVisible=true;
+  editOpen=false;
+  loadTask(currentTask);
+  showToast('Edits saved.');
+}
+
+// ══════════════════════════════════════════════════════════════
+// KG RENDERING ENGINE
+// ══════════════════════════════════════════════════════════════
+const NODE_TYPE_LABELS={
+  evidence:'Vignette evidence',
+  demographic:'Context',
+  symptom:'Symptom',
+  sign:'Sign',
+  history:'History',
+  course:'Course',
+  anatomy:'Pattern',
+  mechanism:'Mechanism',
+  disorder:'Disorder',
+  diagnosis:'Diagnosis',
+  exclusion:'Exclusion clue',
+  // backward-compatible layout aliases
+  finding:'Symptom',
+  pattern:'Pattern',
+  mech:'Mechanism',
+  dx:'Diagnosis'
+};
+const NODE_COLORS={
+  evidence:{fill:'#edf7f2',stroke:'#1a6b3c'},
+  demographic:{fill:'#eef2ff',stroke:'#4f46e5'},
+  symptom:{fill:'#fef3c7',stroke:'#d97706'},
+  sign:{fill:'#ecfdf5',stroke:'#059669'},
+  history:{fill:'#fce7f3',stroke:'#be185d'},
+  course:{fill:'#f5f3ff',stroke:'#7c3aed'},
+  anatomy:{fill:'#f3e8ff',stroke:'#9333ea'},
+  mechanism:{fill:'#ffedd5',stroke:'#ea580c'},
+  disorder:{fill:'#f1f5f9',stroke:'#475569'},
+  diagnosis:{fill:'#dbeafe',stroke:'#2563eb'},
+  exclusion:{fill:'#ecfeff',stroke:'#0891b2'},
+  // backward-compatible layout aliases
+  finding:{fill:'#fef3c7',stroke:'#d97706'},
+  pattern:{fill:'#f3e8ff',stroke:'#9333ea'},
+  mech:{fill:'#ffedd5',stroke:'#ea580c'},
+  dx:{fill:'#dbeafe',stroke:'#2563eb'},
+};
+const NODE_TYPE_BADGE_LABELS={
+  evidence:'EVIDENCE',
+  demographic:'CONTEXT',
+  symptom:'SYMPTOM',
+  sign:'SIGN',
+  history:'HISTORY',
+  course:'COURSE',
+  anatomy:'PATTERN',
+  mechanism:'MECHANISM',
+  disorder:'DISORDER',
+  diagnosis:'DIAGNOSIS',
+  exclusion:'EXCLUSION',
+  finding:'SYMPTOM',
+  pattern:'PATTERN',
+  mech:'MECHANISM',
+  dx:'DIAGNOSIS'
+};
+function semanticTypeFor(node,fallback){
+  if(node&&node.nodeType)return node.nodeType;
+  return {evidence:'evidence',finding:'symptom',pattern:'anatomy',mech:'mechanism',dx:'diagnosis'}[fallback]||fallback||'symptom';
+}
+function semanticTypeLabel(node,fallback){
+  return NODE_TYPE_LABELS[semanticTypeFor(node,fallback)]||'KG node';
+}
+
+
+function wrapText(text,maxChars){
+  const lines=[];
+  String(text).split('\n').forEach(part=>{
+    const words=part.trim().split(' ');let cur='';
+    words.forEach(w=>{const next=cur?cur+' '+w:w;if(next.length>maxChars&&cur){lines.push(cur);cur=w;}else cur=next;});
+    if(cur)lines.push(cur);
+  });
+  return lines.slice(0,3);
+}
+
+function textWidthEstimate(text,font=13){
+  const longest=String(text||'').split('\n').reduce((m,line)=>Math.max(m,line.trim().length),0);
+  return Math.ceil(longest*font*0.62);
+}
+
+function makeNode(id,type,label,cx,cy,meta={}){
+  const FONT=13.5,LH=18.5,PAD_X=18,PAD_TOP=16,PAD_BOTTOM=16;
+  const baseWidth=158;
+  const maxWidth=(type==='dx'||type==='diagnosis')?205:196;
+  const boxWidth=Math.max(baseWidth,Math.min(maxWidth,textWidthEstimate(label,FONT)+PAD_X*2+18));
+  const maxChars=Math.floor((boxWidth-18)/(FONT*0.58));
+  const lines=wrapText(label,maxChars);
+  const w=boxWidth,h=PAD_TOP+PAD_BOTTOM+lines.length*LH;
+  const x=cx-w/2,y=cy-h/2;
+  const displayType=meta.semanticType||semanticTypeFor(meta.nodeRef||{nodeType:type},type);
+  const c=NODE_COLORS[displayType]||NODE_COLORS[type]||NODE_COLORS.finding;
+  const classes=['kg-node',type==='evidence'?'evidence-node':''];
+  if(meta.interactive)classes.push('interactive-node');
+  if(meta.focused)classes.push('focus-node');
+  if(meta.neighbor)classes.push('neighbor-node');
+  if(meta.faded)classes.push('dimmed');
+  
+  const evidAttr=meta.evid?` data-evid="${meta.evid}"`:'';
+  const tooltipAttr=meta.tooltip?` data-tooltip-title="${esc(meta.tooltipTitle||type)}" data-tooltip="${esc(meta.tooltip)}"`:'';
+  const off=kgNodeDragOffsets[dragOffsetKey(id)]||{x:0,y:0};
+  let s=`<g class="${classes.join(' ').trim()}" data-node="${id}" data-base-cx="${cx-(off.x||0)}" data-base-cy="${cy-(off.y||0)}" data-dx="${off.x||0}" data-dy="${off.y||0}"${evidAttr}${tooltipAttr}>`;
+  s+=`<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="10" fill="${c.fill}" stroke="${c.stroke}" stroke-width="2"/>`;
+  const textBlockH=(lines.length-1)*LH+FONT;
+  const textTop=y+(h-textBlockH)/2+FONT-1;
+  lines.forEach((l,i)=>{s+=`<text x="${cx}" y="${textTop+i*LH}" text-anchor="middle" font-size="${FONT}" font-weight="700" fill="#1a1814" font-family="DM Sans,sans-serif">${l}</text>`;});
+  s+='</g>';
+  return{svg:s,cx,cy,w,h,right:cx+w/2,left:cx-w/2};
+}
+
+function makeEdge(from,to,label,color,meta={}){
+  if(!from||!to)return'';
+  // Smart connection: use right→left if nodes are roughly on same row,
+  // otherwise pick the closer edge (top/bottom) to reduce visual clutter
+  const dx=to.cx-from.cx;
+  const dy=to.cy-from.cy;
+  let ax,ay,bx,by;
+  if(Math.abs(dx)>Math.abs(dy)*0.7){
+    // Mostly horizontal — right edge to left edge
+    ax=from.right; ay=from.cy;
+    bx=to.left;    by=to.cy;
+  } else if(dy>0){
+    // Mostly going down — bottom to top
+    ax=from.cx; ay=from.cy+from.h/2;
+    bx=to.cx;   by=to.cy-to.h/2;
+  } else {
+    // Mostly going up — top to bottom
+    ax=from.cx; ay=from.cy-from.h/2;
+    bx=to.cx;   by=to.cy+to.h/2;
+  }
+  const cpx=(ax+bx)/2;
+  const cpy=(ay+by)/2;
+  const tooltipAttr='';
+  const classes=['kg-edge'];
+  // Edge hover is disabled: node hover carries the clinical explanation.
+  if(meta.focused)classes.push('focus-edge');
+  if(meta.neighbor)classes.push('neighbor-edge');
+  if(meta.context)classes.push('context-edge');
+  
+  const edgeAttr=meta.edgeId?` data-edge="${esc(meta.edgeId)}" data-from="${esc(meta.fromId||'')}" data-to="${esc(meta.toId||'')}" data-relation="${esc(label||'')}"`:'';
+  let s=`<g class="${classes.join(' ').trim()}" style="cursor:default"${tooltipAttr}${edgeAttr}>`;
+  s+=`<path d="M${ax},${ay} C${cpx},${ay} ${cpx},${by} ${bx},${by}" fill="none" stroke="transparent" stroke-width="12"/>`;
+  s+=`<path d="M${ax},${ay} C${cpx},${ay} ${cpx},${by} ${bx},${by}" fill="none" stroke="${color}" stroke-width="1.8" marker-end="url(#karrow)"/>`;
+  if(label){
+    const mx=(ax+bx)/2,my=(ay+by)/2;
+    const lw=label.length*6.4+14;
+    const tightGap=Math.abs(bx-ax)<lw+22;
+    const autoOffset=(label.length>10||tightGap)?(dy>=0?-26:26):0;
+    const yOffset=(meta.labelOffsetY!==undefined && meta.labelOffsetY!==null)?meta.labelOffsetY:autoOffset;
+    const ly=my+yOffset;
+    s+=`<rect x="${mx-lw/2}" y="${ly-9}" width="${lw}" height="16" rx="8" fill="white" opacity="0.96"/>`;
+    s+=`<text x="${mx}" y="${ly+3}" text-anchor="middle" font-size="10" font-weight="800" fill="${color}" font-family="DM Sans,sans-serif">${label}</text>`;
+  }
+  s+='</g>';
+  return s;
+}
+
+function makeLegend(W,H,usedTypes=[]){
+  const ordered=['evidence','demographic','symptom','sign','history','course','anatomy','mechanism','disorder','diagnosis'];
+  const active=ordered.filter(key=>usedTypes.includes(key));
+  if(!active.length)return '';
+  const items=active.map(key=>({...(NODE_COLORS[key]||NODE_COLORS.symptom),label:NODE_TYPE_LABELS[key]||key}));
+  const widths=items.map(it=>Math.max(82,it.label.length*7.2+28));
+  const totalW=widths.reduce((a,b)=>a+b,0);
+  const startX=Math.max(16,(W-totalW)/2);
+  const y=H-28;
+  let s='';
+  let x=startX;
+  items.forEach((it,i)=>{
+    s+=`<rect x="${x}" y="${y}" width="14" height="14" rx="3" fill="${it.fill}" stroke="${it.stroke}" stroke-width="1.6"/>`;
+    s+=`<text x="${x+20}" y="${y+11}" font-size="10.5" fill="#6b6560" font-family="DM Sans,sans-serif" font-weight="650">${it.label}</text>`;
+    x+=widths[i];
+  });
+  return s;
+}
+
+
+
+function cleanLabel(label){return String(label||'').replace(/\n/g,' ').replace(/\s+/g,' ').trim();}
+function getNodeTypeLabel(type){return NODE_TYPE_LABELS[type]||NODE_TYPE_LABELS[{finding:'symptom',pattern:'anatomy',mech:'mechanism',dx:'diagnosis'}[type]]||'KG node';}
+function getEvidenceById(kg,id){return (kg.evidence||[]).find(e=>e.id===id);}
+function getFindingById(kg,id){return (kg.findings||[]).find(f=>f.id===id);}
+function getMechanismById(kg,id){return (kg.mechs||[]).find(m=>m.id===id);}
+function getPatternById(kg,id){return (kg.patterns||[]).find(p=>p.id===id);}
+function getNodeRecord(kg,id){
+  const ev=getEvidenceById(kg,id); if(ev)return {type:'evidence',node:ev};
+  const f=getFindingById(kg,id); if(f)return {type:'finding',node:f};
+  const p=getPatternById(kg,id); if(p)return {type:'pattern',node:p};
+  const m=getMechanismById(kg,id); if(m)return {type:'mech',node:m};
+  if(kg.dx&&kg.dx.id===id)return {type:'dx',node:kg.dx};
+  return null;
+}
+function evidencePhrasesForNode(kg,id){
+  const rec=getNodeRecord(kg,id); if(!rec)return[];
+  let evidIds=[];
+  if(rec.type==='evidence')evidIds=[id];
+  else if(rec.type==='finding')evidIds=rec.node.from||[];
+  else if(rec.type==='mech'){
+    (rec.node.from||[]).forEach(fid=>{const f=getFindingById(kg,fid);if(f)evidIds.push(...(f.from||[]));});
+  } else if(rec.type==='dx'){
+    (rec.node.from||[]).forEach(src=>{
+      const r=getNodeRecord(kg,src);
+      if(!r)return;
+      if(r.type==='finding')evidIds.push(...(r.node.from||[]));
+      if(r.type==='mech')(r.node.from||[]).forEach(fid=>{const f=getFindingById(kg,fid);if(f)evidIds.push(...(f.from||[]));});
+    });
+  }
+  evidIds=[...new Set(evidIds)];
+  return evidIds.map(eid=>getEvidenceById(kg,eid)).filter(Boolean).map(e=>e.phrase||e.short||e.label);
+}
+function relatedKnowledgeForCurrentTask(nodeType,nodeLabel){
+  const t=tasks[currentTask];
+  const target=(t.target||'').toLowerCase();
+  const label=cleanLabel(nodeLabel).toLowerCase();
+  if(target.includes('cystic fibrosis')||label.includes('cystic fibrosis')||label.includes('cftr')){
+    return ['CFTR dysfunction','thick dehydrated mucus','impaired mucociliary clearance','pancreatic insufficiency','steatorrhoea','failure to thrive','recurrent pneumonia','digital clubbing','bronchiectasis','PCD as common distractor'];
+  }
+  if(target.includes('primary ciliary dyskinesia')||label.includes('ciliary')||label.includes('pcd')){
+    return ['dynein arm / ciliary motility defect','poor mucociliary clearance','neonatal respiratory distress in term infant','lifelong wet cough','recurrent otitis media / sinusitis','bronchiectasis','normal pancreatic function','situs inversus may occur','CF as common distractor'];
+  }
+  if(target.includes('croup')||label.includes('croup')||label.includes('subglottic')){
+    return ['viral URI prodrome','parainfluenza common','subglottic oedema','seal-bark cough','inspiratory stridor','hoarse voice','non-toxic appearance','epiglottitis / tracheitis as dangerous distractors','foreign body lacks fever/prodrome'];
+  }
+  return ['key vignette evidence','clinical pattern','mechanism / localization','correct diagnosis','distractor contrast'];
+}
+function roleTextForNode(type,label){
+  if(type==='evidence')return 'Raw phrase from the vignette. It should be traceable directly to the case text.';
+  if(type==='finding')return 'Intermediate clinical abstraction. It groups one or more raw clues into a medically meaningful pattern.';
+  if(type==='mech')return 'Pathophysiological or anatomical explanation. It explains why the observed pattern supports the diagnosis.';
+  if(type==='dx')return 'Final answer node. It should be supported by the full evidence-to-mechanism chain and should also contrast with distractors.';
+  return 'Node in the reasoning graph.';
+}
+function bindGraphNodeDragging(){
+  const board=document.getElementById('kgBoard');
+  const svg=board?board.querySelector('svg'):null;
+  if(!board||!svg)return;
+  let drag=null;
+  const toSvgPoint=(evt)=>{
+    const pt=svg.createSVGPoint();
+    pt.x=evt.clientX; pt.y=evt.clientY;
+    return pt.matrixTransform(svg.getScreenCTM().inverse());
+  };
+  board.querySelectorAll('.kg-node[data-node]').forEach(el=>{
+    el.addEventListener('pointerdown',(e)=>{
+      if(e.button!==0)return;
+      const info=getDragBaseFromElement(el);
+      if(!info.id)return;
+      const p=toSvgPoint(e);
+      drag={el,id:info.id,startX:p.x,startY:p.y,startDx:info.currentDx,startDy:info.currentDy,moved:false};
+      el.classList.add('dragging');
+      el.setPointerCapture?.(e.pointerId);
+      hideTooltip();
+      e.preventDefault();
+      e.stopPropagation();
+    });
+  });
+  const moveHandler=(e)=>{
+    if(!drag)return;
+    const p=toSvgPoint(e);
+    const dx=drag.startDx+(p.x-drag.startX);
+    const dy=drag.startDy+(p.y-drag.startY);
+    if(Math.abs(dx-drag.startDx)>2||Math.abs(dy-drag.startDy)>2)drag.moved=true;
+    drag.el.setAttribute('transform',`translate(${dx-drag.startDx},${dy-drag.startDy})`);
+  };
+  const upHandler=()=>{
+    if(!drag)return;
+    drag.el.classList.remove('dragging');
+    if(drag.moved){
+      const transform=drag.el.getAttribute('transform')||'translate(0,0)';
+      const nums=transform.match(/-?\d+(?:\.\d+)?/g)||[0,0];
+      const finalDx=drag.startDx+Number(nums[0]||0);
+      const finalDy=drag.startDy+Number(nums[1]||0);
+      setDraggableNodeOffset(drag.id,finalDx,finalDy);
+      suppressNextGraphClick=true;
+      setTimeout(()=>{suppressNextGraphClick=false;},160);
+      selectedGraphItem=null;
+      focusedKgNodeId=null;
+      renderKG();
+    }
+    drag=null;
+  };
+  window.addEventListener('pointermove',moveHandler,{once:false});
+  window.addEventListener('pointerup',upHandler,{once:false});
+}
+
+function bindNodeInsightClicks(){
+  const kg=tasks[currentTask].kgData;
+  document.querySelectorAll('.kg-node[data-node]').forEach(el=>{
+    const id=el.getAttribute('data-node');
+    if(id && id.startsWith('focus_ctx_'))return;
+    el.addEventListener('click',(e)=>{
+      if(suppressNextGraphClick){e.stopPropagation();return;}
+      e.stopPropagation();
+      const rec=getNodeRecord(kg,id);
+      if(rec && rec.type==='evidence'){
+        const evid=el.getAttribute('data-evid');
+        if(evid)scrollToVignette([evid]);
+        focusedKgNodeId=null;
+        renderKG();
+        return;
+      }
+      focusedKgNodeId = (focusedKgNodeId===id) ? null : id;
+      renderKG();
+    });
+  });
+  const board=document.getElementById('kgBoard');
+  if(board){
+    board.onclick=(e)=>{
+      if(e.target.closest && e.target.closest('.kg-node'))return;
+      if(focusedKgNodeId){focusedKgNodeId=null;renderKG();}
+    };
+  }
+}
+
+
+function directNeighborIdsForFocus(kg,id){
+  if(!id)return new Set();
+  const ids=new Set();
+  const rec=getNodeRecord(kg,id);
+  if(!rec)return ids;
+  if(rec.type==='evidence'){
+    (kg.findings||[]).forEach(f=>{if((f.from||[]).includes(id))ids.add(f.id);});
+  } else if(rec.type==='finding'){
+    (rec.node.from||[]).forEach(eid=>ids.add(eid));
+    (kg.mechs||[]).forEach(m=>{if((m.from||[]).includes(id))ids.add(m.id);});
+    if((kg.dx.from||[]).includes(id))ids.add(kg.dx.id);
+  } else if(rec.type==='mech'){
+    (rec.node.from||[]).forEach(fid=>ids.add(fid));
+    if((kg.dx.from||[]).includes(id))ids.add(kg.dx.id);
+  } else if(rec.type==='dx'){
+    (kg.dx.from||[]).forEach(src=>ids.add(src));
+  }
+  return ids;
+}
+
+function contextLabelsForFocusedNode(kg,id){
+  const rec=getNodeRecord(kg,id);
+  if(!rec || rec.type==='evidence')return [];
+  const label=cleanLabel(rec.node.label||rec.node.short||rec.node.phrase||tasks[currentTask].target);
+  let labels=relatedKnowledgeForCurrentTask(rec.type,label);
+  if(rec.type==='finding'){
+    const low=label.toLowerCase();
+    if(low.includes('pancreatic')) labels=['fat malabsorption','poor weight gain','greasy stools','steatorrhoea','failure to thrive'];
+    else if(low.includes('airway')||low.includes('mucociliary')) labels=['thick mucus','wet cough','recurrent pneumonia','bacterial colonisation','bronchiectasis'];
+    else if(low.includes('hypoxia')||low.includes('clubbing')) labels=['chronic lung disease','digital clubbing','longstanding hypoxaemia','early-onset disease'];
+    else labels=labels.slice(0,5);
+  }
+  if(rec.type==='mech'){
+    const low=label.toLowerCase();
+    if(low.includes('pancreatic')) labels=['CFTR dysfunction','blocked pancreatic ducts','fat malabsorption','steatorrhoea','poor growth'];
+    else if(low.includes('mucociliary')) labels=['dehydrated airway surface','thick mucus','impaired clearance','recurrent infection','bronchiectasis'];
+    else labels=labels.slice(0,5);
+  }
+  return [...new Set(labels)].slice(0,5);
+}
+
+
+function contextRelationForFocusedNode(kg,focusId,contextLabel){
+  const rec=getNodeRecord(kg,focusId);
+  const label=cleanLabel(contextLabel).toLowerCase();
+  const focus=rec?cleanLabel(rec.node.label||rec.node.short||rec.node.phrase||'').toLowerCase():'';
+
+  // Diagnosis-centered context: background knowledge around the final answer
+  if(rec && rec.type==='dx'){
+    if(label.includes('cftr') || label.includes('ciliary motility') || label.includes('viral uri')) return 'caused by';
+    if(label.includes('thick') || label.includes('mucus') || label.includes('subglottic') || label.includes('oedema') || label.includes('clearance')) return 'leads to';
+    if(label.includes('pancreatic') || label.includes('steator') || label.includes('failure') || label.includes('pneumonia') || label.includes('otitis') || label.includes('seal-bark') || label.includes('neonatal')) return 'presents with';
+    if(label.includes('distractor') || label.includes('epiglottitis') || label.includes('tracheitis')) return 'contrasted with';
+    if(label.includes('no pancreatic')) return 'helps exclude CF';
+    return 'associated with';
+  }
+
+  // Mechanism-centered context: mechanisms often explain or cause downstream findings
+  if(rec && rec.type==='mech'){
+    if(label.includes('cftr') || label.includes('viral') || label.includes('dynein') || label.includes('ciliary')) return 'driven by';
+    if(label.includes('blocked') || label.includes('dehydrated') || label.includes('thick') || label.includes('oedema')) return 'causes';
+    if(label.includes('malabsorption') || label.includes('steator') || label.includes('poor growth') || label.includes('infection') || label.includes('bronchiectasis')) return 'results in';
+    return 'mechanistically linked';
+  }
+
+  // Finding/pattern-centered context: findings are recognised through clues or imply a mechanism
+  if(rec && rec.type==='finding'){
+    if(label.includes('poor weight') || label.includes('greasy') || label.includes('wet cough') || label.includes('pneumonia') || label.includes('digital') || label.includes('stridor') || label.includes('seal')) return 'indicated by';
+    if(label.includes('malabsorption') || label.includes('hypoxaemia') || label.includes('bacterial') || label.includes('subglottic') || label.includes('fat')) return 'suggests';
+    if(label.includes('bronchiectasis') || label.includes('failure to thrive') || label.includes('early-onset')) return 'may progress to';
+    return 'clinically linked';
+  }
+
+  return 'associated with';
+}
+
+function contextTooltipForFocusedNode(kg,focusId,contextLabel,relation){
+  const rec=getNodeRecord(kg,focusId);
+  const focusText=rec?cleanLabel(rec.node.label||rec.node.short||rec.node.phrase||'selected node'):'selected node';
+  return `The selected node "${focusText}" is ${relation} "${cleanLabel(contextLabel)}". This is optional surrounding knowledge, not a required step in the main reasoning chain.`;
+}
+
+function graphReviewKey(item=selectedGraphItem){
+  if(!item)return null;
+  return `task${currentTask}:${item.type}:${item.id}`;
+}
+function getReviewRecord(item=selectedGraphItem){
+  const key=graphReviewKey(item);
+  return key?(reviewStore[key]||{}):{};
+}
+function setReviewRecord(patch,item=selectedGraphItem){
+  const key=graphReviewKey(item);
+  if(!key)return;
+  reviewStore[key]={...(reviewStore[key]||{}),...patch,updated_at:new Date().toISOString()};
+  persistReviewState();
+}
+function statusClass(status){
+  if(status==='accepted')return 'accepted';
+  if(status==='revise')return 'revise';
+  if(status==='rejected')return 'rejected';
+  return '';
+}
+function statusLabel(status){
+  return {accepted:'Accepted',revise:'Needs revision',rejected:'Rejected'}[status]||'Unreviewed';
+}
+function edgeIdFor(fromId,toId,kind){return `${fromId}->${toId}:${kind}`;}
+function getEdgeLabel(edgeId,defaultLabel){return edgeLabelOverrides[`task${currentTask}:${edgeId}`]||defaultLabel;}
+function setEdgeLabel(edgeId,label){
+  edgeLabelOverrides[`task${currentTask}:${edgeId}`]=label;
+  persistReviewState();
+}
+function currentKg(){return tasks[currentTask]&&tasks[currentTask].kgData;}
+function getNodeDisplayLabel(rec){
+  if(!rec)return '';
+  return cleanLabel(rec.node.short||rec.node.label||rec.node.phrase||tasks[currentTask].target);
+}
+function updateNodeDisplayLabel(id,label){
+  const kg=currentKg();
+  const rec=getNodeRecord(kg,id);
+  if(!rec)return;
+  if(rec.type==='evidence'){
+    rec.node.short=label;
+    rec.node.label=label;
+  } else {
+    rec.node.label=label;
+  }
+}
+function relationProvenance(edgeId,relation){
+  if(relation==='maps_to')return 'Concept mapping from original vignette phrase to a base KG concept.';
+  if(relation==='forms_pattern')return 'Grouping relation: multiple KG concepts converge into an anatomical concept node.';
+  if(relation==='causes')return 'Base KG causal relation; expert should verify direction and strength.';
+  if(relation==='manifestation_of')return 'Base KG disease-phenotype relation from finding/mechanism to diagnosis.';
+  if(relation==='sign_of')return 'Base KG clinical sign relation from an observed sign to the condition it indicates.';
+  if(relation==='complication_of')return 'Base KG complication relation from a downstream complication to the underlying disease.';
+  if(relation==='pathophysiology_of')return 'Base KG mechanism-disease relation.';
+  if(relation==='risk_factor_for')return 'Base KG risk/epidemiology relation.';
+  if(relation==='predisposes_to')return 'Interpretive epidemiology relation: this factor increases susceptibility to the linked concept.';
+  if(relation==='finding_of')return 'Base KG clinical finding relation.';
+  if(relation==='supports')return 'Interpretive KG relation: this finding supports the linked concept without directly diagnosing the disease.';
+  if(relation==='has_pathophysiology')return 'Interpretive KG bridge from an anatomical concept to the underlying pathophysiology.';
+  if(relation==='localizes_to')return 'Base KG relation: symptom/sign concepts localize to an anatomical finding.';
+  if(relation==='helps_exclude')return 'Exclusion relation used only for hidden or distractor-specific reasoning.';
+  return `Editable graph relation: ${edgeId}`;
+}
+
+function defaultFindingToMechanismRelation(findingLabel,mechanismLabel){
+  const f=cleanLabel(findingLabel).toLowerCase();
+  const m=cleanLabel(mechanismLabel).toLowerCase();
+  if(f.includes('failure')&&m.includes('pancreatic'))return 'manifestation_of';
+  if(f.includes('steator')&&m.includes('pancreatic'))return 'manifestation_of';
+  if(f.includes('respiratory infection')&&m.includes('mucociliary'))return 'manifestation_of';
+  if(f.includes('productive cough')&&m.includes('mucociliary'))return 'manifestation_of';
+  if(f.includes('digital clubbing')&&m.includes('chronic lung'))return 'sign_of';
+  if(f.includes('uri')&&m.includes('viral'))return 'causes';
+  if(f.includes('subglottic airway')&&m.includes('subglottic oedema'))return 'has_pathophysiology';
+  if(f.includes('subglottic')&&m.includes('subglottic'))return 'associated_with';
+  return 'causes';
+}
+
+function defaultEvidenceToFindingRelation(findingLabel){
+  const f=cleanLabel(findingLabel).toLowerCase();
+  if(f.includes('absent')||f.includes('no pancreatic'))return 'helps_exclude';
+  return 'maps_to';
+}
+
+function defaultDiagnosisRelation(nodeRecord,dxLabel){
+  const label=cleanLabel(nodeRecord?.node?.label||'').toLowerCase();
+  const type=nodeRecord?.type||'';
+  if(label.includes('toddler age'))return 'risk_factor_for';
+  if(label.includes('low-grade fever'))return 'finding_of';
+  if(label.includes('subglottic airway'))return 'finding_of';
+  if(label.includes('pancreatic insufficiency'))return 'manifestation_of';
+  if(label.includes('impaired mucociliary'))return 'pathophysiology_of';
+  if(label.includes('chronic lung disease'))return 'complication_of';
+  if(label.includes('subglottic oedema'))return 'pathophysiology_of';
+  if(label.includes('danger signs absent'))return 'helps_exclude';
+  if(type==='finding')return 'finding_of';
+  if(type==='mech')return 'pathophysiology_of';
+  if(type==='pattern')return 'finding_of';
+  return 'associated_with';
+}
+
+function relationSentence(sourceLabel,relation,targetLabel){
+  return `KG edge: "${cleanLabel(sourceLabel)}" --${relation}--> "${cleanLabel(targetLabel)}".`;
+}
+
+function contextBubblePositions(focus,count,W,graphH){
+  const rightSpace=W-(focus.right||focus.cx);
+  const leftSpace=(focus.left||focus.cx);
+  const placeRight=rightSpace>=240 || rightSpace>=leftSpace;
+  const cx=placeRight?Math.min(W-86,(focus.right||focus.cx)+180):Math.max(86,(focus.left||focus.cx)-180);
+  const gap=52;
+  const start=focus.cy-((count-1)*gap)/2;
+  return Array.from({length:count},(_,i)=>({cx,cy:Math.max(36,Math.min(graphH-36,start+i*gap))}));
+}
+
+function contextNodesForTask(){
+  const t=tasks[currentTask];
+  const target=(t.target||'').toLowerCase();
+  if(target.includes('cystic fibrosis')){
+    return ['CFTR dysfunction','thick dehydrated mucus','pancreatic insufficiency','steatorrhoea','PCD as distractor'];
+  }
+  if(target.includes('primary ciliary dyskinesia')){
+    return ['ciliary motility defect','poor mucociliary clearance','neonatal respiratory distress','recurrent otitis media','no pancreatic insufficiency'];
+  }
+  if(target.includes('croup')){
+    return ['viral URI prodrome','subglottic oedema','seal-bark cough','non-toxic appearance','epiglottitis / tracheitis distractors'];
+  }
+  return [];
+}
+
+function task3EvidenceIsRemoved(evidIds){
+  if(currentTask!==3 || (tasks[3]||{}).regenerated) return false;
+  return (evidIds||[]).some(id=>task3SelectedCluesToRemove.has(id));
+}
+
+function renderKG(){
+  const t=tasks[currentTask];
+  const kg=t.kgData;
+  const board=document.getElementById('kgBoard');
+  if(!kg){
+    board.style.display='none';
+    board.innerHTML='';
+    document.getElementById('kgProvenanceNote').style.display='none';
+    document.getElementById('kgExcludeWrap').style.display='none';
+    document.getElementById('pathText').textContent='';
+    document.getElementById('kgTextPanel').classList.remove('open');
+    return;
+  }
+  const isInteractive=((t.mode==='kg' || t.mode==='both') && kgExplainOpen);
+  if(!explanationVisible){
+    board.style.display='none';
+    board.innerHTML='';
+    document.getElementById('kgProvenanceNote').style.display='none';
+    document.getElementById('kgExcludeWrap').style.display='none';
+    document.getElementById('pathText').textContent='';
+    document.getElementById('kgTextPanel').classList.remove('open');
+    return;
+  }
+
+  if(t.mode==='text'){
+    board.style.display='none';
+    board.classList.remove('focus-active');
+    board.innerHTML='';
+    document.getElementById('kgProvenanceNote').style.display='none';
+    document.getElementById('kgExcludeWrap').style.display='none';
+    document.getElementById('pathText').textContent='';
+    document.getElementById('kgTextPanel').classList.remove('open');
+    return;
+  }
+
+  board.style.display='block';
+  const provNote=document.getElementById('kgProvenanceNote');
+  provNote.style.display='none';
+  const llmProv=provNote.querySelector('.llm-prov');
+  if(llmProv)llmProv.style.display=(t.mode==='both')?'inline-flex':'none';
+  board.classList.toggle('focus-active',!!focusedKgNodeId);
+
+  const visibleEvidence=(kg.evidence||[]).filter(ev=>!ev.hiddenInMain);
+  const visibleFindings=(kg.findings||[]).filter(f=>!f.hiddenInMain && !task3EvidenceIsRemoved(f.from));
+  const visiblePatterns=(kg.patterns||[]).filter(p=>!p.hiddenInMain);
+  const visibleMechs=(kg.mechs||[]).filter(m=>!m.hiddenInMain);
+  const W=1180,LEGEND_H=44;
+  const cfCount=visibleFindings.length,pCount=visiblePatterns.length,mCount=visibleMechs.length;
+  const NODE_H=52, GROUP_GAP=34;
+  const totalBandH=Math.max(cfCount,1)*NODE_H + Math.max(cfCount-1,0)*GROUP_GAP;
+  const graphH=Math.max(totalBandH+120, 360);
+  const H=graphH+LEGEND_H;
+
+  const SIDE_PAD=130;
+  const colNames=['cf',...(pCount>0?['pattern']:[]),'mech','dx'];
+  const colSpacing=(W-SIDE_PAD*2)/(colNames.length-1);
+  const COL={};
+  colNames.forEach((name,i)=>{ COL[name]=SIDE_PAD+i*colSpacing; });
+
+  function ySpread(count,total,topMargin){
+    topMargin=topMargin||60;
+    if(count<=0)return[];
+    const usable=total-topMargin*2;
+    if(count===1)return[total/2];
+    const step=usable/(count-1);
+    return Array.from({length:count},(_,i)=>topMargin+i*step);
+  }
+  function clampY(y,margin=56){
+    return Math.max(margin,Math.min(graphH-margin,y));
+  }
+  function avgKnown(ids,map,fallback){
+    const vals=(ids||[]).map(id=>map[id]).filter(v=>Number.isFinite(v));
+    if(!vals.length)return fallback;
+    return vals.reduce((s,v)=>s+v,0)/vals.length;
+  }
+
+  const cfYSpread=ySpread(cfCount,graphH,70);
+  const cfYMap={};
+  visibleFindings.forEach((cf,fi)=>{ cfYMap[cf.id]=cfYSpread[fi]||graphH/2; });
+
+  const pFallback=ySpread(pCount,graphH,60);
+  const pYMap={};
+  visiblePatterns.forEach((p,i)=>{
+    const base=avgKnown(p.from,cfYMap,pFallback[i]||graphH/2);
+    pYMap[p.id]=clampY(base+(pCount===1?8:(i%2?-14:14)));
+  });
+  const sourceYForMech=id=>pYMap[id]??cfYMap[id];
+  const mFallback=ySpread(mCount,graphH,60);
+  const mYMap={};
+  visibleMechs.forEach((m,i)=>{
+    const srcMap=Object.fromEntries([...(m.from||[])].map(id=>[id,sourceYForMech(id)]));
+    const base=avgKnown(m.from,srcMap,mFallback[i]||graphH/2);
+    const mechOffset=(currentTask===3 && m.id==='m1')?-28:(mCount===1?-18:(i%2?18:-18));
+    mYMap[m.id]=clampY(base+mechOffset);
+  });
+  const dxSourceMap={...cfYMap,...pYMap,...mYMap};
+  const dxBase=avgKnown(kg.dx.from,dxSourceMap,graphH/2);
+  const dxY=[clampY(dxBase-8)];
+
+  const nodeMap={};let nodesSvg='',edgesSvg='';
+  const focusRelated=focusedKgNodeId?relatedIdsForFocus(kg,focusedKgNodeId):new Set();
+  const focusNeighbors=focusedKgNodeId?directNeighborIdsForFocus(kg,focusedKgNodeId):new Set();
+  const focusMeta=id=>({
+    focused:focusedKgNodeId===id,
+    neighbor:!!focusedKgNodeId && focusNeighbors.has(id) && focusedKgNodeId!==id,
+    faded:!!focusedKgNodeId && focusedKgNodeId!==id && !focusNeighbors.has(id),
+    selected:false
+  });
+  const edgeMeta=(fromId,toId,kind,extra={})=>({
+    ...extra,
+    edgeId:edgeIdFor(fromId,toId,kind),
+    fromId,toId,
+    focused:!!focusedKgNodeId && (fromId===focusedKgNodeId || toId===focusedKgNodeId),
+    neighbor:!!focusedKgNodeId && fromId!==focusedKgNodeId && toId!==focusedKgNodeId && (focusNeighbors.has(fromId) || focusNeighbors.has(toId)),
+    selected:false
+  });
+
+  visibleFindings.forEach((cf)=>{
+    const evidIds=(cf.from||[]).filter(Boolean);
+    const mergedMeta=evidIds.length?{evid:evidIds.join('|')}:{evid:cf.mergedEvidence||undefined};
+    const canEditDelete=false;
+    const deleteSelected=evidIds.some(id=>task3SelectedCluesToRemove.has(id));
+    const pos=getDraggableNodePosition(cf.id,COL.cf,cfYMap[cf.id]);
+    const nodeMeta=isInteractive?{interactive:true,tooltip:cf.tooltip,tooltipTitle:semanticTypeLabel(cf,'finding'),showDeleteControl:canEditDelete,deleteSelected,...mergedMeta,...focusMeta(cf.id)}:{showDeleteControl:canEditDelete,deleteSelected,...mergedMeta,...focusMeta(cf.id)};
+    const n=makeNode(cf.id,semanticTypeFor(cf,'finding'),cf.label,pos.cx,pos.cy,nodeMeta);
+    nodeMap[cf.id]=n;nodesSvg+=n.svg;
+  });
+  visiblePatterns.forEach((p,i)=>{
+    const pos=getDraggableNodePosition(p.id,COL.pattern,pYMap[p.id]);
+    const n=makeNode(p.id,semanticTypeFor(p,'pattern'),p.label,pos.cx,pos.cy,
+      isInteractive?{interactive:true,tooltip:p.tooltip,tooltipTitle:semanticTypeLabel(p,'pattern'),...focusMeta(p.id)}:focusMeta(p.id));
+    nodeMap[p.id]=n;nodesSvg+=n.svg;
+  });
+  visibleMechs.forEach((m,i)=>{
+    const pos=getDraggableNodePosition(m.id,COL.mech,mYMap[m.id]);
+    const n=makeNode(m.id,semanticTypeFor(m,'mech'),m.label,pos.cx,pos.cy,
+      isInteractive?{interactive:true,tooltip:m.tooltip,tooltipTitle:semanticTypeLabel(m,'mech'),...focusMeta(m.id)}:focusMeta(m.id));
+    nodeMap[m.id]=n;nodesSvg+=n.svg;
+  });
+  const dxPos=getDraggableNodePosition(kg.dx.id,COL.dx,dxY[0]);
+  const dxN=makeNode(kg.dx.id,semanticTypeFor(kg.dx,'dx'),kg.dx.label,dxPos.cx,dxPos.cy,
+    isInteractive?{interactive:true,tooltip:kg.dx.tooltip,tooltipTitle:semanticTypeLabel(kg.dx,'dx'),...focusMeta(kg.dx.id)}:focusMeta(kg.dx.id));
+  nodeMap[kg.dx.id]=dxN;nodesSvg+=dxN.svg;
+
+  // finding → pattern
+  visiblePatterns.forEach(p=>{
+    (p.from||[]).forEach(cfId=>{
+      if(!nodeMap[cfId]||!nodeMap[p.id])return;
+      const relation='localizes_to';
+      const sourceLabel=getFindingById(kg,cfId)?.label||cfId;
+      const tooltip=isInteractive?`${relationSentence(sourceLabel,relation,p.label)} The LLM hover text explains why these separate findings should be grouped before moving to mechanism.`:null;
+      const eid=edgeIdFor(cfId,p.id,relation);
+      edgesSvg+=makeEdge(nodeMap[cfId],nodeMap[p.id],getEdgeLabel(eid,relation),'#7b4da0',
+        isInteractive?edgeMeta(cfId,p.id,relation,{interactive:true,tooltip,tooltipTitle:relation}):edgeMeta(cfId,p.id,relation));
+    });
+  });
+  // finding → mechanism
+  visibleMechs.forEach(m=>{
+    m.from.forEach(cfId=>{
+      if(!nodeMap[cfId]||!nodeMap[m.id])return;
+      const src=visibleFindings.find(f=>f.id===cfId)||visiblePatterns.find(p=>p.id===cfId);
+      const defaultRelation=defaultFindingToMechanismRelation(src?src.label:cfId,m.label);
+      const tooltip=isInteractive?`${relationSentence(src?src.label:cfId,defaultRelation,m.label)} ${m.tooltip||''}`:null;
+      const eid=edgeIdFor(cfId,m.id,defaultRelation);
+      edgesSvg+=makeEdge(nodeMap[cfId],nodeMap[m.id],getEdgeLabel(eid,defaultRelation),'#1a7a7a',
+        isInteractive?edgeMeta(cfId,m.id,defaultRelation,{interactive:true,tooltip,tooltipTitle:defaultRelation}):edgeMeta(cfId,m.id,defaultRelation));
+    });
+  });
+  // mechanism/finding → dx
+  kg.dx.from.forEach(srcId=>{
+    const src=nodeMap[srcId];
+    if(!src)return;
+    const record=getNodeRecord(kg,srcId);
+    const node=record?.node;
+    const defaultDxRelation=defaultDiagnosisRelation(record,kg.dx.label);
+    const tooltip=isInteractive?`${relationSentence(node?node.label:srcId,defaultDxRelation,kg.dx.label)} ${kg.dx.tooltip||''}`:null;
+    const eid=edgeIdFor(srcId,kg.dx.id,defaultDxRelation);
+    edgesSvg+=makeEdge(src,nodeMap[kg.dx.id],getEdgeLabel(eid,defaultDxRelation),'#2d5f8a',
+      isInteractive?edgeMeta(srcId,kg.dx.id,defaultDxRelation,{interactive:true,tooltip,tooltipTitle:defaultDxRelation,labelOffsetY:defaultDxRelation==='pathophysiology_of'?-12:null}):edgeMeta(srcId,kg.dx.id,defaultDxRelation,{labelOffsetY:defaultDxRelation==='pathophysiology_of'?-12:null}));
+  });
+  // Optional KG-internal edges, used when one mapped concept modifies another
+  // rather than feeding directly into mechanism or diagnosis.
+  (kg.extraEdges||[]).forEach(edge=>{
+    const from=nodeMap[edge.from],to=nodeMap[edge.to];
+    if(!from||!to)return;
+    const relation=edge.relation||'associated_with';
+    const eid=edgeIdFor(edge.from,edge.to,relation);
+    const label=getEdgeLabel(eid,relation);
+    const sourceLabel=getNodeRecord(kg,edge.from)?.node?.label||edge.from;
+    const targetLabel=getNodeRecord(kg,edge.to)?.node?.label||edge.to;
+    const tooltip=isInteractive?`${relationSentence(sourceLabel,label,targetLabel)} ${edge.tooltip||''}`:null;
+    edgesSvg+=makeEdge(from,to,label,edge.color||'#6f6b62',
+      isInteractive?edgeMeta(edge.from,edge.to,relation,{interactive:true,tooltip,tooltipTitle:label}):edgeMeta(edge.from,edge.to,relation));
+  });
+
+  const usedLegendTypes=Array.from(new Set([
+    ...visibleFindings.map(n=>semanticTypeFor(n,'finding')),
+    ...visiblePatterns.map(n=>semanticTypeFor(n,'pattern')),
+    ...visibleMechs.map(n=>semanticTypeFor(n,'mech')),
+    semanticTypeFor(kg.dx,'dx')
+  ])).filter(Boolean);
+  const legend=makeLegend(W,H,usedLegendTypes);
+  // Add horizontal padding to viewBox so rightmost nodes are never clipped
+  const VB_PAD=16;
+  const svg=`<svg viewBox="${-VB_PAD} 0 ${W+VB_PAD*2} ${H}" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;display:block;overflow:visible">
+    <defs>
+      <marker id="karrow" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto">
+        <path d="M0,0 L9,4.5 L0,9 z" fill="#aaa"/>
+      </marker>
+    </defs>
+    <rect x="${-VB_PAD}" width="${W+VB_PAD*2}" height="${H}" fill="white" rx="12"/>
+    ${edgesSvg}
+    ${nodesSvg}
+    <line x1="16" y1="${graphH+1}" x2="${W-16}" y2="${graphH+1}" stroke="#e8e4dd" stroke-width="1"/>
+    ${legend}
+  </svg>`;
+
+  board.innerHTML=svg;
+  bindEvidenceInteractions();
+  bindGraphNodeDragging();
+  bindNodeInsightClicks();
+  if(isInteractive) bindNodeEdgeTooltips();
+  renderExcludeCards();
+  const kgTextPanel=document.getElementById('kgTextPanel');
+  kgTextPanel.classList.remove('open');
+  document.getElementById('pathText').textContent='';
+  renderGraphOverlayControls();
+}
+
+
+function toggleKgEnrichedText(force){
+  if(currentTask!==2 && currentTask!==3)return;
+  kgExplainOpen=(force===undefined)?!kgExplainOpen:!!force;
+  renderRightSupportPanel({rerenderGraph:true});
+}
+
+function renderGraphOverlayControls(){
+  const board=document.getElementById('kgBoard');
+  if(!board)return;
+  board.querySelectorAll('.graph-toolbar').forEach(el=>el.remove());
+  if(!explanationVisible)return;
+  if(currentTask===2){
+    const div=document.createElement('div');
+    div.className='graph-toolbar';
+    div.innerHTML=`<button class="graph-toggle ${kgExplainOpen?'active':''}" onclick="toggleKgEnrichedText()" title="Toggle enriched hover text"><span class="graph-toggle-dot"></span> Enriched text</button>`;
+    board.appendChild(div);
+  }
+  if(currentTask===3 && task3SupportMode!=='text'){
+    const right=document.createElement('div');
+    right.className='graph-toolbar';
+    right.innerHTML=`
+      <button class="graph-toggle ${kgExplainOpen?'active':''}" onclick="toggleKgEnrichedText()" title="Toggle enriched hover text"><span class="graph-toggle-dot"></span> Enriched text</button>`;
+    board.appendChild(right);
+  }
+}
+
+let pendingCustomConfirmAction=null;
+function openCustomConfirm({title,body,list,confirmText,onConfirm}){
+  const modal=document.getElementById('customConfirmModal');
+  const titleEl=document.getElementById('customConfirmTitle');
+  const bodyEl=document.getElementById('customConfirmBody');
+  const listEl=document.getElementById('customConfirmList');
+  const btn=document.getElementById('customConfirmPrimaryBtn');
+  if(!modal||!titleEl||!bodyEl||!listEl||!btn)return;
+  titleEl.textContent=title||'Confirm action';
+  bodyEl.textContent=body||'';
+  if(list){
+    listEl.style.display='block';
+    listEl.innerHTML=Array.isArray(list)?list.map(x=>`• ${esc(x)}`).join('<br>'):esc(list);
+  } else {
+    listEl.style.display='none';
+    listEl.innerHTML='';
+  }
+  btn.textContent=confirmText||'Confirm';
+  pendingCustomConfirmAction=typeof onConfirm==='function'?onConfirm:null;
+  btn.onclick=()=>{
+    const action=pendingCustomConfirmAction;
+    closeCustomConfirm();
+    if(action)action();
+  };
+  modal.classList.add('open');
+}
+function closeCustomConfirm(){
+  const modal=document.getElementById('customConfirmModal');
+  if(modal)modal.classList.remove('open');
+  pendingCustomConfirmAction=null;
+}
+function requestResetCurrentTask(){
+  openCustomConfirm({
+    title:'Reset this task?',
+    body:'This will restore the original version and remove regenerated content, clue selections, and manual edits for this task.',
+    confirmText:'Reset',
+    onConfirm:()=>resetCurrentTask(true)
+  });
+}
+
+
+function bindNodeEdgeTooltips(){
+  // Nodes with tooltip
+  document.querySelectorAll('.kg-node.interactive-node[data-tooltip]').forEach(el=>{
+    const title=el.getAttribute('data-tooltip-title')||'';
+    const body=el.getAttribute('data-tooltip')||'';
+    el.addEventListener('mouseenter',e=>showTooltip(e,title,body));
+    el.addEventListener('mousemove',e=>moveTooltip(e));
+    el.addEventListener('mouseleave',hideTooltip);
+  });
+  // Edge hover is disabled: edge labels remain visual only; clinical rationale lives on nodes.
+}
+
+function miniEvidenceRationale(card,eid,role='against'){
+  const target=(card.target||'').toLowerCase();
+  const evId=String(eid||'');
+  const phrase=(getEvidenceById(tasks[currentTask].kgData,eid)?.short||eid);
+
+  if(role==='supports'){
+    if(target.includes('primary ciliary')){
+      if(evId==='ev3'||evId==='ev4')return 'Recurrent lower-respiratory infections fit impaired mucociliary clearance and recurrent bacterial infection, so PCD remains a reasonable respiratory differential.';
+    }
+    if(target.includes('humoral')){
+      if(evId==='ev3')return 'Recurrent bacterial pneumonia is compatible with antibody deficiency, so humoral immunodeficiency should remain in the differential.';
+    }
+    if(target.includes('gastroesophageal')){
+      if(evId==='ev3'||evId==='ev4')return 'Aspiration from reflux can cause chronic cough or recurrent lower-respiratory symptoms, but it does not explain malabsorption.';
+    }
+    if(target.includes('asthma')){
+      if(evId==='ev4'||evId==='ev3')return 'Cough and recurrent respiratory episodes can suggest asthma superficially, especially in childhood.';
+    }
+    if(target.includes('epiglottitis')){
+      if(evId.includes('stridor'))return 'Fever with stridor keeps epiglottitis in the acute upper-airway differential.';
+    }
+    if(target.includes('bacterial tracheitis')){
+      if(evId.includes('stridor'))return 'Stridor can occur in bacterial tracheitis because tracheal inflammation narrows the airway.';
+      if(evId.includes('uri'))return 'A preceding respiratory illness can make bacterial tracheitis plausible, although the expected severity is higher.';
+    }
+    if(target.includes('foreign body')){
+      if(evId.includes('stridor'))return 'Foreign body aspiration can cause sudden noisy breathing or focal airway obstruction in toddlers.';
+    }
+    if(target.includes('retropharyngeal')){
+      if(evId.includes('uri'))return 'Fever and upper-airway symptoms overlap with deep neck infection, so it remains a broad differential diagnosis.';
+      if(evId.includes('stridor'))return 'Upper-airway obstruction can occur with retropharyngeal abscess, though the localization should be pharyngeal/deep neck.';
+    }
+    return `${phrase} is compatible with this distractor and keeps it in the differential at first pass.`;
+  }
+
+  if(target.includes('primary ciliary')){
+    if(evId==='ev2')return 'Steatorrhea indicates fat malabsorption from pancreatic exocrine disease; PCD affects ciliary clearance, not pancreatic ducts.';
+    if(evId==='ev1')return 'Poor weight gain despite intake supports malabsorption; isolated PCD usually does not cause exocrine pancreatic insufficiency.';
+    if(evId==='ev6')return 'Absence of recurrent otitis/hearing problems weakens PCD because Eustachian-tube ciliary dysfunction is a typical associated clue.';
+  }
+  if(target.includes('humoral')){
+    if(evId==='ev2')return 'Steatorrhea is not explained by antibody deficiency; it points to pancreatic enzyme failure.';
+    if(evId==='ev1')return 'Failure to thrive with greasy stools suggests maldigestion, not a primary humoral immune defect.';
+    if(evId==='ev5')return 'Clubbing suggests chronic suppurative lung disease; antibody deficiency alone does not explain the GI malabsorption pattern.';
+  }
+  if(target.includes('gastroesophageal')){
+    if(evId==='ev2')return 'Greasy bulky stools require fat malabsorption; GERD/aspiration cannot produce steatorrhea.';
+    if(evId==='ev1')return 'Poor growth with greasy stools is more coherent with malabsorption than reflux alone.';
+    if(evId==='ev5')return 'Digital clubbing suggests chronic pulmonary disease, not uncomplicated reflux.';
+  }
+  if(target.includes('asthma')){
+    if(evId==='ev2')return 'Asthma cannot cause steatorrhea; this clue forces an exocrine/GI mechanism.';
+    if(evId==='ev5')return 'Digital clubbing is not associated with asthma and should prompt concern for CF or another chronic lung disease.';
+    if(evId==='ev3')return 'Recurrent bacterial pneumonias suggest impaired airway clearance rather than episodic bronchospasm.';
+    if(evId==='ev1')return 'Poor weight gain despite intake is not explained by uncomplicated asthma.';
+  }
+
+  if(target.includes('epiglottitis')){
+    if(evId.includes('swallow'))return 'Normal swallowing and no drooling argue against the supraglottic obstruction pattern of epiglottitis.';
+    if(evId.includes('well'))return 'A non-toxic, comfortable child is unlike epiglottitis, which is typically toxic and distressed.';
+    if(evId.includes('bark'))return 'Barking cough favors subglottic croup rather than supraglottic epiglottitis.';
+  }
+  if(target.includes('bacterial tracheitis')){
+    if(evId.includes('well'))return 'Non-toxic appearance argues against bacterial tracheitis, which is usually high-fever, toxic, and more severe.';
+    if(evId.includes('uri'))return 'Mild URI symptoms with low-grade fever fit croup better than bacterial tracheitis.';
+  }
+  if(target.includes('foreign body')){
+    if(evId.includes('uri'))return 'A two-day viral prodrome argues against foreign body aspiration, which classically has abrupt onset after choking.';
+    if(evId.includes('bark'))return 'Barky cough localizes to subglottic croup rather than a focal aspirated object.';
+  }
+  if(target.includes('retropharyngeal')){
+    if(evId.includes('swallow'))return 'Normal swallowing and no drooling argue against a deep neck infection.';
+    if(evId.includes('bark'))return 'Barking cough and hoarseness favor subglottic croup, not retropharyngeal abscess.';
+    if(evId.includes('well'))return 'Comfortable, non-toxic appearance is not the expected deep neck infection pattern.';
+  }
+  return `${phrase} does not fit the expected mechanism or clinical pattern of ${card.target}.`;
+}
+
+function miniNodeSvg({x,y,label,type='evidence',cls='',attrs='',maxW=112,minW=74,font=9.5,dashed=false,dragKey='',cardIndex=0}){
+  const c=type==='distractor'
+    ? {fill:'#eef2f6',stroke:'#667085',text:'#26313f'}
+    : type==='expected'
+      ? {fill:'#fff8e7',stroke:'#b48600',text:'#5f4a08'}
+      : type==='against'
+        ? {fill:'#fff1f1',stroke:'#9b2d2d',text:'#6c2020'}
+      : {fill:'#edf7f2',stroke:'#1a6b3c',text:'#174a2d'};
+  const clean=cleanLabel(label);
+  const w=Math.max(minW,Math.min(maxW,textWidthEstimate(clean,font)+18));
+  const maxChars=Math.max(8,Math.floor((w-14)/(font*0.58)));
+  const lines=wrapText(clean,maxChars).slice(0,type==='expected'?3:2);
+  const h=type==='expected'?(lines.length>2?50:(lines.length>1?38:30)):(lines.length>1?38:30);
+  const off=dragKey?getMiniDragOffset(cardIndex,dragKey):{x:0,y:0};
+  x=x+(off.x||0); y=y+(off.y||0);
+  const dragAttrs=dragKey?` data-mini-card="${cardIndex}" data-mini-node="${esc(dragKey)}" data-base-x="${x-(off.x||0)}" data-base-y="${y-(off.y||0)}" data-dx="${off.x||0}" data-dy="${off.y||0}"`:'';
+  let s=`<g class="${cls} mini-draggable-node" ${attrs}${dragAttrs}>`;
+  s+=`<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="8" fill="${c.fill}" stroke="${c.stroke}" stroke-width="1.5" ${dashed?'stroke-dasharray="5 3"':''}/>`;
+  const lineGap=Math.max(10.5,font*1.28);
+  const centerY=y+h/2;
+  // SVG text uses baseline coordinates. This formula centers both single-line and wrapped labels vertically inside the rounded rect.
+  lines.forEach((line,i)=>{
+    const ty=centerY + (i-(lines.length-1)/2)*lineGap + font*0.34;
+    s+=`<text x="${x+w/2}" y="${ty.toFixed(1)}" text-anchor="middle" font-size="${font}" font-weight="850" fill="${c.text}" font-family="DM Sans,sans-serif">${esc(line)}</text>`;
+  });
+  s+='</g>';
+  return {svg:s,w,h,cx:x+w/2,cy:y+h/2,right:x+w,left:x};
+}
+
+function miniEvidenceLayout(count){
+  if(count<=1)return[{x:82,y:18}];
+  if(count===2)return[{x:46,y:18},{x:166,y:18}];
+  return[{x:18,y:18},{x:110,y:18},{x:202,y:18}];
+}
+function miniRoleLayout(role,count){
+  // Node positions are padded away from the top/bottom of the mini graph.
+  // The graph viewBox is taller than before, so expected nodes and 3-item against stacks no longer touch the bottom edge.
+  if(role==='supports'){
+    if(count<=1)return[{x:78,y:56}];
+    return[{x:78,y:42},{x:78,y:88}];
+  }
+  if(count<=1)return[{x:78,y:146}];
+  if(count===2)return[{x:78,y:128},{x:78,y:174}];
+  return[{x:78,y:112},{x:78,y:154},{x:78,y:196}];
+}
+
+function renderExcludeCards(){
+  const t=tasks[currentTask];
+  const wrap=document.getElementById('kgExcludeWrap');
+  const box=document.getElementById('kgExcludeCards');
+  const rawCards=(t.kgData&&t.kgData.excludeCards)||[];
+  const cards=(t.distractors||[]).map(d=>{
+    const found=rawCards.find(c=>cleanLabel(c.target).toLowerCase()===cleanLabel(d.disease).toLowerCase());
+    return found||{target:d.disease,focus:[],explanation:d.incorrect||''};
+  });
+  if(!explanationVisible||!cards.length||t.mode==='text'){wrap.style.display='none';box.innerHTML='';return;}
+  wrap.style.display='block';
+  const hint=document.getElementById('miniGraphHint');
+  if(hint)hint.textContent=t.mode==='both'
+    ? 'Green = supports; red = argues_against; dashed = expected_in. Hover nodes for concise clinical rationale.'
+    : 'Green = supports; red = argues_against; dashed = expected_in. Hover nodes for concise clinical rationale.';
+  box.innerHTML=cards.map((c,i)=>{
+    const supportIds=[...(c.supports||[])].slice(0,2);
+    const againstIds=[...(c.against||c.focus||[])].filter(id=>!supportIds.includes(id)).slice(0,3);
+    const focus=[...new Set([...supportIds,...againstIds,...(c.focus||[])])];
+    const hasExpected=!!c.expected;
+    const makeEvItems=(ids,role)=>ids.map((eid,j)=>{
+      const ev=getEvidenceById(t.kgData,eid);
+      const label=ev?ev.short||cleanLabel(ev.label):eid;
+      const {x,y}=miniRoleLayout(role,ids.length)[j];
+      const title=(role==='supports'?'Supports plausibility: ':'Argues against: ')+label;
+      const node=miniNodeSvg({x,y,label,type:role==='against'?'against':'evidence',cls:'mini-evidence-node',attrs:`data-evid="${esc(eid)}" data-role="${esc(role)}" data-explanation="${esc(miniEvidenceRationale(c,eid,role))}" data-title="${esc(title)}"`,maxW:104,minW:78,font:9.6,dragKey:`${role}-${eid}`,cardIndex:i});
+      return {eid,node,role};
+    });
+    const supportItems=makeEvItems(supportIds,'supports');
+    const againstItems=makeEvItems(againstIds,'against');
+    const evItems=[...supportItems,...againstItems];
+    const evidenceNodes=evItems.map(x=>x.node.svg).join('');
+    const expected=hasExpected
+      ? miniNodeSvg({x:224,y:158,label:c.expected,type:'expected',dashed:true,cls:'mini-expected-node',attrs:`data-explanation="${esc(c.expectedExplanation||'Expected distractor pattern is not established by this vignette.')}" data-title="${esc('Expected but not established: '+cleanLabel(c.expected))}"`,maxW:128,minW:104,font:9.1,dragKey:'expected',cardIndex:i})
+      : null;
+    const dist=miniNodeSvg({x:hasExpected?356:170,y:hasExpected?96:90,label:c.target,type:'distractor',cls:'mini-distractor-node',attrs:`data-explanation="${esc(c.explanation||'')}" data-title="${esc('Distractor: '+c.target)}"`,maxW:hasExpected?96:118,minW:84,font:9.2,dragKey:'distractor',cardIndex:i});
+    const miniEdgeLabel=(x,y,text,color)=>{
+      const w=text==='argues_against'?72:(text==='expected_in'?64:54);
+      return `<g class="mini-edge-label" transform="translate(${x-w/2},${y-8})"><rect x="0" y="0" width="${w}" height="15" rx="7.5"/><text x="${w/2}" y="10.8" text-anchor="middle" fill="${color}">${text}</text></g>`;
+    };
+    const softCurve=(from,targetY,color,marker,opts={})=>{
+      const midX=opts.midX||252;
+      const entryX=dist.left;
+      const dash=opts.dash?'stroke-dasharray="4 3"':'';
+      const relation=opts.relation||'supports';
+      const label=opts.label||relation;
+      const title=opts.title||label;
+      const explain=opts.explain||'';
+      const labelX=opts.labelX||((from.right+entryX)/2+8);
+      const labelY=opts.labelY||((from.cy+targetY)/2-4);
+      return `<g class="mini-edge"><path d="M${from.right},${from.cy} C${midX},${from.cy} ${midX},${targetY} ${entryX},${targetY}" fill="none" stroke="${color}" stroke-width="${opts.width||1.45}" ${dash} marker-end="url(#${marker}${i})"/>${miniEdgeLabel(labelX,labelY,label,color)}</g>`;
+    };
+    const supportTargetYs=supportItems.map((_,idx)=>dist.cy-13+(idx-(supportItems.length-1)/2)*7);
+    const againstTargetYs=againstItems.map((_,idx)=>dist.cy+6+(idx-(againstItems.length-1)/2)*9);
+    const edgeLines=hasExpected
+      ? supportItems.map(({node,eid},idx)=>softCurve(node,supportTargetYs[idx],'#1a6b3c','miniArrowGreen',{midX:286,width:1.45,relation:'supports',label:'supports',title:'supports',explain:miniEvidenceRationale(c,eid,'supports')})).join('')
+        + againstItems.map(({node,eid},idx)=>softCurve(node,againstTargetYs[idx],'#8a2d2d','miniArrowRed',{midX:286,width:1.45,relation:'argues_against',label:'argues_against',title:'argues_against',explain:miniEvidenceRationale(c,eid,'against')})).join('')
+        + softCurve(expected,dist.cy+22,'#9b8f84','miniArrowDash',{midX:330,width:1.25,dash:true,relation:'expected_in',label:'expected_in',title:'expected_in',explain:c.expectedExplanation||'Expected distractor pattern is not established by this vignette.',labelX:(expected.right+dist.left)/2+6,labelY:(expected.cy+dist.cy+22)/2-2})
+      : evItems.map(({node,role,eid})=>{
+          const color=role==='supports'?'#1a6b3c':'#8a2d2d';
+          const rel=role==='supports'?'supports':'argues_against';
+          const targetX=dist.cx, targetY=dist.cy-18;
+          return `<g class="mini-edge"><path d="M${node.cx},${node.cy+20} C${node.cx},66 ${targetX},62 ${targetX},${targetY}" fill="none" stroke="${color}" stroke-width="1.35" marker-end="url(#miniArrow${role==='supports'?'Green':'Red'}${i})"/>${miniEdgeLabel((node.cx+targetX)/2,(node.cy+targetY)/2,rel,color)}</g>`;
+        }).join('');
+    const midLabels='';
+    return`<div class="mini-distractor-card" data-focus='${JSON.stringify(focus)}' data-explanation="${esc(c.explanation||'')}" data-target="${esc(c.target)}">
+      <div class="mini-distractor-head"><div class="mini-distractor-title">${esc(c.target)}</div><div class="mini-distractor-chip">excluded</div></div>
+      <svg class="mini-distractor-svg" viewBox="0 0 ${hasExpected?460:330} ${hasExpected?250:170}" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <marker id="miniArrowGreen${i}" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#1a6b3c"/></marker>
+          <marker id="miniArrowRed${i}" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#8a2d2d"/></marker>
+          <marker id="miniArrowDash${i}" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#9b8f84"/></marker>
+        </defs>
+        ${evidenceNodes}
+        ${edgeLines}
+        ${midLabels}
+        ${expected?expected.svg:''}
+        ${dist.svg}
+      </svg>
+    </div>`;
+  }).join('');
+
+  document.querySelectorAll('.mini-distractor-card').forEach(card=>{
+    const focus=JSON.parse(card.getAttribute('data-focus')||'[]');
+    const explanation=card.getAttribute('data-explanation')||'';
+    const targetText=card.getAttribute('data-target')||'Distractor';
+    card.addEventListener('click',()=>{if(suppressNextMiniClick){suppressNextMiniClick=false;return;} hideTooltip();scrollToVignette(focus);});
+  });
+
+  // Mini-edge hover is intentionally disabled; node hover carries the clinical rationale.
+
+  document.querySelectorAll('.mini-evidence-node[data-evid]').forEach(node=>{
+    const evid=node.getAttribute('data-evid');
+    const explanation=node.getAttribute('data-explanation')||'';
+    const title=node.getAttribute('data-title')||'Evidence';
+    node.addEventListener('mouseenter',e=>{
+      setLinkedEvidenceState(evid,true);
+      if(kgExplainOpen&&explanation)showTooltip(e,title,explanation);
+    });
+    node.addEventListener('mousemove',e=>{if(kgExplainOpen&&explanation)moveTooltip(e);});
+    node.addEventListener('mouseleave',()=>{setLinkedEvidenceState(evid,false);hideTooltip();});
+    node.addEventListener('click',(e)=>{e.stopPropagation();scrollToVignette([evid]);});
+  });
+  document.querySelectorAll('.mini-expected-node[data-explanation]').forEach(node=>{
+    const explanation=node.getAttribute('data-explanation')||'';
+    const title=node.getAttribute('data-title')||'Expected pattern';
+    if(kgExplainOpen&&explanation){
+      node.addEventListener('mouseenter',e=>showTooltip(e,title,explanation));
+      node.addEventListener('mousemove',e=>moveTooltip(e));
+      node.addEventListener('mouseleave',hideTooltip);
+    }
+  });
+  document.querySelectorAll('.mini-distractor-node[data-explanation]').forEach(node=>{
+    const explanation=node.getAttribute('data-explanation')||'';
+    const title=node.getAttribute('data-title')||'Distractor';
+    if(kgExplainOpen&&explanation){
+      node.addEventListener('mouseenter',e=>showTooltip(e,title,explanation));
+      node.addEventListener('mousemove',e=>moveTooltip(e));
+      node.addEventListener('mouseleave',hideTooltip);
+    }
+  });
+  bindMiniGraphDragging();
+}
+
+function bindMiniGraphDragging(){
+  document.querySelectorAll('.mini-draggable-node[data-mini-node]').forEach(node=>{
+    node.addEventListener('mousedown',e=>{
+      e.stopPropagation();
+      hideTooltip();
+      const svg=node.closest('svg');
+      if(!svg)return;
+      const pt=svg.createSVGPoint();
+      pt.x=e.clientX; pt.y=e.clientY;
+      const local=pt.matrixTransform(svg.getScreenCTM().inverse());
+      activeMiniDrag={
+        card:Number(node.getAttribute('data-mini-card')||0),
+        id:node.getAttribute('data-mini-node'),
+        startX:local.x,
+        startY:local.y,
+        startDx:Number(node.getAttribute('data-dx')||0),
+        startDy:Number(node.getAttribute('data-dy')||0),
+        moved:false
+      };
+      node.classList.add('dragging');
+    });
+  });
+}
+document.addEventListener('mousemove',e=>{
+  if(!activeMiniDrag)return;
+  const svg=document.querySelector(`.mini-draggable-node[data-mini-card="${activeMiniDrag.card}"][data-mini-node="${CSS.escape(activeMiniDrag.id)}"]`)?.closest('svg');
+  if(!svg)return;
+  const pt=svg.createSVGPoint();
+  pt.x=e.clientX; pt.y=e.clientY;
+  const local=pt.matrixTransform(svg.getScreenCTM().inverse());
+  const dx=activeMiniDrag.startDx+(local.x-activeMiniDrag.startX);
+  const dy=activeMiniDrag.startDy+(local.y-activeMiniDrag.startY);
+  if(Math.abs(dx-activeMiniDrag.startDx)>2 || Math.abs(dy-activeMiniDrag.startDy)>2){
+    activeMiniDrag.moved=true;
+    suppressNextMiniClick=true;
+  }
+  setMiniDragOffset(activeMiniDrag.card,activeMiniDrag.id,dx,dy);
+  renderExcludeCards();
+});
+document.addEventListener('mouseup',()=>{
+  if(activeMiniDrag){
+    activeMiniDrag=null;
+    document.querySelectorAll('.mini-draggable-node.dragging').forEach(n=>n.classList.remove('dragging'));
+    setTimeout(()=>{suppressNextMiniClick=false;},80);
+  }
+});
+
+function handleExcludeClick(card,focus){
+  hideTooltip();
+  scrollToVignette(focus);
+}
+
+
+
+function renderTask3CluePanel(){
+  const t=tasks[currentTask]||{};
+  const show=currentTask===3 && !t.regenerated;
+  const sub=document.getElementById('task3SupportSub');
+  if(sub && currentTask===3){
+    if(show){
+      sub.textContent = task3ClueEditMode
+        ? 'Review the question and use Regenerate when ready.'
+        : 'Review the question, then use Regenerate if you want to inspect a revised version. Node hover explains the clinical clues; edges are labels only.';
+    } else {
+      sub.textContent = 'Regenerated version loaded. You can compare it using text, KG, or KG + enriched text.';
+    }
+  }
+  const btn=document.getElementById('task3ClueEditBtn');
+  if(btn){
+    btn.textContent='Regenerate available';
+    btn.classList.toggle('active',task3ClueEditMode);
+  }
+  updateSelectedClueHighlights();
+}
+
+
+function toggleTask3ClueEditMode(force){
+  task3ClueEditMode=false;
+  renderTask3CluePanel();
+}
+
+function updateSelectedClueHighlights(){
+  document.querySelectorAll('.hl-core.remove-selected').forEach(el=>el.classList.remove('remove-selected'));
+  document.querySelectorAll('.kg-node.task3-clue-node,.kg-node.task3-remove-selected').forEach(el=>{
+    el.classList.remove('task3-clue-node','task3-remove-selected','task3-editable');
+  });
+}
+
+
+function updateSelectedClueSummary(){
+  const box=document.getElementById('selectedClueSummary');
+  if(!box)return;
+  const selected=TASK3_CLUE_CANDIDATES.filter(c=>task3SelectedCluesToRemove.has(c.id));
+  if(!selected.length){
+    box.style.display='none';
+    box.innerHTML='';
+    return;
+  }
+  box.style.display='block';
+  box.innerHTML=`Selected clues to remove/weaken:<br>${selected.map(c=>`• ${esc(c.label)}`).join('<br>')}`;
+}
+
+function updateRegenerationIssueDefaults(){
+  const modal=document.getElementById('regenerateModal');
+  if(!modal)return;
+  const selectedIds=[...task3SelectedCluesToRemove];
+  const checks=modal.querySelectorAll('input[type="checkbox"][value]');
+  checks.forEach(input=>{
+    if(input.value==='too_much_evidence') input.checked=selectedIds.length>=3;
+    if(input.value==='answer_named') input.checked=selectedIds.includes('ev_named');
+    if(input.value==='too_obvious') input.checked=selectedIds.includes('ev_named')||selectedIds.includes('ev_bark');
+    if(input.value==='weak_distractors') input.checked=selectedIds.includes('ev_swallow')||selectedIds.includes('ev_well');
+  });
+  updateSelectedClueSummary();
+}
+
+
+function updateTask3SupportSwitch(){
+  const sw=document.getElementById('task3SupportSwitch');
+  if(!sw)return;
+  const isTask3=currentTask===3 && explanationVisible;
+  sw.style.display=isTask3?'flex':'none';
+  if(!isTask3)return;
+  const sub=document.getElementById('task3SupportSub');
+  const t=tasks[currentTask]||{};
+  if(sub){
+    sub.textContent=t.regenerated
+      ? 'Regenerated version: choose text or KG support. Enriched hover text is controlled inside the KG.'
+      : 'Choose text or KG support. Use Regenerate to load a revised version.';
+  }
+  const textBtn=document.getElementById('supportModeText');
+  const kgBtn=document.getElementById('supportModeKg');
+  if(textBtn) textBtn.classList.toggle('active',task3SupportMode==='text');
+  if(kgBtn) kgBtn.classList.toggle('active',task3SupportMode!=='text');
+  const chip=document.getElementById('navChip');
+  if(chip){
+    const label=task3SupportMode==='text'?'Text':(kgExplainOpen?'KG + enriched text':'KG');
+    chip.textContent=(tasks[currentTask]&&tasks[currentTask].regenerated)
+      ? `Regenerated version · ${label}`
+      : label;
+  }
+}
+
+function setTask3SupportMode(mode){
+  task3SupportMode=(mode==='text')?'text':'kg';
+  renderRightSupportPanel({rerenderGraph:true});
+}
+
+function applyTask3SupportMode(shouldRender=true){
+  if(currentTask!==3)return;
+  renderRightSupportPanel({rerenderGraph:!!shouldRender});
+}
+
+function renderActions(){
+  const actions=document.getElementById('actionsSection');
+  if(!actions)return;
+  const t=tasks[currentTask];
+  const isTask3=currentTask===3;
+  const isRegenerated=!!(t&&t.regenerated);
+  if(isTask3 && !isRegenerated){
+    actions.innerHTML=`
+      <button class="btn reject" onclick="openRegenerate()">Regenerate</button>
+      <button class="btn edit-btn" onclick="toggleEdit()" id="editBtn">Revise</button>
+      <button class="btn accept" onclick="acceptQuestion()">Accept &amp; Save</button>
+    `;
+  } else if(isTask3 && isRegenerated){
+    actions.innerHTML=`
+      <button class="btn edit-btn" onclick="toggleEdit()" id="editBtn">Revise this version</button>
+      <button class="btn accept" onclick="acceptQuestion()">Accept &amp; Save</button>
+      <button class="btn reject" onclick="openReject()">Reject</button>
+    `;
+  } else {
+    actions.innerHTML=`
+      <button class="btn accept" onclick="acceptQuestion()">Accept &amp; Save</button>
+      <button class="btn reject" onclick="openReject()">Reject</button>
+      <button class="btn edit-btn" onclick="toggleEdit()" id="editBtn">Revise</button>
+    `;
+  }
+}
+
+function openRegenerate(){
+  updateRegenerationIssueDefaults();
+  const modal=document.getElementById('regenerateModal');
+  if(modal)modal.classList.add('open');
+}
+function closeRegenerate(){
+  const modal=document.getElementById('regenerateModal');
+  if(modal)modal.classList.remove('open');
+}
+function resetCurrentTask(skipConfirm=false){
+  if(!skipConfirm){ requestResetCurrentTask(); return; }
+  tasks[currentTask]=JSON.parse(JSON.stringify(originalTasks[currentTask]));
+  revisedTasks.delete(currentTask);
+  if(currentTask===3){
+    task3SupportMode='kg';
+    task3SelectedCluesToRemove=new Set();
+    task3ClueEditMode=false;
+  }
+  focusedKgNodeId=null;
+  selectedGraphItem=null;
+  toggleEdit(false);
+  loadTask(currentTask);
+  showToast('Task reset to the original version.');
+}
+function applyRegenerate(){
+  try{
+    const removedClues=[...task3SelectedCluesToRemove];
+    tasks[3]=JSON.parse(JSON.stringify(task3ImprovedTemplate));
+    tasks[3].removed_clues=removedClues;
+    task3ClueEditMode=false;
+    closeRegenerate();
+    // loadTask(3) already re-renders the right support panel and Task 3 switch.
+    loadTask(3);
+    const n=removedClues.length;
+    showToast(n?`Regenerated version loaded with ${n} selected clue(s) removed or weakened.`:'Regenerated version loaded. You can inspect it with Text, KG, or KG + enriched text.');
+  }catch(err){
+    console.error(err);
+    alert('Regeneration failed: '+(err&&err.message?err.message:err));
+  }
+}
+
+// ══════════════════════════════════════════════════════════════
+// ACCEPT / BANK / REJECT
+// ══════════════════════════════════════════════════════════════
+function acceptQuestion(){
+  const bank=JSON.parse(localStorage.getItem('resp_mcq_bank')||'[]');
+  const t=tasks[currentTask];
+  bank.push({target:t.target,question_stem:t.question_stem,correct:t.correct,options:t.options,source:t.source,saved_at:new Date().toISOString()});
+  localStorage.setItem('resp_mcq_bank',JSON.stringify(bank));
+  renderBank();
+  showToast('Accepted and saved to question bank');
+}
+function openBank(){renderBank();document.getElementById('bankModal').classList.add('open');}
+function closeBank(){document.getElementById('bankModal').classList.remove('open');}
+function renderBank(){
+  const list=document.getElementById('bankList');
+  const count=document.getElementById('navBankCount');
+  const bank=JSON.parse(localStorage.getItem('resp_mcq_bank')||'[]');
+  if(count)count.textContent=bank.length;
+  if(list){
+    if(!bank.length)list.innerHTML='<div class="study-note">No accepted questions yet.</div>';
+    else list.innerHTML=bank.map((q,i)=>`<div class="bank-card"><h4>${i+1}. ${esc(q.target)}</h4><p><strong>Stem:</strong> ${esc(q.question_stem)}</p><p><strong>Correct:</strong> ${esc(q.correct)}. ${esc(q.options[q.correct])}</p><p><strong>Source:</strong> ${esc(q.source)}</p><div class="bank-actions"><button class="btn reject" onclick="deleteFromBank(${i})">Delete</button></div></div>`).join('');
+  }
+}
+function deleteFromBank(i){const bank=JSON.parse(localStorage.getItem('resp_mcq_bank')||'[]');bank.splice(i,1);localStorage.setItem('resp_mcq_bank',JSON.stringify(bank));renderBank();showToast('Deleted from bank');}
+function openReject(){document.getElementById('rejectModal').classList.add('open');}
+function closeReject(){document.getElementById('rejectModal').classList.remove('open');}
+function submitReject(){closeReject();showToast('Feedback submitted');}
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.style.display='block';setTimeout(()=>t.style.display='none',2200);}
+
+// ── Init ──
+renderBank();
+</script>
+</body>
+</html>
