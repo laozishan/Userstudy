@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>MedMCQ Expert Review Prototype - Neurology</title>
+<title>MedMCQ Expert Review Prototype - Paediatric Respiratory</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=DM+Serif+Display:ital@0;1&display=swap');
 :root{
@@ -199,7 +199,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);fon
 .mini-distractor-head{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 10px;border-bottom:1px solid var(--border);background:var(--surface2)}
 .mini-distractor-title{font-size:13px;font-weight:900;color:var(--text)}
 .mini-distractor-chip{font-size:11px;font-weight:900;border-radius:999px;background:var(--reject-bg);color:var(--reject);padding:2px 8px;white-space:nowrap}
-.mini-distractor-svg{width:100%;height:300px;display:block;background:#fff;overflow:visible}
+.mini-distractor-svg{width:100%;height:250px;display:block;background:#fff}
 .mini-evidence-node{cursor:pointer}
 .mini-evidence-node rect{transition:.12s}
 .mini-evidence-node:hover rect{stroke-width:2.4}
@@ -429,9 +429,9 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);fon
   <div class="modal-box">
     <div style="display:flex;justify-content:space-between;align-items:center"><div class="modal-title">Regenerate this question</div><button class="btn" onclick="closeRegenerate()" style="background:var(--surface2);border:1px solid var(--border)">×</button></div>
     <div class="label" style="margin-top:16px">Problem category</div>
-    <label class="issue"><input type="checkbox" value="answer_cue_stacking"><div><strong>Correct-answer cue stacking</strong><span>Too many classic CVST clues are stacked in one vignette: postpartum state, progressive headache, vomiting, seizure, and papilledema.</span></div></label>
-    <label class="issue"><input type="checkbox" value="direct_answer_cue"><div><strong>Direct answer cue</strong><span>Explicit bilateral papilledema makes the intracranial-hypertension pathway too obvious.</span></div></label>
-    <label class="issue"><input type="checkbox" value="explicit_negative_exclusion"><div><strong>Explicit negative distractor elimination</strong><span>Negative findings such as no fever and no clean arterial-territory deficit make meningitis and lacunar infarct too easy to reject.</span></div></label>
+    <label class="issue"><input type="checkbox" value="answer_cue_stacking"><div><strong>Correct-answer cue stacking</strong><span>Too many classic croup clues are stacked in one vignette: toddler age, viral prodrome, barky cough, stridor, and hoarseness.</span></div></label>
+    <label class="issue"><input type="checkbox" value="direct_answer_cue"><div><strong>Direct answer cue</strong><span>The item points too directly to croup through the steeple sign and the final parent question.</span></div></label>
+    <label class="issue"><input type="checkbox" value="explicit_negative_exclusion"><div><strong>Explicit negative distractor elimination</strong><span>Negative findings such as no drooling or dysphagia make competing diagnoses too easy to reject.</span></div></label>
     <div class="label" style="margin-top:16px">Additional notes (optional)</div>
     <textarea class="review-textarea" id="regenerateFreeText" placeholder="Any additional notes for the revised question or KG?"></textarea>
     <div class="study-note" id="selectedClueSummary" style="margin-top:14px"></div>
@@ -489,11 +489,11 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);fon
     <div class="setup-desc">Configure your medical education question parameters</div>
     <div class="field">
       <div class="field-label">Domain</div>
-      <select class="select-box" id="setupDomain" onchange="switchDomainPage()"><option value="neurology" selected>Neurology</option><option value="pediatrics">Pediatrics</option></select>
+      <select class="select-box" id="setupDomain" onchange="switchDomainPage()"><option value="pediatrics" selected>Pediatrics</option><option value="neurology">Neurology</option></select>
     </div>
     <div class="field">
       <div class="field-label">Topic</div>
-      <select class="select-box" id="setupTopic"><option value="cerebral_hemispheres_vascular_supply" selected>Cerebral hemispheres and vascular supply</option></select>
+      <select class="select-box" id="setupTopic"><option value="respiratory_system" selected>Respiratory System</option></select>
     </div>
     <div class="field">
       <div class="field-label">Difficulty Level</div>
@@ -654,7 +654,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);fon
 let selectedDiff='easy', selectedMode='new', selectedPickerTask=null;
 
 function switchDomainPage(){
-  const domain=document.getElementById('setupDomain')?.value||'neurology';
+  const domain=document.getElementById('setupDomain')?.value||'pediatrics';
   const onPediatrics=location.pathname.toLowerCase().endsWith('/pediatrics.html');
   if(domain==='pediatrics'&&!onPediatrics){location.href='pediatrics.html';return true;}
   if(domain==='neurology'&&onPediatrics){location.href='index.html';return true;}
@@ -666,9 +666,9 @@ function startStudy(){if(switchDomainPage())return;document.getElementById('setu
 function goSetup(){document.getElementById('appPage').style.display='none';document.getElementById('setupPage').style.display='flex';}
 
 const pickerQuestions=[
-  {id:1,title:'A 66-year-old man with fluent aphasia',domain:'Neurology',date:'2026-03-02',vignette:'A right-handed man has fluent paraphasic speech, impaired command following, right visual field loss, and atrial fibrillation off anticoagulation.',stem:'Which vascular territory is most likely involved?'},
-  {id:2,title:'A 70-year-old man with amaurosis fugax',domain:'Neurology',date:'2026-03-09',vignette:'A man has transient left monocular curtain-like vision loss, transient right hand weakness, vascular risk factors, and a left cervical bruit.',stem:'Which vascular lesion best explains both types of transient symptoms?'},
-  {id:3,title:'A postpartum woman with progressive headache and seizure',domain:'Neurology',date:'2026-03-16',vignette:'A postpartum woman has progressive headache, vomiting, a generalized seizure, papilledema, no fever, and no clear arterial-territory focal deficit.',stem:'What is the most likely diagnosis?'},
+  {id:1,title:'A 2-year-old boy with seal-bark cough and stridor',domain:'Paediatrics',date:'2026-01-12',vignette:'A 2-year-old boy is brought to the emergency department with sudden onset noisy breathing overnight after two days of runny nose and low-grade fever.',stem:'What is the most likely diagnosis?'},
+  {id:2,title:'A 14-month-old boy with poor weight gain and greasy stools',domain:'Paediatrics',date:'2026-01-18',vignette:'A 14-month-old boy with poor weight gain, persistent wet cough, three episodes of pneumonia, and bulky pale greasy stools.',stem:'What is the most likely diagnosis?'},
+  {id:3,title:'A 7-year-old boy with lifelong wet cough and ear infections',domain:'Paediatrics',date:'2026-02-04',vignette:'A 7-year-old boy with a wet, mucus-like cough since infancy, neonatal respiratory distress, and recurrent ear infections requiring ear tubes. Growth is normal.',stem:'What is the most likely diagnosis?'},
 ];
 
 function openPicker(){renderPicker(pickerQuestions);document.getElementById('pickerModal').classList.add('open');}
@@ -683,234 +683,199 @@ function confirmPicker(){closePicker();}
 // ══════════════════════════════════════════════════════════════
 const tasks={
 1:{
-  title:'Task 1 — Textual explanation only',chip:'Explanation: Text only',condition:'Wernicke aphasia · MCA inferior division · text explanation only',mode:'text',difficulty:'Easy',target:'Left MCA inferior division',source:'Neurology · Aphasia and vascular localization',correct:'A',
-  question_stem:'Which vascular territory is most likely involved?',
-  vignette:'A 66-year-old right-handed man is evaluated after his daughter noticed that he was speaking strangely. He talks fluently and at normal speed, but his sentences contain incorrect words and do not answer the question asked. When asked to close his eyes or raise his left hand, he smiles and continues speaking without following the command. He seems unaware that anything is wrong. There is no clear facial droop, and strength is full in all extremities. Confrontation testing suggests loss of vision in the right visual field. His past history includes atrial fibrillation, for which he stopped taking anticoagulation two months ago.',
-  options:{A:'Left MCA inferior division',B:'Left MCA deep territory',C:'Right MCA superior division',D:'Left ACA territory',E:'Right PCA territory'},
+  title:'Task 1 — Textual explanation only',chip:'Explanation: Text only',
+  condition:'Primary ciliary dyskinesia · Chronic wet cough · text explanation only',mode:'text',
+  difficulty:'Easy',target:'Primary ciliary dyskinesia',source:"Nelson's Essentials · Chronic Wet Cough",correct:'C',
+  question_stem:'What is the most likely diagnosis?',
+  vignette:'A 7-year-old boy is brought to clinic for a persistent cough. His parents report that he has had a wet, mucus-like cough for as long as they can remember, often worsening in the mornings. He was born at term but experienced respiratory distress shortly after birth, requiring a brief stay in the NICU. Throughout early childhood, he had recurrent ear infections necessitating multiple sets of ear tubes. On examination, his growth parameters are at the 50th percentile. Auscultation reveals mild hyperinflation and coarse crackles over both lung fields. He has no history of fatty stools.',
+  options:{A:'Cystic fibrosis',B:'Humoral immunodeficiency',C:'Primary ciliary dyskinesia',D:'Gastroesophageal reflux',E:'Asthma'},
   supporting:[
-    {phrase:'right-handed',why:'Right-handed patients are usually left-hemisphere language dominant, so fluent receptive aphasia localizes to the left hemisphere.'},
-    {phrase:'talks fluently and at normal speed',why:'Fluent speech with preserved output points away from Broca aphasia and toward Wernicke aphasia.'},
-    {phrase:'incorrect words and do not answer the question asked',why:'Paraphasic, nonsensical speech with impaired meaning is characteristic of Wernicke aphasia.'},
-    {phrase:'without following the command',why:'Failure to follow commands indicates impaired comprehension, the key deficit in Wernicke aphasia.'},
-    {phrase:'right visual field',why:'A right homonymous visual field deficit localizes posterior to the optic chiasm in the left hemisphere, compatible with a posterior temporal/parietal MCA cortical lesion.'},
-    {phrase:'atrial fibrillation',why:'Atrial fibrillation after stopping anticoagulation is a strong cardioembolic stroke risk factor, favoring a cortical arterial territory infarct.'},
+    {phrase:'wet, mucus-like cough for as long as they can remember',why:'A lifelong wet cough from birth indicates a fundamental defect in airway clearance — the hallmark of a primary mucociliary disorder.'},
+    {phrase:'respiratory distress shortly after birth, requiring a brief stay in the NICU',why:'Neonatal respiratory distress in a term infant is a characteristic early presentation of PCD; cilia are responsible for clearing lung fluid after delivery.'},
+    {phrase:'recurrent ear infections necessitating multiple sets of ear tubes',why:'Recurrent otitis media requiring tympanostomy tubes reflects ciliary dysfunction in the Eustachian tube — a distinctive PCD pattern.'},
+    {phrase:'growth parameters are at the 50th percentile',why:'Normal growth contrasts with cystic fibrosis, where pancreatic insufficiency causes failure to thrive. PCD does not affect exocrine function.'},
+    {phrase:'no history of fatty stools',why:'Absence of steatorrhoea confirms normal pancreatic exocrine function, effectively excluding cystic fibrosis.'},
   ],
   distractors:[
-    {letter:'B',disease:'Left MCA deep territory',plausible:'Can cause contralateral face/arm weakness from lenticulostriate involvement.',incorrect:'Deep MCA infarcts classically produce pure motor deficits or sensorimotor lacunar syndromes, not isolated fluent aphasia with cortical visual field involvement.'},
-    {letter:'C',disease:'Right MCA superior division',plausible:'Can cause cortical deficits and neglect.',incorrect:'Right MCA superior division would cause left-sided neglect and left face/arm weakness, not dominant-language Wernicke aphasia or right visual field loss.'},
-    {letter:'D',disease:'Left ACA territory',plausible:'Left ACA can affect executive function and contralateral leg motor control.',incorrect:'ACA territory classically causes contralateral leg-predominant weakness and abulia, not fluent receptive aphasia.'},
-    {letter:'E',disease:'Right PCA territory',plausible:'PCA lesions can cause homonymous visual field deficits.',incorrect:'A right PCA lesion causes left visual field loss and does not explain dominant receptive aphasia.'},
+    {letter:'A',disease:'Cystic fibrosis',plausible:'CF causes chronic wet cough, recurrent pneumonia, and can present in early childhood.',incorrect:'CF typically presents with failure to thrive and steatorrhoea. This child has normal growth and no fatty stools. Neonatal respiratory distress followed by recurrent otitis media is the PCD pattern.'},
+    {letter:'B',disease:'Humoral immunodeficiency',plausible:'Causes recurrent infections including otitis media and respiratory infections.',incorrect:'Does not explain neonatal respiratory distress in a term infant, nor the lifelong wet cough suggestive of a structural clearance defect.'},
+    {letter:'D',disease:'Gastroesophageal reflux',plausible:'Can cause chronic cough in children through laryngeal irritation or aspiration.',incorrect:'GERD does not explain neonatal respiratory distress or recurrent otitis media requiring ear tubes.'},
+    {letter:'E',disease:'Asthma',plausible:'Common cause of chronic cough and hyperinflation in childhood.',incorrect:'Asthma does not account for neonatal respiratory distress, recurrent otitis media requiring tubes, or a consistently productive wet cough since birth.'},
   ]
 },
 2:{
-  title:'Task 2 — Knowledge graph explanation only',chip:'Explanation: KG only',condition:'Amaurosis fugax · carotid stenosis · KG explanation only',mode:'kg',difficulty:'Easy',target:'Left internal carotid artery stenosis',source:'Neurology · TIA and carotid localization',correct:'A',
-  question_stem:'Which vascular lesion best explains both types of transient symptoms?',
-  vignette:'A 70-year-old man reports three brief episodes over the past week in which vision in his left eye went dark like a curtain coming down. Each episode lasted about five minutes and resolved completely. Yesterday he also had a 10-minute episode of clumsiness and weakness of the right hand while buttoning his shirt. He has smoked for 45 years and has hypercholesterolemia. Examination between episodes is normal. A soft bruit is heard just below the angle of the left jaw. There is no history of seizure or migraine.',
-  options:{A:'Left internal carotid artery stenosis',B:'Right internal carotid artery stenosis',C:'Left posterior cerebral artery stenosis',D:'Superior sagittal sinus thrombosis',E:'Right thalamoperforator artery occlusion'},
+  title:'Task 2 — Knowledge graph explanation only',chip:'Explanation: KG only',
+  condition:'Cystic fibrosis · Chronic wet cough · KG explanation only',mode:'kg',
+  difficulty:'Medium',target:'Cystic fibrosis',source:"Nelson's Essentials · Chronic Wet Cough",correct:'B',
+  question_stem:'What is the most likely diagnosis?',
+  vignette:'A 14-month-old boy is brought to the clinic by his parents due to poor weight gain and a persistent cough. Despite eating well, his weight has remained stagnant for the past four months. He has had three episodes of pneumonia requiring antibiotics since infancy and frequently has a wet-sounding cough. His parents describe his stools as bulky, pale, and unusually greasy. On examination, he appears thin. Mild digital clubbing is noted, and auscultation reveals diffuse crackles. His parents report no history of ear infections or hearing problems.',
+  options:{A:'Primary ciliary dyskinesia',B:'Cystic fibrosis',C:'Humoral immunodeficiency',D:'Gastroesophageal reflux with aspiration',E:'Asthma'},
   supporting:[
-    {phrase:'vision in his left eye went dark',why:'Transient monocular vision loss is amaurosis fugax from ipsilateral retinal ischemia.'},
-    {phrase:'weakness of the right hand',why:'Right hand weakness localizes to the left cerebral hemisphere/anterior circulation.'},
-    {phrase:'smoked for 45 years',why:'Long-term smoking plus hypercholesterolemia supports atherosclerotic large-artery disease.'},
-    {phrase:'left jaw',why:'A cervical bruit below the jaw localizes to the left carotid artery.'},
-    {phrase:'no history of seizure or migraine',why:'Absence of seizure or migraine history weakens common mimics of transient visual or neurologic episodes.'},
+    {phrase:'poor weight gain',why:'Failure to thrive despite adequate oral intake indicates malabsorption — a hallmark of cystic fibrosis pancreatic insufficiency.'},
+    {phrase:'bulky, pale, and unusually greasy',why:'Steatorrhoea directly reflects exocrine pancreatic insufficiency, which occurs in ~85% of CF patients.'},
+    {phrase:'three episodes of pneumonia requiring antibiotics since infancy',why:'Recurrent lower respiratory tract infections reflect impaired mucociliary clearance due to viscous mucus in the CF airways.'},
+    {phrase:'wet-sounding cough',why:'Chronic productive cough indicates ongoing airway secretion retention — a key feature of CF lung disease.'},
+    {phrase:'Mild digital clubbing',why:'Digital clubbing is a sign of chronic hypoxaemia and lung disease, common in established CF.'},
   ],
   distractors:[
-    {letter:'B',disease:'Right internal carotid artery stenosis',plausible:'Can cause anterior circulation TIAs.',incorrect:'Right ICA disease would cause right monocular symptoms or left hemispheric deficits; this patient has left monocular vision loss and right hand weakness, pointing to the left ICA.'},
-    {letter:'C',disease:'Left posterior cerebral artery stenosis',plausible:'Can produce visual symptoms.',incorrect:'PCA disease causes homonymous visual field loss, not monocular curtain-like visual loss. It also does not explain a left cervical carotid bruit.'},
-    {letter:'D',disease:'Superior sagittal sinus thrombosis',plausible:'Can cause transient neurologic symptoms and headache/seizures.',incorrect:'There is no headache, papilledema, seizure, or intracranial hypertension. The monocular retinal ischemia and carotid bruit point to carotid stenosis.'},
-    {letter:'E',disease:'Right thalamoperforator artery occlusion',plausible:'Can cause small-vessel neurologic deficits.',incorrect:'A thalamoperforator occlusion would not cause recurrent left monocular vision loss or a cervical carotid bruit, and lacunar deficits are not typically recurrent retinal TIAs.'},
+    {letter:'A',disease:'Primary ciliary dyskinesia',plausible:'PCD causes chronic wet cough and recurrent pneumonia via impaired mucociliary clearance.',incorrect:'PCD does not affect the pancreas; it does not cause steatorrhoea or failure to thrive. The greasy stools and poor weight gain with normal intake specifically point away from PCD.'},
+    {letter:'C',disease:'Humoral immunodeficiency',plausible:'Can cause recurrent sinopulmonary infections in childhood.',incorrect:'Does not explain steatorrhoea, failure to thrive, or digital clubbing.'},
+    {letter:'D',disease:'GERD with aspiration',plausible:'Chronic aspiration can cause recurrent cough and pneumonia in infants.',incorrect:'GERD does not cause steatorrhoea or digital clubbing. Weight issues in GERD relate to feeding avoidance, not malabsorption.'},
+    {letter:'E',disease:'Asthma',plausible:'Chronic cough and recurrent respiratory symptoms are common in paediatric asthma.',incorrect:'Asthma does not produce steatorrhoea, failure to thrive, recurrent bacterial pneumonia, or digital clubbing.'},
   ],
   kgData:{
     evidence:[
-      {id:'ev1',label:'Transient left monocular darkness',short:'Left monocular darkness',phrase:'vision in his left eye went dark'},
-      {id:'ev3',label:'Transient right hand weakness',short:'Right hand weakness',phrase:'weakness of the right hand'},
-      {id:'ev4',label:'Smoking plus hypercholesterolemia',short:'Smoking + hyperlipidemia',phrase:['smoked for 45 years','hypercholesterolemia']},
-      {id:'ev6',label:'Left cervical carotid bruit',short:'Left jaw bruit',phrase:['soft bruit','left jaw'],hiddenInMain:true},
-      {id:'ev7',label:'No seizure or migraine history',short:'No seizure/migraine',phrase:'no history of seizure or migraine',hiddenInMain:true},
+      {id:'ev1',label:'Failure to thrive',short:'Failure to thrive',phrase:'poor weight gain'},
+      {id:'ev2',label:'Steatorrhea',short:'Steatorrhea',phrase:'bulky, pale, and unusually greasy'},
+      {id:'ev3',label:'Recurrent lower\nrespiratory infections',short:'Recurrent LRTIs',phrase:'three episodes of pneumonia requiring antibiotics since infancy',hiddenInMain:true},
+      {id:'ev4',label:'Chronic productive\ncough',short:'Chronic productive cough',phrase:'wet-sounding cough',hiddenInMain:true},
+      {id:'ev5',label:'Mild digital clubbing',short:'Digital clubbing',phrase:'Mild digital clubbing',hiddenInMain:true},
+      {id:'ev6',label:'No ear/hearing\ninvolvement',short:'No ear/hearing involvement',phrase:'no history of ear infections or hearing problems',hiddenInMain:true},
     ],
     findings:[
-      {id:'cf1',label:'Amaurosis fugax',nodeType:'symptom',from:['ev1'],tooltip:'Transient monocular darkness is amaurosis fugax, reflecting retinal ischemia from the ipsilateral ophthalmic artery, a branch of the ICA.'},
-      {id:'cf2',label:'Left hemispheric motor TIA',nodeType:'symptom',from:['ev3'],tooltip:'Right hand weakness localizes to transient ischemia in the left motor cortex or corticospinal tract, supplied by the left ICA/MCA circulation.'},
-      {id:'cf3',label:'Large-artery atherosclerotic risk',nodeType:'history',from:['ev4'],tooltip:'Long-term smoking with hypercholesterolemia supports large-artery atherosclerotic disease, the mechanism underlying ICA stenosis.'},
-      {id:'cf4',label:'Left carotid bruit',nodeType:'sign',from:['ev6'],mergedEvidence:'ev6',tooltip:'A soft bruit just below the left jaw is an auscultatory sign of turbulent flow in the left carotid artery, localizing the lesion to the left ICA.'},
+      {id:'cf1',label:'Failure to thrive',nodeType:'sign',from:['ev1'],
+        tooltip:'Failure to thrive fits pancreatic malabsorption: calories are lost despite adequate intake because digestive enzyme delivery is impaired.'},
+      {id:'cf2',label:'Steatorrhea',nodeType:'symptom',from:['ev2'],
+        tooltip:'Bulky, greasy stools indicate steatorrhea. This points to fat malabsorption from exocrine pancreatic insufficiency rather than a purely respiratory disorder.'},
+      {id:'cf3',label:'Recurrent lower\nrespiratory infections',nodeType:'history',from:['ev3'],
+        mergedEvidence:'ev3',
+        tooltip:'Repeated pneumonia alone could fit PCD or humoral immunodeficiency. The combination with steatorrhoea and failure to thrive makes CF the only unifying explanation.'},
+      {id:'cf4',label:'Chronic productive\ncough',nodeType:'symptom',from:['ev4'],
+        mergedEvidence:'ev4',
+        tooltip:'Wet/productive cough indicates retained airway secretions. In CF, thick mucus is hard to clear and becomes a nidus for recurrent infection.'},
+      {id:'cf5',label:'Digital clubbing',nodeType:'sign',from:['ev5'],
+        mergedEvidence:'ev5',
+        tooltip:'Digital clubbing is a red flag for chronic suppurative lung disease. It should push the reasoning away from uncomplicated asthma.'},
     ],
     mechs:[
-      {id:'m1',label:'Left ICA atherosclerotic stenosis',nodeType:'mechanism',from:['cf1','cf2','cf3','cf4'],tooltip:'Amaurosis fugax plus a contralateral hand TIA localize to the left ICA; the bruit supports the anatomic side and the risk factors support atherosclerotic stenosis.'}
+      {id:'m1',label:'Exocrine pancreatic\ninsufficiency',nodeType:'mechanism',from:['cf1','cf2'],
+        tooltip:'Thick secretions obstruct pancreatic ducts, limiting pancreatic enzyme delivery. The downstream chain is fat malabsorption → steatorrhea → poor weight gain.'},
+      {id:'m2',label:'Impaired mucociliary\nclearance',nodeType:'mechanism',from:['cf3','cf4'],
+        tooltip:'Thick airway mucus impairs mucociliary clearance. Retained secretions predispose to recurrent infection and chronic structural airway damage.'},
+      {id:'m3',label:'Chronic lung disease',nodeType:'disorder',from:['cf5'],
+        tooltip:'Clubbing links the recurrent infection and crackles to chronic lung disease. It is not expected in uncomplicated asthma or reflux.'},
     ],
-    dx:{id:'dx',label:'Left internal carotid artery stenosis',nodeType:'diagnosis',from:['m1'],tooltip:'Left ICA stenosis unifies ipsilateral amaurosis fugax, contralateral right hand weakness, a left cervical bruit, and atherosclerotic vascular risk.'},
+    dx:{id:'dx',label:'Cystic fibrosis',nodeType:'diagnosis',from:['m1','m2','m3'],
+      tooltip:'The strongest CF synthesis is multi-system: pancreatic insufficiency explains greasy stools and poor growth, while impaired airway clearance explains recurrent pneumonia, wet cough, crackles, and clubbing.'},
     excludeCards:[
-      {target:'Right internal carotid artery stenosis',supports:[],against:['ev3','ev1','ev6'],expected:'Right eye symptoms\nor left body weakness',expectedExplanation:'Right ICA stenosis is expected to cause right monocular ischemia or left-sided hemispheric symptoms.',explanation:'Right ICA disease is directionally wrong: right hand weakness localizes to the left hemisphere, and the left eye/left bruit point to left ICA.'},
-      {target:'Left posterior cerebral artery stenosis',supports:[],against:['ev1','ev3','ev6'],expected:'Homonymous visual field loss\noccipital syndrome',expectedExplanation:'PCA stenosis causes contralateral homonymous visual field symptoms, not monocular retinal ischemia.',explanation:'Monocular curtain-like visual loss, right hand weakness, and a carotid bruit point to ICA/anterior circulation rather than PCA.'},
-      {target:'Superior sagittal sinus thrombosis',supports:[],against:['ev1','ev6','ev7'],expected:'Headache / papilledema\nseizure or intracranial hypertension pattern',expectedExplanation:'Venous sinus thrombosis is expected to show intracranial hypertension, headache, papilledema, or seizures.',explanation:'The recurrent retinal/hemispheric TIAs with carotid bruit are arterial, not venous sinus thrombosis.'},
-      {target:'Right thalamoperforator artery occlusion',supports:[],against:['ev3','ev1','ev6'],expected:'Left-sided lacunar syndrome\nno retinal ischemia',expectedExplanation:'A right thalamoperforator lesion is expected to produce left-sided lacunar sensory-motor deficits, not right hand weakness or recurrent monocular retinal TIAs.',explanation:'Right hand weakness localizes to the left hemisphere, and a small deep perforator occlusion cannot explain left amaurosis fugax or left carotid bruit.'},
+      {cue:'Recurrent pneumonia + wet cough',target:'Primary ciliary dyskinesia',supports:['ev3','ev4'],against:['ev2','ev6'],
+        expected:'Neonatal RD\nrecurrent otitis media',
+        expectedExplanation:'PCD often has neonatal respiratory distress and recurrent otitis media. These expected PCD clues are not established in the vignette.',
+        explanation:'PCD is plausible because recurrent pneumonia and chronic wet cough can result from impaired mucociliary clearance. It is ruled out by the separate gastrointestinal malabsorption pattern, which PCD does not cause.'},
+      {cue:'Greasy stools + poor weight gain',target:'Humoral immunodeficiency',supports:['ev3'],against:['ev2','ev1'],
+        expected:'Low immunoglobulins\npoor vaccine response',
+        expectedExplanation:'Humoral immunodeficiency would be supported by antibody-defect clues such as low immunoglobulins or poor vaccine response. These are not established in the vignette.',
+        explanation:'Humoral immunodeficiency can cause recurrent sinopulmonary infection, but it does not explain steatorrhoea or failure to thrive despite eating well. Those GI clues point to pancreatic insufficiency rather than antibody failure.'},
+      {cue:'Recurrent pneumonia + greasy stools',target:'GERD with aspiration',supports:['ev3'],against:['ev2'],
+        expected:'Reflux / choking\nwith feeds',
+        expectedExplanation:'GERD with aspiration would be supported by reflux, choking, or cough during feeds. These expected clues are not established in the vignette.',
+        explanation:'GERD with aspiration may explain recurrent respiratory symptoms, but it does not cause bulky greasy stools. The presence of steatorrhoea shifts the explanation toward cystic fibrosis with pancreatic insufficiency.'},
+      {cue:'Digital clubbing + recurrent pneumonia',target:'Asthma',supports:['ev4'],against:['ev5','ev2'],
+        expected:'Episodic wheeze\ntrigger history',
+        expectedExplanation:'Asthma would be supported by episodic wheeze or a trigger history. These expected asthma clues are not established in the vignette.',
+        explanation:'Asthma can cause cough and wheeze, but digital clubbing and recurrent bacterial pneumonia indicate chronic suppurative lung disease. Those findings are not typical for uncomplicated asthma.'},
     ]
   }
 },
 3:{
-  title:'Task 3 — Text + Knowledge graph explanation',chip:'Explanation: Text + KG',condition:'Postpartum headache · cerebral venous sinus thrombosis · Text + KG',mode:'both',difficulty:'Easy',target:'Cerebral venous sinus thrombosis',source:'Neurology · Postpartum headache and seizure',correct:'A',
+  title:'Task 3 — Question refinement',chip:'Explanation: KG support',
+  condition:'Croup · question refinement task',mode:'both',regenerated:false,
+  difficulty:'Easy',target:'Croup',source:"Nelson's Essentials · Acute Stridor",correct:'C',
   question_stem:'What is the most likely diagnosis?',
-  vignette:'A 30-year-old woman presents five days after an uncomplicated delivery because of worsening headache and vomiting. The headache began the day after delivery and has become more severe each day. On the morning of presentation, she had a generalized tonic-clonic seizure lasting two minutes. She is drowsy afterward but can answer questions. There is no fever. Examination shows bilateral papilledema. Strength, language, and visual field testing are otherwise without a clear focal deficit.',
-  options:{A:'Cerebral venous sinus thrombosis',B:'Migraine with aura',C:'Reversible cerebral vasoconstriction syndrome (RCVS)',D:'Lacunar infarction of the internal capsule',E:'Acute bacterial meningitis'},
+  vignette:'A 2-year-old boy is brought to the emergency department because of noisy breathing. For the past two days, he has had a runny nose, low-grade fever, and mild sore throat. His parents report that his cough sounds exactly like a “seal bark.” On examination, he has inspiratory stridor, a hoarse voice, and subglottic edema on neck radiograph with a classic steeple sign. He is alert, playful, and sitting comfortably in his mother’s lap. He has no drooling, no difficulty swallowing, is able to drink water normally, and shows no signs of epiglottitis. His parents ask whether this could be croup.',
+  options:{A:'Epiglottitis',B:'Bacterial tracheitis',C:'Croup',D:'Foreign body aspiration',E:'Retropharyngeal abscess'},
   supporting:[
-    {phrase:'five days after an uncomplicated delivery',why:'The postpartum period is a hypercoagulable state and is a major risk factor for cerebral venous sinus thrombosis.'},
-    {phrase:'worsening headache and vomiting',why:'Progressive headache with vomiting suggests raised intracranial pressure rather than a benign primary headache.'},
-    {phrase:'vomiting',why:'Vomiting is an additional raised-intracranial-pressure clue and can also make meningitis clinically plausible before fever/meningismus are checked.'},
-    {phrase:'generalized tonic-clonic seizure',why:'Seizure is common in CVST because venous congestion can irritate cortex or cause venous infarction.'},
-    {phrase:'There is no fever',why:'Absence of fever argues against acute bacterial meningitis as the primary explanation.'},
-    {phrase:'bilateral papilledema',why:'Papilledema is objective evidence of raised intracranial pressure, a classic CVST clue.'},
-    {phrase:'without a clear focal deficit',why:'CVST can present with headache, seizure, and intracranial hypertension without a clean arterial-territory focal deficit.'},
+    {phrase:'2-year-old boy',why:'Croup is most common in toddlers, whose narrow subglottic airway is more easily obstructed by edema.'},
+    {phrase:'runny nose, low-grade fever, and mild sore throat',why:'A mild viral prodrome fits viral laryngotracheobronchitis.'},
+    {phrase:'sounds exactly like a “seal bark.”',why:'A barky cough is a classic symptom of croup and reflects laryngeal/subglottic narrowing.'},
+    {phrase:'inspiratory stridor, a hoarse voice',why:'Stridor and hoarseness localize the process to the upper airway, especially the laryngeal/subglottic region.'},
+    {phrase:'classic steeple sign',why:'The steeple sign reflects subglottic narrowing on neck radiograph and supports croup.'},
+    {phrase:'alert, playful, and sitting comfortably',why:'A well, non-toxic appearance fits uncomplicated croup more than severe bacterial causes of stridor.'},
+    {phrase:'no drooling, no difficulty swallowing',why:'Normal swallowing and absence of drooling make epiglottitis and retropharyngeal abscess less likely.'},
   ],
   distractors:[
-    {letter:'B',disease:'Migraine with aura',plausible:'Migraine can cause headache and transient neurologic symptoms.',incorrect:'Progressive postpartum headache with vomiting, seizure, and papilledema is not a typical migraine aura pattern.'},
-    {letter:'C',disease:'Reversible cerebral vasoconstriction syndrome (RCVS)',plausible:'RCVS can occur postpartum and cause headache and seizures.',incorrect:'RCVS classically presents with recurrent thunderclap headaches rather than a gradually worsening pressure-like headache. Progressive course and papilledema are not typical RCVS features.'},
-    {letter:'D',disease:'Lacunar infarction of the internal capsule',plausible:'Can cause acute neurologic deficits.',incorrect:'Internal capsule lacunar infarction causes focal pure motor or sensorimotor deficits, not progressive headache, papilledema, and seizure.'},
-    {letter:'E',disease:'Acute bacterial meningitis',plausible:'Can cause headache, vomiting, altered mental status, and seizure.',incorrect:'Meningitis would usually have fever, meningismus, and infectious CSF pattern; papilledema with postpartum hypercoagulability points to CVST.'},
+    {letter:'A',disease:'Epiglottitis',plausible:'Fever and stridor overlap with acute upper-airway obstruction.',incorrect:'The item explicitly gives no drooling/dysphagia and even states no epiglottitis, making the distractor artificially weak.'},
+    {letter:'B',disease:'Bacterial tracheitis',plausible:'Can cause fever, stridor, and airway obstruction.',incorrect:'Non-toxic appearance and low-grade fever undercut the usual severe bacterial pattern.'},
+    {letter:'D',disease:'Foreign body aspiration',plausible:'Toddler with noisy breathing can raise concern for aspiration.',incorrect:'The URI prodrome, barky cough, and steeple sign overdetermine croup.'},
+    {letter:'E',disease:'Retropharyngeal abscess',plausible:'Fever and upper-airway symptoms may overlap.',incorrect:'No dysphagia/drooling plus barky cough make this too easy to reject.'},
   ],
   kgData:{
-  evidence:[
-    {id:'ev1',  label:'Postpartum day 5',              short:'Postpartum day 5',   phrase:'five days after an uncomplicated delivery'},
-    {id:'ev2',  label:'Progressive headache',          short:'Worsening headache', phrase:'worsening headache'},
-    {id:'ev8',  label:'Vomiting',                      short:'Vomiting',           phrase:'vomiting'},
-    {id:'ev5',  label:'Bilateral papilledema',         short:'Papilledema',        phrase:'bilateral papilledema'},
-    {id:'ev3',  label:'Generalized tonic-clonic seizure', short:'Generalized seizure', phrase:'generalized tonic-clonic seizure'},
-    {id:'ev4',  label:'No fever',                      short:'No fever',           phrase:'There is no fever',                                             hiddenInMain:true},
-    {id:'ev6',  label:'No clear focal deficit',        short:'No focal deficit',   phrase:'without a clear focal deficit',                                 hiddenInMain:true},
-    {id:'ev_rcvs', label:'No thunderclap onset',       short:'No thunderclap',     phrase:'headache began the day after delivery and has become more severe each day', hiddenInMain:true},
-  ],
-  findings:[
-    {id:'cf1', label:'Postpartum hypercoagulable state', nodeType:'history',  from:['ev1'],
-     tooltip:'The postpartum period is a prothrombotic state and a major risk context for CVST in young women. Day 5 is within the peak risk window.'},
-    {id:'cf2', label:'Progressive headache + vomiting',  nodeType:'symptom',  from:['ev2','ev8'],
-     tooltip:'A headache beginning the day after delivery and escalating over days, accompanied by vomiting, fits raised intracranial pressure from impaired venous drainage rather than a primary headache disorder.'},
-    {id:'cf3', label:'Bilateral papilledema',            nodeType:'sign',     from:['ev5'],
-     tooltip:'Bilateral papilledema is objective evidence of raised intracranial pressure. In a postpartum patient with progressive headache, this strongly supports venous outflow obstruction.'},
-    {id:'cf4', label:'Generalized tonic-clonic seizure', nodeType:'symptom',  from:['ev3'],
-     tooltip:'A new generalized seizure in the postpartum period is consistent with CVST: venous congestion raises cortical excitability and venous infarction can generate a seizure focus.'},
-    {id:'cf5', label:'No fever',                         nodeType:'exclusion',from:['ev4'], hiddenInMain:true,
-     tooltip:'Absence of fever weakens acute bacterial meningitis as the primary explanation.'},
-    {id:'cf6', label:'No arterial-territory focal deficit', nodeType:'exclusion', from:['ev6'], hiddenInMain:true,
-     tooltip:'The absence of a clean focal motor or language deficit weakens lacunar or arterial MCA infarction and fits diffuse venous congestion.'},
-  ],
-  mechs:[
-    {id:'m_risk', label:'Postpartum hypercoagulability',        nodeType:'mechanism', from:['cf1'],
-     tooltip:'Postpartum physiology increases coagulation factor levels and reduces fibrinolysis, creating a prothrombotic state that predisposes to dural sinus thrombosis.'},
-    {id:'m_icp',  label:'Venous outflow obstruction → raised ICP', nodeType:'mechanism', from:['cf2','cf3'],
-     tooltip:'Thrombosis of a major dural sinus impairs CSF resorption and venous drainage, raising intracranial pressure. This produces progressive headache, vomiting, and — when severe — papilledema.'},
-    {id:'m_sz',   label:'Venous cortical congestion → seizure',  nodeType:'mechanism', from:['cf4'],
-     tooltip:'Venous congestion or venous infarction irritates cortex directly. A new generalised seizure in this context reflects cortical hyperexcitability from venous stasis, not an arterial event.'},
-  ],
-  dx:{
-    id:'dx', label:'Cerebral venous sinus thrombosis', nodeType:'diagnosis',
-    from:['m_risk','m_icp','m_sz'],
-    tooltip:'CVST unifies three independent pathways: postpartum hypercoagulability as the predisposing mechanism, raised intracranial pressure from venous outflow obstruction, and cortical seizure from venous congestion — without a clean arterial-territory focal deficit.'
+    evidence:[
+      {id:'ev_age',label:'Toddler age\n(2 years)',short:'Toddler age',phrase:'2-year-old boy'},
+      {id:'ev_uri',label:'Viral URI\nprodrome',short:'Viral URI prodrome',phrase:'runny nose, low-grade fever, and mild sore throat'},
+      {id:'ev_bark',label:'Seal-bark\ncough',short:'Seal-bark cough',phrase:'sounds exactly like a “seal bark.”'},
+      {id:'ev_stridor',label:'Stridor +\nhoarseness',short:'Stridor + hoarseness',phrase:'inspiratory stridor, a hoarse voice'},
+      {id:'ev_steeple',label:'Classic\nsteeple sign',short:'Classic steeple sign',phrase:'classic steeple sign'},
+      {id:'ev_well',label:'Non-toxic\nappearance',short:'Non-toxic appearance',phrase:'alert, playful, and sitting comfortably'},
+      {id:'ev_swallow',label:'No drooling\nor dysphagia',short:'No drooling/dysphagia',phrase:'no drooling, no difficulty swallowing'},
+    ],
+    findings:[
+      {id:'cf_age',label:'Peak age for\ncroup',nodeType:'demographic',from:['ev_age'],tooltip:'In toddlers, the subglottic airway is relatively narrow. Even modest viral edema can create audible upper-airway obstruction.'},
+      {id:'cf_viral',label:'Viral upper respiratory\nprodrome',nodeType:'history',from:['ev_uri'],tooltip:'Croup usually begins after a short viral URI. This timing separates it from abrupt choking and from primary bacterial airway infection.'},
+      {id:'cf_bark',label:'Seal-bark\ncough',nodeType:'symptom',from:['ev_bark'],tooltip:'A barky cough comes from turbulent airflow through a narrowed laryngeal/subglottic airway, not from lower-airway wheeze.'},
+      {id:'cf_stridor',label:'Inspiratory stridor\n+ hoarseness',nodeType:'sign',from:['ev_stridor'],tooltip:'Inspiratory stridor points to extrathoracic upper-airway obstruction. Hoarseness places the process near the vocal cords or subglottis.'},
+      {id:'cf_steeple',label:'Steeple sign\non radiograph',nodeType:'sign',from:['ev_steeple'],tooltip:'The steeple sign is tapering of the subglottic air column caused by mucosal edema below the vocal cords.'},
+      {id:'cf_well',label:'Non-toxic\nappearance',nodeType:'sign',from:['ev_well'],hiddenInMain:true,tooltip:'A well-appearing child with stridor is more consistent with viral croup than epiglottitis or bacterial tracheitis.'},
+      {id:'cf_swallow',label:'No drooling\n/ dysphagia',nodeType:'exclusion',from:['ev_swallow'],hiddenInMain:true,tooltip:'Drooling and dysphagia suggest supraglottic or deep-neck obstruction. Their absence shifts reasoning toward subglottic croup.'},
+    ],
+    mechs:[
+      {id:'m_croup',label:'Subglottic\nedema',nodeType:'mechanism',from:['cf_viral','cf_stridor'],tooltip:'This is the central mechanism: viral inflammation below the vocal cords narrows the airway and produces stridor, hoarseness, and barky cough.'},
+    ],
+    dx:{id:'dx',label:'Croup',nodeType:'diagnosis',from:['cf_age','cf_bark','cf_steeple','m_croup'],tooltip:'Viral subglottic obstruction is the unifying mechanism. Consider whether the vignette provides more evidence than necessary to reach this conclusion.'},
+    excludeCards:[
+      {target:'Epiglottitis',supports:['ev_stridor'],against:['ev_swallow','ev_well'],expected:'Drooling / dysphagia\ntoxic child',expectedExplanation:'Expected epiglottitis pattern: toxic child, drooling, dysphagia, tripod posture, high fever.',explanation:'Epiglottitis stays on the differential for acute stridor, but absent drooling and a well appearance make it less likely here.'},
+      {target:'Bacterial tracheitis',supports:['ev_stridor'],against:['ev_well'],expected:'High fever\ntoxic appearance',expectedExplanation:'Expected bacterial tracheitis pattern: high fever, toxic/anxious appearance, more severe airway illness.',explanation:'Bacterial tracheitis can cause stridor, but it usually presents with higher fever and a more toxic appearance.'},
+      {target:'Foreign body aspiration',supports:['ev_stridor'],against:['ev_uri','ev_bark'],expected:'Choking episode\nabrupt onset',expectedExplanation:'Expected aspiration pattern: abrupt onset after choking, often without viral prodrome.',explanation:'Foreign body aspiration is less likely because the history fits a viral upper-airway process rather than abrupt choking.'},
+      {target:'Retropharyngeal abscess',supports:['ev_uri'],against:['ev_swallow','ev_bark'],expected:'Dysphagia\nneck stiffness\nmuffled voice',expectedExplanation:'Expected retropharyngeal abscess pattern: dysphagia, drooling, neck stiffness/torticollis, muffled voice.',explanation:'Retropharyngeal abscess is less likely because normal swallowing and a barky cough do not fit a deep-neck infection pattern.'},
+    ]
   },
-  excludeCards:[
-    {target:'Migraine with aura',
-     supports:[], against:['ev5','ev3'],
-     expected:'Recurrent stereotyped aura\nno papilledema',
-     expectedExplanation:'Migraine with aura is expected to be episodic and stereotyped, without papilledema or new generalized seizure.',
-     explanation:'Progressive postpartum headache with papilledema and a new generalized seizure is not consistent with migraine with aura as the unifying diagnosis.'},
-    {target:'Reversible cerebral vasoconstriction syndrome (RCVS)',
-     supports:['ev1'], against:['ev_rcvs','ev5'],
-     expected:'Recurrent thunderclap headaches\npostpartum vasospasm',
-     expectedExplanation:'RCVS is expected to cause sudden-onset thunderclap headaches, often recurrent, reflecting cerebral vasospasm rather than venous obstruction.',
-     explanation:'The headache here is gradually progressive from day one, not thunderclap. Bilateral papilledema further supports raised intracranial pressure from venous outflow obstruction rather than vasospasm.'},
-    {target:'Lacunar infarction of the internal capsule',
-     supports:[], against:['ev2','ev5','ev6'],
-     expected:'Pure motor weakness\nor lacunar syndrome',
-     expectedExplanation:'Internal capsule lacunar infarction is expected to produce a focal pure motor or sensorimotor deficit without papilledema or progressive headache.',
-     explanation:'Progressive headache, papilledema, and the absence of a focal motor syndrome are not features of lacunar infarction.'},
-    {target:'Acute bacterial meningitis',
-     supports:[], against:['ev4'],
-     expected:'Fever / meningismus\ninfectious syndrome',
-     expectedExplanation:'Bacterial meningitis is expected to present with fever, meningismus, and infectious CSF features.',
-     explanation:'Absence of fever and the missing infectious syndrome pattern make acute bacterial meningitis a weaker unifying diagnosis than CVST.'},
-  ]
-},},
+},
 };
 
 const task3ImprovedTemplate={
   title:'Task 3 — Regenerated question review',chip:'Regenerated version · KG support',
-  condition:'Cerebral venous sinus thrombosis · regenerated item · expert-selected support mode',mode:'both',regenerated:true,
-  difficulty:'Medium',target:'Cerebral venous sinus thrombosis',source:'Neurology · Postpartum headache and seizure',correct:'A',
+  condition:'Croup · regenerated item · expert-selected support mode',mode:'both',regenerated:true,
+  difficulty:'Medium',target:'Croup',source:"Nelson's Essentials · Acute Stridor",correct:'C',
   question_stem:'What is the most likely diagnosis?',
-  vignette:'A 28-year-old woman is brought to the emergency department three weeks after an uncomplicated vaginal delivery because of a two-day history of worsening headache and one episode of vomiting. The headache is diffuse, pressure-like, and has been gradually intensifying. This morning her husband witnessed her right hand shaking rhythmically for approximately 90 seconds, after which she was briefly confused. She has a mild headache history but describes this as different in character. On examination, temperature is 37.4°C, blood pressure is 128/82 mmHg. She is drowsy but oriented. There is mild neck stiffness. Strength and language are intact. Visual fields are full to confrontation. Fundoscopic examination is limited by poor patient cooperation.',
-  options:{A:'Cerebral venous sinus thrombosis',B:'Reversible cerebral vasoconstriction syndrome (RCVS)',C:'Acute bacterial meningitis',D:'Left MCA territory infarction',E:'Migraine with focal aura'},
+  vignette:'A 2-year-old boy is brought to the emergency department because of noisy breathing that worsened overnight. He has had two days of nasal congestion and a mild fever. His parents report that his cough became harsher during the night. On examination, he is alert and sitting upright in his mother’s lap. His temperature is 38.1°C. He has inspiratory stridor at rest, a hoarse voice, and mild subcostal retractions. He is able to swallow and has no drooling. Lung auscultation is otherwise clear.',
+  options:{A:'Epiglottitis',B:'Bacterial tracheitis',C:'Croup',D:'Foreign body aspiration',E:'Retropharyngeal abscess'},
   supporting:[
-    {phrase:'three weeks after an uncomplicated vaginal delivery',why:'The postpartum period remains a prothrombotic risk window, supporting venous sinus thrombosis even without an obvious obstetric complication.'},
-    {phrase:'two-day history of worsening headache',why:'Gradually intensifying diffuse pressure-like headache suggests a secondary intracranial process rather than a typical thunderclap or primary migraine pattern.'},
-    {phrase:'one episode of vomiting',why:'Vomiting accompanying a progressive headache raises concern for increased intracranial pressure.'},
-    {phrase:'right hand shaking rhythmically',why:'A focal motor seizure localizes to the contralateral left motor cortex and supports cortical irritation.'},
-    {phrase:'briefly confused',why:'Postictal confusion makes the episode more seizure-like than a migraine aura or transient ischemic attack alone.'},
-    {phrase:'different in character',why:'A headache that differs from her usual mild headache history lowers the likelihood of an uncomplicated migraine.'},
-    {phrase:'temperature is 37.4°C',why:'Near-normal temperature weakens acute bacterial meningitis, although mild neck stiffness keeps it in the differential.'},
-    {phrase:'mild neck stiffness',why:'Neck stiffness creates diagnostic ambiguity with meningitis or meningeal irritation, but it is not specific for infection.'},
-    {phrase:'Strength and language are intact',why:'Absence of persistent hemiparesis or aphasia weakens a completed left MCA arterial infarct despite the focal seizure.'},
-    {phrase:'Fundoscopic examination is limited',why:'Papilledema is intentionally not given; the reviewer must reason from postpartum risk, progressive headache, vomiting, and focal seizure rather than a direct raised-ICP clue.'},
+    {phrase:'2-year-old boy',why:'Croup is most common in toddlers, whose subglottic airway is narrow.'},
+    {phrase:'two days of nasal congestion and a mild fever',why:'A short viral prodrome supports viral laryngotracheobronchitis.'},
+    {phrase:'inspiratory stridor at rest, a hoarse voice',why:'Stridor and hoarseness indicate upper-airway narrowing around the laryngeal/subglottic region.'},
+    {phrase:'able to swallow and has no drooling',why:'Normal swallowing and no drooling argue against epiglottitis.'},
   ],
   distractors:[
-    {letter:'B',disease:'Reversible cerebral vasoconstriction syndrome (RCVS)',plausible:'RCVS can occur postpartum and present with headache and seizures.',incorrect:'RCVS classically causes recurrent thunderclap headaches. This vignette emphasizes gradually intensifying pressure-like headache with focal seizure, making CVST more coherent.'},
-    {letter:'C',disease:'Acute bacterial meningitis',plausible:'Headache, vomiting, drowsiness, seizure, and neck stiffness can occur with meningitis.',incorrect:'The near-normal temperature, postpartum thrombotic risk, and focal cortical seizure pattern without a clear infectious syndrome favor CVST over acute bacterial meningitis.'},
-    {letter:'D',disease:'Left MCA territory infarction',plausible:'Right hand seizure localizes to the left cortex and could raise concern for a left MCA lesion.',incorrect:'A left MCA infarction would more typically produce persistent aphasia, face-arm weakness, or visual field deficits. The intact strength/language and postpartum venous-risk context favor venous thrombosis.'},
-    {letter:'E',disease:'Migraine with focal aura',plausible:'She has a headache history, and migraine aura can cause transient neurologic symptoms.',incorrect:'A new focal motor seizure with postictal confusion, vomiting, drowsiness, and postpartum prothrombotic risk is not typical migraine with aura.'},
+    {letter:'A',disease:'Epiglottitis',plausible:'Fever and stridor can occur in epiglottitis.',incorrect:'Epiglottitis usually causes toxic appearance, drooling, dysphagia, and high fever; this child can swallow and is not drooling.'},
+    {letter:'B',disease:'Bacterial tracheitis',plausible:'Can follow viral URI and cause fever with stridor.',incorrect:'Bacterial tracheitis usually causes high fever, toxic appearance, and severe illness, which are not present.'},
+    {letter:'D',disease:'Foreign body aspiration',plausible:'Can cause acute noisy breathing or stridor in toddlers.',incorrect:'A two-day viral prodrome and fever make croup more likely; no choking episode is described.'},
+    {letter:'E',disease:'Retropharyngeal abscess',plausible:'Can cause fever and upper-airway symptoms.',incorrect:'Expected findings include dysphagia, neck stiffness/torticollis, and muffled voice; these are absent.'},
   ],
   kgData:{
-  evidence:[
-    {id:'ev1',  label:'Postpartum three weeks',              short:'Postpartum 3 wks',    phrase:'three weeks after an uncomplicated vaginal delivery'},
-    {id:'ev2',  label:'Gradually worsening pressure-like headache', short:'Progressive headache', phrase:['two-day history of worsening headache','diffuse, pressure-like','gradually intensifying']},
-    {id:'ev3',  label:'Vomiting',                            short:'Vomiting',             phrase:'one episode of vomiting'},
-    {id:'ev4',  label:'Focal right-hand motor seizure',      short:'Right-hand seizure',   phrase:'right hand shaking rhythmically'},
-    {id:'ev5',  label:'Postictal confusion',                 short:'Postictal confusion',  phrase:'briefly confused',                                              hiddenInMain:true},
-    {id:'ev7',  label:'Near-normal temperature',             short:'Near-normal temp',     phrase:'temperature is 37.4°C',                                         hiddenInMain:true},
-    {id:'ev8',  label:'Mild neck stiffness',                 short:'Neck stiffness',       phrase:'mild neck stiffness',                                           hiddenInMain:true},
-    {id:'ev9',  label:'No persistent focal deficit',         short:'No persistent deficit',phrase:['Strength and language are intact','Visual fields are full'],    hiddenInMain:true},
-    {id:'ev10', label:'Fundoscopy limited — papilledema not assessable', short:'Fundoscopy limited', phrase:'Fundoscopic examination is limited',                  hiddenInMain:true},
-    {id:'ev6',  label:'Different from usual headache',       short:'Different headache',   phrase:'different in character',                                        hiddenInMain:true},
-  ],
-  findings:[
-    {id:'cf1', label:'Postpartum prothrombotic risk',         nodeType:'history',  from:['ev1'],
-     tooltip:'Three weeks postpartum remains within the hypercoagulable risk window for CVST. The risk is lower than the first week but still clinically significant, especially without another unifying diagnosis.'},
-    {id:'cf2', label:'Progressive pressure-like headache + vomiting', nodeType:'symptom', from:['ev2','ev3'],
-     tooltip:'A diffuse, gradually intensifying headache with vomiting over two days suggests raised intracranial pressure. Papilledema is intentionally withheld in this version — the diagnosis must be inferred from the headache phenotype and context alone.'},
-    {id:'cf3', label:'Focal motor seizure with postictal state', nodeType:'sign', from:['ev4','ev5'],
-     tooltip:'Rhythmic right-hand shaking for 90 seconds followed by postictal confusion is most consistent with a focal motor seizure localising to the left motor cortex. Importantly, strength and language remain intact afterward, distinguishing this from a completed arterial infarct.'},
-  ],
-  mechs:[
-    {id:'m_risk', label:'Postpartum hypercoagulability',            nodeType:'mechanism', from:['cf1'],
-     tooltip:'Postpartum physiology sustains a prothrombotic state beyond the first week. This provides the predisposing mechanism for dural sinus thrombosis even at three weeks.'},
-    {id:'m_icp',  label:'Venous outflow obstruction → raised ICP',  nodeType:'mechanism', from:['cf2'],
-     tooltip:'CVST impairs CSF resorption and venous drainage, raising intracranial pressure. In this version, the raised-ICP inference rests on headache phenotype and vomiting alone — papilledema is not available to confirm it directly.'},
-    {id:'m_sz',   label:'Venous cortical irritation → focal seizure', nodeType:'mechanism', from:['cf3'],
-     tooltip:'Venous congestion or focal venous infarction can irritate cortex and generate a focal seizure without leaving a persistent motor or language deficit. This distinguishes venous from arterial cortical injury: a left MCA infarct would typically produce lasting aphasia or hemiparesis.'},
-  ],
-  dx:{
-    id:'dx', label:'Cerebral venous sinus thrombosis', nodeType:'diagnosis',
-    from:['m_risk','m_icp','m_sz'],
-    tooltip:'CVST integrates three converging pathways: postpartum hypercoagulability as predisposing mechanism, raised intracranial pressure inferred from progressive headache and vomiting (without direct papilledema confirmation), and focal cortical seizure from venous congestion without a persistent arterial deficit. No single pathway is conclusive alone; the diagnosis rests on their convergence.'
+    evidence:[
+      {id:'ev_age',label:'Toddler age\n(2 years)',short:'Toddler age',phrase:'2-year-old boy'},
+      {id:'ev_uri',label:'Viral upper respiratory\nprodrome',short:'Viral URI prodrome',phrase:'two days of nasal congestion and a mild fever'},
+      {id:'ev_cough_night',label:'Harsher cough\nat night',short:'Harsher cough at night',phrase:'his cough became harsher during the night'},
+      {id:'ev_stridor_voice',label:'Inspiratory stridor\nand hoarseness',short:'Inspiratory stridor + hoarseness',phrase:'inspiratory stridor at rest, a hoarse voice'},
+      {id:'ev_swallow',label:'Absence of drooling\nor dysphagia',short:'Absence of drooling/dysphagia',phrase:'able to swallow and has no drooling'},
+    ],
+    findings:[
+      {id:'cf_age',label:'Peak age for\ncroup',nodeType:'demographic',from:['ev_age'],tooltip:'Toddler age fits the usual croup age range because a young child has a relatively narrow subglottic airway.'},
+      {id:'cf_viral',label:'Viral upper respiratory\nprodrome',nodeType:'history',from:['ev_uri'],tooltip:'A short viral prodrome fits viral laryngotracheobronchitis and favors an infectious upper-airway process.'},
+      {id:'cf_cough',label:'Nocturnal barky\ncough',nodeType:'symptom',from:['ev_cough_night'],tooltip:'A harsher barky cough at night reflects turbulent airflow through a narrowed laryngeal or subglottic airway.'},
+      {id:'cf_upper',label:'Inspiratory upper-airway\nobstruction',nodeType:'sign',from:['ev_stridor_voice'],tooltip:'Inspiratory stridor localizes obstruction to the upper airway, and hoarseness points to laryngeal or subglottic involvement.'},
+    ],
+    mechs:[
+      {id:'m_subglottic',label:'Subglottic edema',nodeType:'mechanism',from:['cf_viral','cf_upper'],tooltip:'Subglottic edema produces stridor, hoarseness, and worsening nocturnal cough. The steeple sign on radiograph is not required for this diagnosis.'},
+    ],
+    dx:{id:'dx',label:'Croup',nodeType:'diagnosis',from:['cf_age','cf_cough','m_subglottic'],tooltip:'Toddler age, a viral prodrome, a barky nocturnal cough, and upper-airway localization together fit croup.'},
+    excludeCards:[
+      {target:'Epiglottitis',supports:['ev_stridor_voice'],against:['ev_swallow'],expected:'Drooling / dysphagia\ntoxic child',expectedExplanation:'Epiglottitis usually causes drooling, dysphagia, toxic appearance, and high fever.',explanation:'Fever and stridor make epiglottitis plausible, but normal swallowing and no drooling argue against it.'},
+      {target:'Bacterial tracheitis',supports:['ev_stridor_voice'],against:['ev_uri'],expected:'High fever\ntoxic appearance\npurulent secretions',expectedExplanation:'Bacterial tracheitis is expected to cause high fever, toxic appearance, and purulent tracheal secretions.',explanation:'A viral prodrome and stridor are plausible, but the child is not severely ill and has only mild fever.'},
+      {target:'Foreign body aspiration',supports:['ev_stridor_voice'],against:['ev_uri'],expected:'Choking episode\nabrupt onset',expectedExplanation:'Foreign body aspiration would usually involve choking or abrupt onset without infectious prodrome.',explanation:'Noisy breathing keeps foreign body aspiration plausible, but the viral prodrome and fever support croup instead.'},
+      {target:'Retropharyngeal abscess',supports:['ev_uri'],against:['ev_swallow'],expected:'Dysphagia\nneck stiffness\nmuffled voice',expectedExplanation:'Retropharyngeal abscess is expected to cause dysphagia, neck stiffness/torticollis, and muffled voice.',explanation:'Fever/upper airway symptoms can make it plausible, but normal swallowing and no neck findings argue against it.'},
+    ]
   },
-  excludeCards:[
-    {target:'Reversible cerebral vasoconstriction syndrome (RCVS)',
-     supports:['ev1','ev4'], against:['ev2'],
-     expected:'Recurrent thunderclap headaches\npostpartum vasospasm',
-     expectedExplanation:'Postpartum RCVS classically presents with sudden-onset thunderclap headaches, often recurrent over days to weeks, reflecting cerebral vasospasm.',
-     explanation:'Postpartum status and focal seizure create genuine overlap with RCVS. However, this headache is gradual, diffuse, and pressure-like from onset — not thunderclap. RCVS does not explain the progressive intracranial pressure phenotype.'},
-    {target:'Acute bacterial meningitis',
-     supports:['ev8','ev3'], against:['ev7'],
-     expected:'Fever and meningitic infectious syndrome',
-     expectedExplanation:'Acute bacterial meningitis is expected to present with fever, severe meningismus, toxic appearance, and infectious CSF features.',
-     explanation:'Mild neck stiffness and vomiting create genuine overlap with meningitis. Near-normal temperature and the postpartum prothrombotic context make CVST the more coherent unifying diagnosis, but LP would be needed to exclude infection definitively.'},
-    {target:'Left MCA territory infarction',
-     supports:['ev4'], against:['ev9','ev1'],
-     expected:'Persistent aphasia or face-arm weakness',
-     expectedExplanation:'A left MCA territory infarct typically produces persistent focal deficits: aphasia, contralateral face-arm weakness, or visual field loss depending on the division involved.',
-     explanation:'Right-hand focal seizure localises to the left cortex and raises the MCA question. However, intact strength, language, and visual fields after the seizure argue against a completed arterial infarct. Postpartum venous risk with progressive headache favours venous over arterial pathology.'},
-    {target:'Migraine with focal aura',
-     supports:['ev6'], against:['ev4','ev5','ev1'],
-     expected:'Stereotyped aura without postictal confusion',
-     expectedExplanation:'Migraine aura is gradual, stereotyped, and fully reversible without witnessed rhythmic motor activity or postictal confusion.',
-     explanation:'A different headache character raises the migraine question. However, observed focal motor seizure with postictal confusion, vomiting, drowsiness, and postpartum thrombotic risk are not explained by migraine with focal aura.'},
-  ]
-},
 };
 
 function applySemanticEvidenceTypes(){
@@ -918,9 +883,9 @@ function applySemanticEvidenceTypes(){
     if(!taskObj||!taskObj.kgData||!Array.isArray(taskObj.kgData.evidence))return;
     taskObj.kgData.evidence.forEach(ev=>{ if(map[ev.id]) ev.nodeType=map[ev.id]; });
   };
-  applyMap(tasks[2],{ev1:'symptom',ev3:'symptom',ev4:'history',ev6:'sign',ev7:'exclusion'});
-  applyMap(tasks[3],{ev1:'history',ev2:'symptom',ev8:'symptom',ev5:'sign',ev3:'symptom',ev4:'exclusion',ev6:'exclusion',ev_rcvs:'exclusion'});
-  applyMap(task3ImprovedTemplate,{ev1:'history',ev2:'symptom',ev3:'symptom',ev4:'sign',ev5:'symptom',ev7:'exclusion',ev8:'exclusion',ev9:'exclusion',ev10:'exclusion',ev6:'exclusion'});
+  applyMap(tasks[2],{ev1:'sign',ev2:'symptom',ev3:'history',ev4:'symptom',ev5:'sign',ev6:'history'});
+  applyMap(tasks[3],{ev_age:'demographic',ev_uri:'history',ev_bark:'symptom',ev_stridor:'sign',ev_steeple:'sign',ev_well:'sign',ev_swallow:'exclusion'});
+  applyMap(task3ImprovedTemplate,{ev_age:'demographic',ev_uri:'history',ev_stridor_voice:'sign',ev_swallow:'exclusion'});
 }
 applySemanticEvidenceTypes();
 const originalTasks=JSON.parse(JSON.stringify(tasks));
@@ -934,7 +899,7 @@ let editOpen=false;
 let focusedKgNodeId=null;
 let selectedGraphItem=null;
 let kgNodeDragOffsets=JSON.parse(localStorage.getItem('pediatric_mcq_node_drag_offsets_v19')||'{}');
-let miniGraphDragOffsets=JSON.parse(localStorage.getItem('pediatric_mcq_mini_drag_offsets_v30')||'{}');
+let miniGraphDragOffsets=JSON.parse(localStorage.getItem('pediatric_mcq_mini_drag_offsets_v26')||'{}');
 let activeMiniDrag=null;
 let suppressNextMiniClick=false;
 let suppressNextGraphClick=false;
@@ -1063,13 +1028,13 @@ function renderRightSupportPanel({rerenderGraph=false}={}){
 }
 
 const TASK3_CLUE_CANDIDATES=[
-  {id:'ev1',label:'Postpartum day 5',tag:'core risk context',recommend:'keep'},
-  {id:'ev2',label:'Progressive postpartum headache',tag:'core clue',recommend:'keep'},
-  {id:'ev8',label:'Vomiting',tag:'ICP clue',recommend:'weaken'},
-  {id:'ev3',label:'Generalized tonic-clonic seizure',tag:'strong clue',recommend:'weaken'},
-  {id:'ev5',label:'Bilateral papilledema',tag:'over-explicit ICP sign',recommend:'remove'},
-  {id:'ev4',label:'No fever',tag:'exclusion clue',recommend:'weaken'},
-  {id:'ev6',label:'No clear focal deficit',tag:'exclusion clue',recommend:'weaken'}
+  {id:'ev_age',label:'Toddler age (2 years)',tag:'core clue',recommend:'keep'},
+  {id:'ev_uri',label:'Viral upper respiratory prodrome',tag:'core clue',recommend:'keep'},
+  {id:'ev_bark',label:'Barking / seal-bark cough',tag:'strong clue',recommend:'weaken'},
+  {id:'ev_steeple',label:'Classic steeple sign',tag:'over-explicit test clue',recommend:'remove'},
+  {id:'ev_stridor',label:'Inspiratory stridor + hoarseness',tag:'core clue',recommend:'keep'},
+  {id:'ev_well',label:'Non-toxic appearance',tag:'exclusion clue',recommend:'weaken'},
+  {id:'ev_swallow',label:'No drooling / normal swallowing',tag:'exclusion clue',recommend:'weaken'}
 ];
 
 function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
@@ -1093,7 +1058,7 @@ function getMiniDragOffset(cardIndex,nodeId){
 }
 function setMiniDragOffset(cardIndex,nodeId,dx,dy){
   miniGraphDragOffsets[miniDragKey(cardIndex,nodeId)]={x:dx,y:dy};
-  localStorage.setItem('pediatric_mcq_mini_drag_offsets_v30',JSON.stringify(miniGraphDragOffsets));
+  localStorage.setItem('pediatric_mcq_mini_drag_offsets_v26',JSON.stringify(miniGraphDragOffsets));
 }
 function getDragBaseFromElement(el){
   return {
@@ -1125,21 +1090,42 @@ function getTaskDisplayVignette(task){
   if(currentTask!==3 || (tasks[3]||{}).regenerated || !task3SelectedCluesToRemove || task3SelectedCluesToRemove.size===0){
     return v;
   }
-  const kg=(task&&task.kgData)||{};
-  const evidence=Array.isArray(kg.evidence)?kg.evidence:[];
-  evidence.forEach(ev=>{
-    if(!task3SelectedCluesToRemove.has(ev.id))return;
-    const phrases=Array.isArray(ev.phrase)?ev.phrase:(ev.phrase?[ev.phrase]:[]);
-    phrases.forEach(phrase=>{
-      if(!phrase)return;
-      const re=new RegExp(escReg(phrase),'ig');
-      v=v.replace(re,'[clue removed]');
-    });
-  });
+  const removed=id=>task3SelectedCluesToRemove.has(id);
+
+  // Task 3 uses a redacted preview: deleting a clue removes the corresponding
+  // surface wording from the vignette, while keeping the original task data intact
+  // for Reset and Regenerate.
+  if(removed('ev_age')){
+    v=v.replace(/^A 2-year-old boy is brought\b/i,'A child is brought');
+    v=v.replace(/\b2-year-old boy\b/gi,'child');
+  }
+  if(removed('ev_uri')){
+    v=v.replace(/\s*For the past two days, he has had a runny nose and a low-grade fever\.\s*/i,' ');
+  }
+
+  const bark=removed('ev_bark');
+  const named=removed('ev_named');
+  if(bark && named){
+    v=v.replace(/\s*His parents say his cough sounds exactly like a “seal bark,” and the clinician notes that this is a classic croup-like cough\.\s*/i,' ');
+  } else if(bark){
+    v=v.replace(/His parents say his cough sounds exactly like a “seal bark,” and the clinician notes that /i,'The clinician notes that ');
+  } else if(named){
+    v=v.replace(/, and the clinician notes that this is a classic croup-like cough/i,'');
+  }
+
+  if(removed('ev_well')){
+    v=v.replace(/\s*On examination, he is alert, playful, and sitting comfortably in his mother’s lap\.\s*/i,' On examination, he is sitting in his mother’s lap. ');
+  }
+  if(removed('ev_stridor')){
+    v=v.replace(/\s*He has inspiratory stridor and a hoarse voice\.\s*/i,' ');
+  }
+  if(removed('ev_swallow')){
+    v=v.replace(/\s*He is not drooling, has no difficulty swallowing, and can drink water normally\.\s*/i,' ');
+  }
   return v
     .replace(/\s+([,.;:!?])/g,'$1')
     .replace(/\s{2,}/g,' ')
-    .replace(/\[clue removed\](?:\s*and\s*\[clue removed\])?/g,'[clue removed]')
+    .replace(/\.\s*\./g,'.')
     .trim();
 }
 
@@ -2389,19 +2375,15 @@ function miniEvidenceLayout(count){
   return[{x:18,y:18},{x:110,y:18},{x:202,y:18}];
 }
 function miniRoleLayout(role,count){
-  // Mini graphs are fixed-layout explanatory diagrams, not force graphs.
-  // The previous layout compressed evidence, expected-pattern, and distractor
-  // nodes into a 210px-high viewBox, so long expected nodes could collide with
-  // the third evidence node. This layout reserves separate vertical bands:
-  // supports at the top, against-evidence in the middle, expected-pattern at
-  // the lower middle, and the distractor target on the right.
+  // Node positions are padded away from the top/bottom of the mini graph.
+  // The graph viewBox is taller than before, so expected nodes and 3-item against stacks no longer touch the bottom edge.
   if(role==='supports'){
-    if(count<=1)return[{x:42,y:34}];
-    return[{x:42,y:22},{x:42,y:64}];
+    if(count<=1)return[{x:78,y:56}];
+    return[{x:78,y:42},{x:78,y:88}];
   }
-  if(count<=1)return[{x:42,y:82}];
-  if(count===2)return[{x:42,y:72},{x:42,y:122}];
-  return[{x:42,y:50},{x:42,y:100},{x:42,y:150}];
+  if(count<=1)return[{x:78,y:146}];
+  if(count===2)return[{x:78,y:128},{x:78,y:174}];
+  return[{x:78,y:112},{x:78,y:154},{x:78,y:196}];
 }
 
 function renderExcludeCards(){
@@ -2437,9 +2419,9 @@ function renderExcludeCards(){
     const evItems=[...supportItems,...againstItems];
     const evidenceNodes=evItems.map(x=>x.node.svg).join('');
     const expected=hasExpected
-      ? miniNodeSvg({x:226,y:186,label:c.expected,type:'expected',dashed:true,cls:'mini-expected-node',attrs:`data-explanation="${esc(c.expectedExplanation||'Expected distractor pattern is not established by this vignette.')}" data-title="${esc('Expected but not established: '+cleanLabel(c.expected))}"`,maxW:128,minW:104,font:9.1,dragKey:'expected',cardIndex:i})
+      ? miniNodeSvg({x:224,y:158,label:c.expected,type:'expected',dashed:true,cls:'mini-expected-node',attrs:`data-explanation="${esc(c.expectedExplanation||'Expected distractor pattern is not established by this vignette.')}" data-title="${esc('Expected but not established: '+cleanLabel(c.expected))}"`,maxW:128,minW:104,font:9.1,dragKey:'expected',cardIndex:i})
       : null;
-    const dist=miniNodeSvg({x:hasExpected?406:188,y:hasExpected?90:104,label:c.target,type:'distractor',cls:'mini-distractor-node',attrs:`data-explanation="${esc(c.explanation||'')}" data-title="${esc('Distractor: '+c.target)}"`,maxW:hasExpected?96:118,minW:84,font:9.2,dragKey:'distractor',cardIndex:i});
+    const dist=miniNodeSvg({x:hasExpected?356:170,y:hasExpected?96:90,label:c.target,type:'distractor',cls:'mini-distractor-node',attrs:`data-explanation="${esc(c.explanation||'')}" data-title="${esc('Distractor: '+c.target)}"`,maxW:hasExpected?96:118,minW:84,font:9.2,dragKey:'distractor',cardIndex:i});
     const miniEdgeLabel=(x,y,text,color)=>{
       const w=text==='argues_against'?72:(text==='expected_in'?64:54);
       return `<g class="mini-edge-label" transform="translate(${x-w/2},${y-8})"><rect x="0" y="0" width="${w}" height="15" rx="7.5"/><text x="${w/2}" y="10.8" text-anchor="middle" fill="${color}">${text}</text></g>`;
@@ -2459,9 +2441,9 @@ function renderExcludeCards(){
     const supportTargetYs=supportItems.map((_,idx)=>dist.cy-13+(idx-(supportItems.length-1)/2)*7);
     const againstTargetYs=againstItems.map((_,idx)=>dist.cy+6+(idx-(againstItems.length-1)/2)*9);
     const edgeLines=hasExpected
-      ? supportItems.map(({node,eid},idx)=>softCurve(node,supportTargetYs[idx],'#1a6b3c','miniArrowGreen',{midX:330,width:1.45,relation:'supports',label:'supports',title:'supports',explain:miniEvidenceRationale(c,eid,'supports')})).join('')
-        + againstItems.map(({node,eid},idx)=>softCurve(node,againstTargetYs[idx],'#8a2d2d','miniArrowRed',{midX:330,width:1.45,relation:'argues_against',label:'argues_against',title:'argues_against',explain:miniEvidenceRationale(c,eid,'against')})).join('')
-        + softCurve(expected,dist.cy+22,'#9b8f84','miniArrowDash',{midX:370,width:1.25,dash:true,relation:'expected_in',label:'expected_in',title:'expected_in',explain:c.expectedExplanation||'Expected distractor pattern is not established by this vignette.',labelX:(expected.right+dist.left)/2+6,labelY:(expected.cy+dist.cy+22)/2-2})
+      ? supportItems.map(({node,eid},idx)=>softCurve(node,supportTargetYs[idx],'#1a6b3c','miniArrowGreen',{midX:286,width:1.45,relation:'supports',label:'supports',title:'supports',explain:miniEvidenceRationale(c,eid,'supports')})).join('')
+        + againstItems.map(({node,eid},idx)=>softCurve(node,againstTargetYs[idx],'#8a2d2d','miniArrowRed',{midX:286,width:1.45,relation:'argues_against',label:'argues_against',title:'argues_against',explain:miniEvidenceRationale(c,eid,'against')})).join('')
+        + softCurve(expected,dist.cy+22,'#9b8f84','miniArrowDash',{midX:330,width:1.25,dash:true,relation:'expected_in',label:'expected_in',title:'expected_in',explain:c.expectedExplanation||'Expected distractor pattern is not established by this vignette.',labelX:(expected.right+dist.left)/2+6,labelY:(expected.cy+dist.cy+22)/2-2})
       : evItems.map(({node,role,eid})=>{
           const color=role==='supports'?'#1a6b3c':'#8a2d2d';
           const rel=role==='supports'?'supports':'argues_against';
@@ -2471,7 +2453,7 @@ function renderExcludeCards(){
     const midLabels='';
     return`<div class="mini-distractor-card" data-focus='${JSON.stringify(focus)}' data-explanation="${esc(c.explanation||'')}" data-target="${esc(c.target)}">
       <div class="mini-distractor-head"><div class="mini-distractor-title">${esc(c.target)}</div><div class="mini-distractor-chip">excluded</div></div>
-      <svg class="mini-distractor-svg" viewBox="0 0 ${hasExpected?540:360} ${hasExpected?260:190}" xmlns="http://www.w3.org/2000/svg">
+      <svg class="mini-distractor-svg" viewBox="0 0 ${hasExpected?460:330} ${hasExpected?250:170}" xmlns="http://www.w3.org/2000/svg">
         <defs>
           <marker id="miniArrowGreen${i}" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#1a6b3c"/></marker>
           <marker id="miniArrowRed${i}" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#8a2d2d"/></marker>
@@ -2636,9 +2618,10 @@ function updateRegenerationIssueDefaults(){
   const selectedIds=[...task3SelectedCluesToRemove];
   const checks=modal.querySelectorAll('input[type="checkbox"][value]');
   checks.forEach(input=>{
-    if(input.value==='answer_cue_stacking') input.checked=selectedIds.length>=3;
-    if(input.value==='direct_answer_cue') input.checked=selectedIds.includes('ev5');
-    if(input.value==='explicit_negative_exclusion') input.checked=selectedIds.includes('ev4')||selectedIds.includes('ev6');
+    if(input.value==='too_much_evidence') input.checked=selectedIds.length>=3;
+    if(input.value==='answer_named') input.checked=selectedIds.includes('ev_named');
+    if(input.value==='too_obvious') input.checked=selectedIds.includes('ev_named')||selectedIds.includes('ev_bark');
+    if(input.value==='weak_distractors') input.checked=selectedIds.includes('ev_swallow')||selectedIds.includes('ev_well');
   });
   updateSelectedClueSummary();
 }
