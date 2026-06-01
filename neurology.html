@@ -846,7 +846,7 @@ const task3ImprovedTemplate={
     {phrase:'temperature is 37.4°C',why:'Near-normal temperature weakens acute bacterial meningitis, although mild neck stiffness keeps it in the differential.'},
     {phrase:'mild neck stiffness',why:'Neck stiffness creates diagnostic ambiguity with meningitis or meningeal irritation, but it is not specific for infection.'},
     {phrase:'Strength and language are intact',why:'Absence of persistent hemiparesis or aphasia weakens a completed left MCA arterial infarct despite the focal seizure.'},
-    {phrase:'Fundoscopic examination is limited',why:'Papilledema is intentionally not given; the reviewer must reason from postpartum risk, progressive headache, vomiting, and focal seizure rather than a direct raised-ICP clue.'},
+    {phrase:'Fundoscopic examination is limited',why:'Papilledema cannot be confirmed at the bedside, so raised intracranial pressure must be inferred from the progressive headache, vomiting, postpartum risk context, and focal seizure.'},
   ],
   distractors:[
     {letter:'B',disease:'Reversible cerebral vasoconstriction syndrome (RCVS)',plausible:'RCVS can occur postpartum and present with headache and seizures.',incorrect:'RCVS classically causes recurrent thunderclap headaches. This vignette emphasizes gradually intensifying pressure-like headache with focal seizure, making CVST more coherent.'},
@@ -871,7 +871,7 @@ const task3ImprovedTemplate={
     {id:'cf1', label:'Postpartum prothrombotic risk',         nodeType:'history',  from:['ev1'],
      tooltip:'Three weeks postpartum remains within the hypercoagulable risk window for CVST. The risk is lower than the first week but still clinically significant, especially without another unifying diagnosis.'},
     {id:'cf2', label:'Progressive pressure-like headache + vomiting', nodeType:'symptom', from:['ev2','ev3'],
-     tooltip:'A diffuse, gradually intensifying headache with vomiting over two days suggests raised intracranial pressure. Papilledema is intentionally withheld in this version — the diagnosis must be inferred from the headache phenotype and context alone.'},
+     tooltip:'A diffuse, gradually intensifying headache with vomiting over two days suggests raised intracranial pressure. Without fundoscopic confirmation of papilledema, the raised-ICP inference rests on headache phenotype and vomiting alone — requiring integration with postpartum risk and seizure type.'},
     {id:'cf3', label:'Focal motor seizure with postictal state', nodeType:'sign', from:['ev4','ev5'],
      tooltip:'Rhythmic right-hand shaking for 90 seconds followed by postictal confusion is most consistent with a focal motor seizure localising to the left motor cortex. Importantly, strength and language remain intact afterward, distinguishing this from a completed arterial infarct.'},
   ],
@@ -879,7 +879,7 @@ const task3ImprovedTemplate={
     {id:'m_risk', label:'Postpartum hypercoagulability',            nodeType:'mechanism', from:['cf1'],
      tooltip:'Postpartum physiology sustains a prothrombotic state beyond the first week. This provides the predisposing mechanism for dural sinus thrombosis even at three weeks.'},
     {id:'m_icp',  label:'Venous outflow obstruction',  nodeType:'mechanism', from:['cf2'],
-     tooltip:'CVST impairs CSF resorption and venous drainage, raising intracranial pressure. In this version, the raised-ICP inference rests on headache phenotype and vomiting alone — papilledema is not available to confirm it directly.'},
+     tooltip:'CVST impairs CSF resorption and venous drainage, raising intracranial pressure. Without papilledema to confirm raised ICP directly, the mechanism is inferred from two days of progressively worsening diffuse headache with vomiting — a pattern that should prompt consideration of venous outflow obstruction in the postpartum context.'},
     {id:'m_sz',   label:'Venous cortical irritation', nodeType:'mechanism', from:['cf3'],
      tooltip:'Venous congestion or focal venous infarction can irritate cortex and generate a focal seizure without leaving a persistent motor or language deficit. This distinguishes venous from arterial cortical injury: a left MCA infarct would typically produce lasting aphasia or hemiparesis.'},
   ],
@@ -990,14 +990,10 @@ function getHeaderCopy(){
     if(task3SupportMode==='text'){
       return {title:'Text explanation · Question review',hint:'Text support is selected. Switch to KG to view the knowledge graph.'};
     }
-    return kgExplainOpen
-      ? {title:'Knowledge graph · KG + enriched text support',hint:'KG is selected. Enriched hover text is on; hover over nodes for rationale.'}
-      : {title:'Knowledge graph · KG support',hint:'KG is selected. Use the enriched text switch inside the graph if extra hover reasoning is needed.'};
+    return {title:'Knowledge graph · KG support',hint:'KG is selected. Use the enriched text switch inside the graph if extra hover reasoning is needed.'};
   }
   if(t.mode==='kg'){
-    return kgExplainOpen
-      ? {title:'Knowledge graph · KG review',hint:'Hover explanation is enabled. Move over nodes for concise clinical rationale.'}
-      : {title:'Knowledge graph · KG review',hint:'KG-only condition: review the graph structure without text explanation.'};
+    return {title:'Knowledge graph · KG review',hint:'KG-only condition: review the graph structure without text explanation.'};
   }
   if(t.mode==='both'){
     return kgExplainOpen
@@ -2282,6 +2278,10 @@ function miniEvidenceRationale(card,eid,role='against'){
   const phrase=(getEvidenceById(tasks[currentTask].kgData,eid)?.short||eid);
 
   if(role==='supports'){
+    if(target.includes('reversible cerebral vasoconstriction')){
+      if(evId==='ev1')return 'Postpartum status is a shared risk factor for both CVST and RCVS, keeping RCVS in the differential at first glance.';
+      if(evId==='ev4')return 'A focal seizure can occur with postpartum RCVS, so this finding creates overlap before the headache phenotype is weighed.';
+    }
     if(target.includes('primary ciliary')){
       if(evId==='ev3'||evId==='ev4')return 'Recurrent lower-respiratory infections fit impaired mucociliary clearance and recurrent bacterial infection, so PCD remains a reasonable respiratory differential.';
     }
@@ -2354,7 +2354,7 @@ function miniEvidenceRationale(card,eid,role='against'){
   return `${phrase} does not fit the expected mechanism or clinical pattern of ${card.target}.`;
 }
 
-function miniNodeSvg({x,y,label,type='evidence',cls='',attrs='',maxW=112,minW=74,font=9.5,dashed=false,dragKey='',cardIndex=0}){
+function miniNodeSvg({x,y,label,type='evidence',cls='',attrs='',maxW=112,minW=74,font=11,dashed=false,dragKey='',cardIndex=0}){
   const c=type==='distractor'
     ? {fill:'#eef2f6',stroke:'#667085',text:'#26313f'}
     : type==='expected'
@@ -2429,7 +2429,7 @@ function renderExcludeCards(){
       const label=ev?ev.short||cleanLabel(ev.label):eid;
       const {x,y}=miniRoleLayout(role,ids.length)[j];
       const title=(role==='supports'?'Supports plausibility: ':'Argues against: ')+label;
-      const node=miniNodeSvg({x,y,label,type:role==='against'?'against':'evidence',cls:'mini-evidence-node',attrs:`data-evid="${esc(eid)}" data-role="${esc(role)}" data-explanation="${esc(miniEvidenceRationale(c,eid,role))}" data-title="${esc(title)}"`,maxW:104,minW:78,font:9.6,dragKey:`${role}-${eid}`,cardIndex:i});
+      const node=miniNodeSvg({x,y,label,type:role==='against'?'against':'evidence',cls:'mini-evidence-node',attrs:`data-evid="${esc(eid)}" data-role="${esc(role)}" data-explanation="${esc(miniEvidenceRationale(c,eid,role))}" data-title="${esc(title)}"`,maxW:104,minW:78,font:11,dragKey:`${role}-${eid}`,cardIndex:i});
       return {eid,node,role};
     });
     const supportItems=makeEvItems(supportIds,'supports');
@@ -2437,9 +2437,9 @@ function renderExcludeCards(){
     const evItems=[...supportItems,...againstItems];
     const evidenceNodes=evItems.map(x=>x.node.svg).join('');
     const expected=hasExpected
-      ? miniNodeSvg({x:226,y:186,label:c.expected,type:'expected',dashed:true,cls:'mini-expected-node',attrs:`data-explanation="${esc(c.expectedExplanation||'Expected distractor pattern is not established by this vignette.')}" data-title="${esc('Expected but not established: '+cleanLabel(c.expected))}"`,maxW:128,minW:104,font:9.1,dragKey:'expected',cardIndex:i})
+      ? miniNodeSvg({x:226,y:186,label:c.expected,type:'expected',dashed:true,cls:'mini-expected-node',attrs:`data-explanation="${esc(c.expectedExplanation||'Expected distractor pattern is not established by this vignette.')}" data-title="${esc('Expected but not established: '+cleanLabel(c.expected))}"`,maxW:128,minW:104,font:11,dragKey:'expected',cardIndex:i})
       : null;
-    const dist=miniNodeSvg({x:hasExpected?406:188,y:hasExpected?90:104,label:c.target,type:'distractor',cls:'mini-distractor-node',attrs:`data-explanation="${esc(c.explanation||'')}" data-title="${esc('Distractor: '+c.target)}"`,maxW:hasExpected?96:118,minW:84,font:9.2,dragKey:'distractor',cardIndex:i});
+    const dist=miniNodeSvg({x:hasExpected?406:188,y:hasExpected?90:104,label:c.target,type:'distractor',cls:'mini-distractor-node',attrs:`data-explanation="${esc(c.explanation||'')}" data-title="${esc('Distractor: '+c.target)}"`,maxW:hasExpected?96:118,minW:84,font:11,dragKey:'distractor',cardIndex:i});
     const miniEdgeLabel=(x,y,text,color)=>{
       const w=text==='argues_against'?72:(text==='expected_in'?64:54);
       return `<g class="mini-edge-label" transform="translate(${x-w/2},${y-8})"><rect x="0" y="0" width="${w}" height="15" rx="7.5"/><text x="${w/2}" y="10.8" text-anchor="middle" fill="${color}">${text}</text></g>`;
@@ -2663,7 +2663,7 @@ function updateTask3SupportSwitch(){
   if(kgBtn) kgBtn.classList.toggle('active',task3SupportMode!=='text');
   const chip=document.getElementById('navChip');
   if(chip){
-    const label=task3SupportMode==='text'?'Text':(kgExplainOpen?'KG + enriched text':'KG');
+    const label=task3SupportMode==='text'?'Text':'KG';
     chip.textContent=(tasks[currentTask]&&tasks[currentTask].regenerated)
       ? `Regenerated version · ${label}`
       : label;
