@@ -784,7 +784,8 @@ const tasks={
     {id:'ev3',  label:'Generalized tonic-clonic seizure', short:'Generalized seizure', phrase:'generalized tonic-clonic seizure'},
     {id:'ev4',  label:'No fever',                      short:'No fever',           phrase:'There is no fever',                                             hiddenInMain:true},
     {id:'ev6',  label:'No clear focal deficit',        short:'No focal deficit',   phrase:'without a clear focal deficit',                                 hiddenInMain:true},
-    {id:'ev_rcvs', label:'No thunderclap onset',       short:'No thunderclap',     phrase:'headache began the day after delivery and has become more severe each day', hiddenInMain:true},
+    {id:'ev_rcvs', label:'Gradually progressive headache', short:'Progressive onset', phrase:'headache began the day after delivery and has become more severe each day', nodeType:'exclusion', hiddenInMain:true,
+     tooltip:'A headache that builds gradually over days is phenotypically distinct from the sudden thunderclap onset typical of RCVS. This progressive pattern supports raised ICP from venous outflow obstruction rather than cerebral vasospasm.'},
   ],
   findings:[
     {id:'cf1', label:'Postpartum hypercoagulable state', nodeType:'history',  from:['ev1'],
@@ -801,17 +802,19 @@ const tasks={
      tooltip:'The absence of a clean focal motor or language deficit weakens lacunar or arterial MCA infarction and fits diffuse venous congestion.'},
   ],
   mechs:[
-    {id:'m_risk', label:'Postpartum hypercoagulability',        nodeType:'mechanism', from:['cf1'],
+    {id:'m_risk', label:'Postpartum hypercoagulability',        nodeType:'mechanism', layer:'risk', from:['cf1'],
      tooltip:'Postpartum physiology increases coagulation factor levels and reduces fibrinolysis, creating a prothrombotic state that predisposes to dural sinus thrombosis.'},
-    {id:'m_icp',  label:'Venous outflow obstruction', nodeType:'mechanism', from:['cf2','cf3'],
-     tooltip:'Thrombosis of a major dural sinus impairs CSF resorption and venous drainage, raising intracranial pressure. This produces progressive headache, vomiting, and — when severe — papilledema.'},
-    {id:'m_sz',   label:'Venous cortical congestion',  nodeType:'mechanism', from:['cf4'],
-     tooltip:'Venous congestion or venous infarction irritates cortex directly. A new generalised seizure in this context reflects cortical hyperexcitability from venous stasis, not an arterial event.'},
+    {id:'m_core', label:'Dural sinus thrombosis',              nodeType:'mechanism', layer:'core', from:['m_risk'],
+     tooltip:'Postpartum hypercoagulability promotes thrombus formation in a dural sinus. This single upstream event drives two parallel downstream consequences: impaired venous drainage raising ICP, and cortical venous congestion lowering the seizure threshold.'},
+    {id:'m_icp',  label:'Raised ICP',                          nodeType:'mechanism', layer:'consequence', from:['m_core','cf2','cf3'],
+     tooltip:'Dural sinus thrombosis impairs venous drainage and CSF resorption, raising intracranial pressure. The downstream clinical expression is progressive headache, vomiting, and papilledema.'},
+    {id:'m_sz',   label:'Cortical irritation',                  nodeType:'mechanism', layer:'consequence', from:['m_core','cf4'],
+     tooltip:'Cortical venous congestion lowers the seizure threshold and can produce a generalized tonic-clonic seizure without requiring a primary arterial-territory infarct.'},
   ],
   dx:{
     id:'dx', label:'Cerebral venous sinus thrombosis', nodeType:'diagnosis',
-    from:['m_risk','m_icp','m_sz'],
-    tooltip:'CVST unifies three independent pathways: postpartum hypercoagulability as the predisposing mechanism, raised intracranial pressure from venous outflow obstruction, and cortical seizure from venous congestion — without a clean arterial-territory focal deficit.'
+    from:['m_icp','m_sz'],
+    tooltip:'CVST is supported by a single upstream dural sinus thrombosis mechanism that explains both raised-ICP symptoms and signs, plus seizure from cortical venous congestion in a postpartum hypercoagulable patient.'
   },
   excludeCards:[
     {target:'Migraine with aura',
@@ -872,8 +875,10 @@ const task3ImprovedTemplate={
     {id:'ev5',  label:'Postictal confusion',                 short:'Postictal confusion',  phrase:'briefly confused',                                              hiddenInMain:true},
     {id:'ev7',  label:'Near-normal temperature',             short:'Near-normal temp',     phrase:'temperature is 37.4°C',                                         hiddenInMain:true},
     {id:'ev8',  label:'Mild neck stiffness',                 short:'Neck stiffness',       phrase:'mild neck stiffness',                                           hiddenInMain:true},
-    {id:'ev9',  label:'No persistent focal deficit',         short:'No persistent deficit',phrase:['Strength and language are intact','Visual fields are full'],    hiddenInMain:true},
-    {id:'ev10', label:'Fundoscopy limited — papilledema not assessable', short:'Fundoscopy limited', phrase:'Fundoscopic examination is limited',                  hiddenInMain:true},
+    {id:'ev9',  label:'Intact motor and language function',  short:'Intact motor/language',phrase:['Strength and language are intact','Visual fields are full'], nodeType:'exclusion', hiddenInMain:true,
+     tooltip:'Intact strength, language, and visual fields after the seizure argue against a completed arterial infarction with persistent left MCA territory deficits.'},
+    {id:'ev10', label:'Limited fundoscopic examination',      short:'Limited fundoscopy', phrase:'Fundoscopic examination is limited', nodeType:'exclusion', hiddenInMain:true,
+     tooltip:'Fundoscopy cannot confirm or exclude papilledema here, so raised ICP must be inferred clinically from progressive headache, vomiting, postpartum risk, and focal seizure.'},
     {id:'ev6',  label:'Different from usual headache',       short:'Different headache',   phrase:'different in character',                                        hiddenInMain:true},
   ],
   findings:[
@@ -885,17 +890,19 @@ const task3ImprovedTemplate={
      tooltip:'Rhythmic right-hand shaking for 90 seconds followed by postictal confusion is most consistent with a focal motor seizure localising to the left motor cortex. Importantly, strength and language remain intact afterward, distinguishing this from a completed arterial infarct.'},
   ],
   mechs:[
-    {id:'m_risk', label:'Postpartum hypercoagulability',            nodeType:'mechanism', from:['cf1'],
+    {id:'m_risk', label:'Postpartum hypercoagulability',            nodeType:'mechanism', layer:'risk', from:['cf1'],
      tooltip:'Postpartum physiology sustains a prothrombotic state beyond the first week. This provides the predisposing mechanism for dural sinus thrombosis even at three weeks.'},
-    {id:'m_icp',  label:'Venous outflow obstruction',  nodeType:'mechanism', from:['cf2'],
+    {id:'m_core', label:'Dural sinus thrombosis',                  nodeType:'mechanism', layer:'core', from:['m_risk'],
+     tooltip:'Postpartum hypercoagulability promotes thrombus formation in a dural sinus. This single upstream event drives two parallel downstream consequences: impaired venous drainage raising ICP, and cortical venous congestion lowering the seizure threshold.'},
+    {id:'m_icp',  label:'Raised ICP',                              nodeType:'mechanism', layer:'consequence', from:['m_core','cf2'],
      tooltip:'CVST impairs CSF resorption and venous drainage, raising intracranial pressure. Without papilledema to confirm raised ICP directly, the mechanism is inferred from two days of progressively worsening diffuse headache with vomiting — a pattern that should prompt consideration of venous outflow obstruction in the postpartum context.'},
-    {id:'m_sz',   label:'Venous cortical irritation', nodeType:'mechanism', from:['cf3'],
+    {id:'m_sz',   label:'Cortical irritation',                     nodeType:'mechanism', layer:'consequence', from:['m_core','cf3'],
      tooltip:'Venous congestion or focal venous infarction can irritate cortex and generate a focal seizure without leaving a persistent motor or language deficit. This distinguishes venous from arterial cortical injury: a left MCA infarct would typically produce lasting aphasia or hemiparesis.'},
   ],
   dx:{
     id:'dx', label:'Cerebral venous sinus thrombosis', nodeType:'diagnosis',
-    from:['m_risk','m_icp','m_sz'],
-    tooltip:'CVST integrates three converging pathways: postpartum hypercoagulability as predisposing mechanism, raised intracranial pressure inferred from progressive headache and vomiting (without direct papilledema confirmation), and focal cortical seizure from venous congestion without a persistent arterial deficit. No single pathway is conclusive alone; the diagnosis rests on their convergence.'
+    from:['m_icp','m_sz'],
+    tooltip:'CVST is supported by a single upstream dural sinus thrombosis mechanism. The diagnosis rests on convergence between postpartum thrombotic risk, raised-ICP symptoms inferred from progressive headache and vomiting, and focal cortical seizure from venous congestion without a persistent arterial deficit.'
   },
   excludeCards:[
     {target:'Reversible cerebral vasoconstriction syndrome (RCVS)',
@@ -1653,20 +1660,15 @@ function getNodeRecord(kg,id){
   return null;
 }
 function evidencePhrasesForNode(kg,id){
-  const rec=getNodeRecord(kg,id); if(!rec)return[];
-  let evidIds=[];
-  if(rec.type==='evidence')evidIds=[id];
-  else if(rec.type==='finding')evidIds=rec.node.from||[];
-  else if(rec.type==='mech'){
-    (rec.node.from||[]).forEach(fid=>{const f=getFindingById(kg,fid);if(f)evidIds.push(...(f.from||[]));});
-  } else if(rec.type==='dx'){
-    (rec.node.from||[]).forEach(src=>{
-      const r=getNodeRecord(kg,src);
-      if(!r)return;
-      if(r.type==='finding')evidIds.push(...(r.node.from||[]));
-      if(r.type==='mech')(r.node.from||[]).forEach(fid=>{const f=getFindingById(kg,fid);if(f)evidIds.push(...(f.from||[]));});
-    });
+  function collect(srcId,seen=new Set()){
+    if(seen.has(srcId))return[];
+    seen.add(srcId);
+    const rec=getNodeRecord(kg,srcId);
+    if(!rec)return[];
+    if(rec.type==='evidence')return[srcId];
+    return (rec.node.from||[]).flatMap(nextId=>collect(nextId,seen));
   }
+  let evidIds=collect(id);
   evidIds=[...new Set(evidIds)];
   return evidIds.map(eid=>getEvidenceById(kg,eid)).filter(Boolean).map(e=>e.phrase||e.short||e.label);
 }
@@ -1788,6 +1790,7 @@ function directNeighborIdsForFocus(kg,id){
     if((kg.dx.from||[]).includes(id))ids.add(kg.dx.id);
   } else if(rec.type==='mech'){
     (rec.node.from||[]).forEach(fid=>ids.add(fid));
+    (kg.mechs||[]).forEach(m=>{if((m.from||[]).includes(id))ids.add(m.id);});
     if((kg.dx.from||[]).includes(id))ids.add(kg.dx.id);
   } else if(rec.type==='dx'){
     (kg.dx.from||[]).forEach(src=>ids.add(src));
@@ -2039,13 +2042,14 @@ function renderKG(){
   const visibleMechs=(kg.mechs||[]).filter(m=>!m.hiddenInMain);
   const W=1180,LEGEND_H=44;
   const cfCount=visibleFindings.length,pCount=visiblePatterns.length,mCount=visibleMechs.length;
+  const hasMechanismLayers=visibleMechs.some(m=>m.layer);
   const NODE_H=52, GROUP_GAP=34;
   const totalBandH=Math.max(cfCount,1)*NODE_H + Math.max(cfCount-1,0)*GROUP_GAP;
   const graphH=Math.max(totalBandH+120, 360);
   const H=graphH+LEGEND_H;
 
   const SIDE_PAD=130;
-  const colNames=['cf',...(pCount>0?['pattern']:[]),'mech','dx'];
+  const colNames=['cf',...(pCount>0?['pattern']:[]),...(hasMechanismLayers?['mechRisk','mechCore','mechConsequence']:['mech']),'dx'];
   const colSpacing=(W-SIDE_PAD*2)/(colNames.length-1);
   const COL={};
   colNames.forEach((name,i)=>{ COL[name]=SIDE_PAD+i*colSpacing; });
@@ -2077,13 +2081,16 @@ function renderKG(){
     const base=avgKnown(p.from,cfYMap,pFallback[i]||graphH/2);
     pYMap[p.id]=clampY(base+(pCount===1?8:(i%2?-14:14)));
   });
-  const sourceYForMech=id=>pYMap[id]??cfYMap[id];
+  const sourceYForMech=id=>mYMap[id]??pYMap[id]??cfYMap[id];
   const mFallback=ySpread(mCount,graphH,60);
   const mYMap={};
   visibleMechs.forEach((m,i)=>{
     const srcMap=Object.fromEntries([...(m.from||[])].map(id=>[id,sourceYForMech(id)]));
-    const base=avgKnown(m.from,srcMap,mFallback[i]||graphH/2);
-    const mechOffset=(currentTask===3 && m.id==='m1')?-28:(mCount===1?-18:(i%2?18:-18));
+    let base=avgKnown(m.from,srcMap,mFallback[i]||graphH/2);
+    if(hasMechanismLayers && m.layer==='core')base=graphH/2;
+    const mechOffset=hasMechanismLayers
+      ? (m.layer==='consequence' && m.id==='m_icp'?-35:(m.layer==='consequence' && m.id==='m_sz'?35:0))
+      : ((currentTask===3 && m.id==='m1')?-28:(mCount===1?-18:(i%2?18:-18)));
     mYMap[m.id]=clampY(base+mechOffset);
   });
   const dxSourceMap={...cfYMap,...pYMap,...mYMap};
@@ -2124,8 +2131,11 @@ function renderKG(){
       isInteractive?{interactive:true,tooltip:p.tooltip,tooltipTitle:semanticTypeLabel(p,'pattern'),...focusMeta(p.id)}:focusMeta(p.id));
     nodeMap[p.id]=n;nodesSvg+=n.svg;
   });
+  const mechXFor=m=>hasMechanismLayers
+    ? COL[m.layer==='risk'?'mechRisk':(m.layer==='core'?'mechCore':'mechConsequence')]
+    : COL.mech;
   visibleMechs.forEach((m,i)=>{
-    const pos=getDraggableNodePosition(m.id,COL.mech,mYMap[m.id]);
+    const pos=getDraggableNodePosition(m.id,mechXFor(m),mYMap[m.id]);
     const n=makeNode(m.id,semanticTypeFor(m,'mech'),m.label,pos.cx,pos.cy,
       isInteractive?{interactive:true,tooltip:m.tooltip,tooltipTitle:semanticTypeLabel(m,'mech'),...focusMeta(m.id)}:focusMeta(m.id));
     nodeMap[m.id]=n;nodesSvg+=n.svg;
@@ -2151,8 +2161,9 @@ function renderKG(){
   visibleMechs.forEach(m=>{
     m.from.forEach(cfId=>{
       if(!nodeMap[cfId]||!nodeMap[m.id])return;
-      const src=visibleFindings.find(f=>f.id===cfId)||visiblePatterns.find(p=>p.id===cfId);
-      const defaultRelation=defaultFindingToMechanismRelation(src?src.label:cfId,m.label);
+      const srcRecord=getNodeRecord(kg,cfId);
+      const src=srcRecord?.node;
+      const defaultRelation=srcRecord?.type==='mech'?'pathophysiology_of':defaultFindingToMechanismRelation(src?src.label:cfId,m.label);
       const tooltip=isInteractive?`${relationSentence(src?src.label:cfId,defaultRelation,m.label)} ${m.tooltip||''}`:null;
       const eid=edgeIdFor(cfId,m.id,defaultRelation);
       edgesSvg+=makeEdge(nodeMap[cfId],nodeMap[m.id],getEdgeLabel(eid,defaultRelation),'#1a7a7a',
