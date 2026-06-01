@@ -416,10 +416,12 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);fon
   <div class="modal-box">
     <div style="display:flex;justify-content:space-between;align-items:center"><div class="modal-title">Reject with feedback</div><button class="btn" onclick="closeReject()" style="background:var(--surface2);border:1px solid var(--border)">×</button></div>
     <div class="label" style="margin-top:16px">Select issues</div>
-    <label class="issue"><input type="checkbox"><div><strong>Too obvious</strong><span>The answer is immediately clear without reasoning.</span></div></label>
-    <label class="issue"><input type="checkbox"><div><strong>Distractor too weak</strong><span>One or more alternatives are easy to eliminate.</span></div></label>
-    <label class="issue"><input type="checkbox"><div><strong>Missing key information</strong><span>The case lacks information needed for review.</span></div></label>
-    <label class="issue"><input type="checkbox"><div><strong>Unclear explanation</strong><span>The reasoning path is hard to follow.</span></div></label>
+    <label class="issue"><input type="checkbox" value="too_obvious"><div><strong>Too obvious</strong><span>The answer is immediately clear without clinical reasoning.</span></div></label>
+    <label class="issue"><input type="checkbox" value="distractor_too_weak"><div><strong>Distractor too weak</strong><span>One or more alternatives are not plausible differential diagnoses.</span></div></label>
+    <label class="issue"><input type="checkbox" value="missing_key_information"><div><strong>Missing key information</strong><span>The vignette lacks information needed to reach the answer.</span></div></label>
+    <label class="issue"><input type="checkbox" value="multiple_defensible_answers"><div><strong>Multiple defensible answers</strong><span>More than one option can be reasonably justified.</span></div></label>
+    <div class="label" style="margin-top:16px">Additional notes (optional)</div>
+    <textarea class="review-textarea" id="rejectOptionalNote" placeholder="Optional comments for the rejected question"></textarea>
     <div class="modal-footer"><button class="btn" onclick="closeReject()" style="background:var(--surface2);border:1px solid var(--border)">Cancel</button><button class="btn reject" onclick="submitReject()">Submit feedback</button></div>
   </div>
 </div>
@@ -459,7 +461,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);fon
 <div class="modal" id="bankModal">
   <div class="modal-box bank-modal-box">
     <div style="display:flex;justify-content:space-between;align-items:center;gap:12px">
-      <div class="modal-title">Accepted question bank</div>
+      <div class="modal-title">Question bank</div>
       <button class="btn" onclick="closeBank()" style="background:var(--surface2);border:1px solid var(--border)">×</button>
     </div>
     <div id="bankList" style="margin-top:16px"></div>
@@ -2735,29 +2737,92 @@ function applyRegenerate(){
 // ACCEPT / BANK / REJECT
 // ══════════════════════════════════════════════════════════════
 function acceptQuestion(){
-  const bank=JSON.parse(localStorage.getItem('resp_mcq_bank')||'[]');
+  const bank=readBank('saved');
   const t=tasks[currentTask];
-  bank.push({target:t.target,question_stem:t.question_stem,correct:t.correct,options:t.options,source:t.source,saved_at:new Date().toISOString()});
-  localStorage.setItem('resp_mcq_bank',JSON.stringify(bank));
+  bank.push(makeBankEntry('saved'));
+  writeBank('saved',bank);
   renderBank();
   showToast('Accepted and saved to question bank');
 }
 function openBank(){renderBank();document.getElementById('bankModal').classList.add('open');}
 function closeBank(){document.getElementById('bankModal').classList.remove('open');}
+function bankDomain(){return location.pathname.toLowerCase().endsWith('/pediatrics.html')?'pediatrics':'neurology';}
+function bankKey(kind){return kind==='rejected'?`resp_mcq_rejected_bank_${bankDomain()}`:`resp_mcq_saved_bank_${bankDomain()}`;}
+function readBank(kind){return JSON.parse(localStorage.getItem(bankKey(kind))||'[]');}
+function writeBank(kind,items){localStorage.setItem(bankKey(kind),JSON.stringify(items));}
+function makeBankEntry(status,feedback={}){
+  const t=tasks[currentTask];
+  return {
+    status,
+    domain:bankDomain(),
+    task_id:currentTask,
+    target:t.target,
+    question_stem:t.question_stem,
+    correct:t.correct,
+    options:JSON.parse(JSON.stringify(t.options||{})),
+    source:t.source,
+    difficulty:t.difficulty,
+    task:JSON.parse(JSON.stringify(t)),
+    feedback,
+    saved_at:new Date().toISOString()
+  };
+}
 function renderBank(){
   const list=document.getElementById('bankList');
   const count=document.getElementById('navBankCount');
-  const bank=JSON.parse(localStorage.getItem('resp_mcq_bank')||'[]');
-  if(count)count.textContent=bank.length;
+  const saved=readBank('saved');
+  const rejected=readBank('rejected');
+  if(count)count.textContent=saved.length+rejected.length;
   if(list){
-    if(!bank.length)list.innerHTML='<div class="study-note">No accepted questions yet.</div>';
-    else list.innerHTML=bank.map((q,i)=>`<div class="bank-card"><h4>${i+1}. ${esc(q.target)}</h4><p><strong>Stem:</strong> ${esc(q.question_stem)}</p><p><strong>Correct:</strong> ${esc(q.correct)}. ${esc(q.options[q.correct])}</p><p><strong>Source:</strong> ${esc(q.source)}</p><div class="bank-actions"><button class="btn reject" onclick="deleteFromBank(${i})">Delete</button></div></div>`).join('');
+    const renderSection=(title,items,kind,empty)=>`
+      <div class="card-label" style="margin:${kind==='saved'?'0':'18px'} 0 10px">${title}</div>
+      ${items.length?items.map((q,i)=>renderBankCard(q,i,kind)).join(''):`<div class="study-note">${empty}</div>`}
+    `;
+    list.innerHTML=renderSection('Saved questions',saved,'saved','No saved questions yet.')+renderSection('Rejected questions',rejected,'rejected','No rejected questions yet.');
   }
 }
-function deleteFromBank(i){const bank=JSON.parse(localStorage.getItem('resp_mcq_bank')||'[]');bank.splice(i,1);localStorage.setItem('resp_mcq_bank',JSON.stringify(bank));renderBank();showToast('Deleted from bank');}
-function openReject(){document.getElementById('rejectModal').classList.add('open');}
+function renderBankCard(q,i,kind){
+  const feedback=q.feedback||{};
+  const issueText=(feedback.issues||[]).map(x=>x.label).join('; ');
+  const note=feedback.note?`<p><strong>Note:</strong> ${esc(feedback.note)}</p>`:'';
+  const issues=issueText?`<p><strong>Issues:</strong> ${esc(issueText)}</p>`:'';
+  return `<div class="bank-card"><h4>${i+1}. ${esc(q.target)}</h4><p><strong>Stem:</strong> ${esc(q.question_stem)}</p><p><strong>Correct:</strong> ${esc(q.correct)}. ${esc((q.options||{})[q.correct]||'')}</p><p><strong>Source:</strong> ${esc(q.source||'')}</p>${issues}${note}<div class="bank-actions"><button class="btn edit-btn" onclick="openBankQuestion('${kind}',${i})">Open</button><button class="btn reject" onclick="deleteFromBank('${kind}',${i})">Delete</button></div></div>`;
+}
+function openBankQuestion(kind,i){
+  const bank=readBank(kind);
+  const item=bank[i];
+  if(!item)return;
+  const id=item.task_id||1;
+  if(item.task)tasks[id]=JSON.parse(JSON.stringify(item.task));
+  currentTask=id;
+  if(id===3)task3SupportMode='kg';
+  closeBank();
+  document.getElementById('setupPage').style.display='none';
+  document.getElementById('appPage').style.display='block';
+  loadTask(id);
+  showToast(`${kind==='rejected'?'Rejected':'Saved'} question opened`);
+}
+function deleteFromBank(kind,i){const bank=readBank(kind);bank.splice(i,1);writeBank(kind,bank);renderBank();showToast('Deleted from bank');}
+function openReject(){
+  document.querySelectorAll('#rejectModal input[type="checkbox"]').forEach(input=>input.checked=false);
+  const note=document.getElementById('rejectOptionalNote');
+  if(note)note.value='';
+  document.getElementById('rejectModal').classList.add('open');
+}
 function closeReject(){document.getElementById('rejectModal').classList.remove('open');}
-function submitReject(){closeReject();showToast('Feedback submitted');}
+function submitReject(){
+  const issues=[...document.querySelectorAll('#rejectModal input[type="checkbox"]:checked')].map(input=>({
+    value:input.value,
+    label:input.closest('.issue')?.querySelector('strong')?.textContent||input.value
+  }));
+  const note=(document.getElementById('rejectOptionalNote')?.value||'').trim();
+  const bank=readBank('rejected');
+  bank.push(makeBankEntry('rejected',{issues,note}));
+  writeBank('rejected',bank);
+  closeReject();
+  renderBank();
+  showToast('Feedback submitted and saved to rejected bank');
+}
 function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.style.display='block';setTimeout(()=>t.style.display='none',2200);}
 
 // ── Init ──
