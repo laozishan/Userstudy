@@ -427,7 +427,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);fon
     <label class="issue"><input type="checkbox" value="missing_key_information"><div><strong>Missing key information</strong><span>The vignette lacks information needed to reach the answer.</span></div></label>
     <label class="issue"><input type="checkbox" value="multiple_defensible_answers"><div><strong>Multiple defensible answers</strong><span>More than one option can be reasonably justified.</span></div></label>
     <div class="label" style="margin-top:16px">Additional notes (optional)</div>
-    <textarea class="review-textarea" id="rejectOptionalNote" placeholder="Optional comments for the rejected question"></textarea>
+    <textarea class="review-textarea" id="rejectOptionalNote" placeholder="Any additional notes for this question?"></textarea>
     <div class="modal-footer"><button class="btn" onclick="closeReject()" style="background:var(--surface2);border:1px solid var(--border)">Cancel</button><button class="btn reject" onclick="submitReject()">Submit feedback</button></div>
   </div>
 </div>
@@ -441,7 +441,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);fon
     <label class="issue"><input type="checkbox" value="direct_answer_cue"><div><strong>Direct answer cue</strong><span>Explicit bilateral papilledema makes the intracranial-hypertension pathway too obvious.</span></div></label>
     <label class="issue"><input type="checkbox" value="explicit_negative_exclusion"><div><strong>Explicit negative distractor elimination</strong><span>Negative findings such as no fever and no clean arterial-territory deficit make meningitis and lacunar infarct too easy to reject.</span></div></label>
     <div class="label" style="margin-top:16px">Additional notes (optional)</div>
-    <textarea class="review-textarea" id="regenerateFreeText" placeholder="Any additional notes for the revised question or KG?"></textarea>
+    <textarea class="review-textarea" id="regenerateFreeText" placeholder="Any additional notes for this question?"></textarea>
     <div class="study-note" id="selectedClueSummary" style="margin-top:14px"></div>
     <div class="modal-footer"><button class="btn" onclick="closeRegenerate()" style="background:var(--surface2);border:1px solid var(--border)">Cancel</button><button class="btn accept" onclick="applyRegenerate()">Generate revised version</button></div>
   </div>
@@ -536,12 +536,12 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);fon
     <div class="nav-logo" onclick="goSetup()" title="Back to setup">Med<span>MCQ</span></div>
     <div class="nav-divider"></div>
     <div class="task-tabs">
-      <button class="nav-tab active" id="navTab1" onclick="loadTask(1)">Task 1 <span class="pill text">Text only</span></button>
-      <button class="nav-tab" id="navTab2" onclick="loadTask(2)">Task 2 <span class="pill kg">KG ± hover</span></button>
-      <button class="nav-tab" id="navTab3" onclick="loadTask(3)">Task 3 <span class="pill both">KG + Text</span></button>
+      <button class="nav-tab active" id="navTab1" onclick="loadTask(1)">Task 1 <span class="pill text">Text</span></button>
+      <button class="nav-tab" id="navTab2" onclick="loadTask(2)">Task 2 <span class="pill kg">KG</span></button>
+      <button class="nav-tab" id="navTab3" onclick="loadTask(3)">Task 3 <span class="pill both">KG+Text</span></button>
     </div>
     <div class="nav-meta">
-      <span class="meta-chip" id="navChip">Explanation: Text only</span>
+      <span class="meta-chip" id="navChip">Explanation: Text</span>
       <button class="bank-btn" onclick="openBank()">Question bank <span class="bank-count" id="navBankCount">0</span></button>
       <button class="back-nav-btn" onclick="goSetup()">← Setup</button>
     </div>
@@ -614,7 +614,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);fon
           </div>
           <div class="mode-toggle-wrap">
             <button class="support-mode-btn" id="supportModeText" onclick="setTask3SupportMode('text')">Text</button>
-            <button class="support-mode-btn" id="supportModeKg" onclick="setTask3SupportMode('kg')">KG + Text</button>
+            <button class="support-mode-btn" id="supportModeKg" onclick="setTask3SupportMode('kg')">KG+Text</button>
           </div>
         </div>
         <div id="kgBoard" class="reasoning-board"></div>
@@ -692,7 +692,7 @@ function confirmPicker(){closePicker();}
 // ══════════════════════════════════════════════════════════════
 const tasks={
 1:{
-  title:'Task 1 — Textual explanation only',chip:'Explanation: Text only',condition:'Wernicke aphasia · MCA inferior division · text explanation only',mode:'text',difficulty:'Easy',target:'Left MCA inferior division',source:'Neurology · Aphasia and vascular localization',correct:'A',
+  title:'Task 1 — Textual explanation only',chip:'Explanation: Text',condition:'Wernicke aphasia · MCA inferior division · text explanation only',mode:'text',difficulty:'Easy',target:'Left MCA inferior division',source:'Neurology · Aphasia and vascular localization',correct:'A',
   question_stem:'Which vascular territory is most likely involved?',
   vignette:'A 66-year-old right-handed man is evaluated after his daughter noticed that he was speaking strangely. He talks fluently and at normal speed, but his sentences contain incorrect words and do not answer the question asked. When asked to close his eyes or raise his left hand, he smiles and continues speaking without following the command. He seems unaware that anything is wrong. There is no clear facial droop, and strength is full in all extremities. Confrontation testing suggests loss of vision in the right visual field. His past history includes atrial fibrillation, for which he stopped taking anticoagulation two months ago.',
   options:{A:'Left MCA inferior division',B:'Left MCA deep territory',C:'Right MCA superior division',D:'Left ACA territory',E:'Right PCA territory'},
@@ -712,7 +712,7 @@ const tasks={
   ]
 },
 2:{
-  title:'Task 2 — Knowledge graph explanation only',chip:'Explanation: KG only',condition:'Amaurosis fugax · carotid stenosis · KG explanation only',mode:'kg',difficulty:'Easy',target:'Left internal carotid artery stenosis',source:'Neurology · TIA and carotid localization',correct:'A',
+  title:'Task 2 — Knowledge graph explanation only',chip:'Explanation: KG',condition:'Amaurosis fugax · carotid stenosis · KG explanation only',mode:'kg',difficulty:'Easy',target:'Left internal carotid artery stenosis',source:'Neurology · TIA and carotid localization',correct:'A',
   question_stem:'Which vascular lesion best explains both types of transient symptoms?',
   vignette:'A 70-year-old man reports three brief episodes over the past week in which vision in his left eye went dark like a curtain coming down. Each episode lasted about five minutes and resolved completely. Yesterday he also had a 10-minute episode of clumsiness and weakness of the right hand while buttoning his shirt. He has smoked for 45 years and has hypercholesterolemia. Examination between episodes is normal. A soft bruit is heard just below the angle of the left jaw. There is no history of seizure or migraine.',
   options:{A:'Left internal carotid artery stenosis',B:'Right internal carotid artery stenosis',C:'Left posterior cerebral artery stenosis',D:'Superior sagittal sinus thrombosis',E:'Right thalamoperforator artery occlusion'},
@@ -756,7 +756,7 @@ const tasks={
   }
 },
 3:{
-  title:'Task 3 — Text + Knowledge graph explanation',chip:'Explanation: Text + KG',condition:'Postpartum headache · cerebral venous sinus thrombosis · Text + KG',mode:'both',difficulty:'Easy',target:'Cerebral venous sinus thrombosis',source:'Neurology · Postpartum headache and seizure',correct:'A',
+  title:'Task 3 — Text + Knowledge graph explanation',chip:'Explanation: KG+Text',condition:'Postpartum headache · cerebral venous sinus thrombosis · KG+Text',mode:'both',difficulty:'Easy',target:'Cerebral venous sinus thrombosis',source:'Neurology · Postpartum headache and seizure',correct:'A',
   question_stem:'What is the most likely diagnosis?',
   vignette:'A 30-year-old woman presents five days after an uncomplicated delivery because of worsening headache and vomiting. The headache began the day after delivery and has become more severe each day. On the morning of presentation, she had a generalized tonic-clonic seizure lasting two minutes. She is drowsy afterward but can answer questions. There is no fever. Examination shows bilateral papilledema. Strength, language, and visual field testing are otherwise without a clear focal deficit.',
   options:{A:'Cerebral venous sinus thrombosis',B:'Migraine with aura',C:'Reversible cerebral vasoconstriction syndrome (RCVS)',D:'Lacunar infarction of the internal capsule',E:'Acute bacterial meningitis'},
@@ -839,7 +839,7 @@ const tasks={
 };
 
 const task3ImprovedTemplate={
-  title:'Task 3 — Regenerated question review',chip:'Regenerated version · KG + Text support',
+  title:'Task 3 — Regenerated question review',chip:'Explanation: KG+Text',
   condition:'Cerebral venous sinus thrombosis · regenerated item · expert-selected support mode',mode:'both',regenerated:true,
   difficulty:'Medium',target:'Cerebral venous sinus thrombosis',source:'Neurology · Postpartum headache and seizure',correct:'A',
   question_stem:'What is the most likely diagnosis?',
@@ -1000,7 +1000,7 @@ function getHeaderCopy(){
     if(task3SupportMode==='text'){
       return {title:'Text explanation · Question review',hint:'Text support is selected. Switch to KG to view the knowledge graph.'};
     }
-    return {title:'Knowledge graph · KG + Text support',hint:'KG + Text support is selected. Use the enriched text switch inside the graph if hover reasoning is needed.'};
+    return {title:'Knowledge graph · KG+Text support',hint:'KG+Text support is selected. Use the enriched text switch inside the graph if hover reasoning is needed.'};
   }
   if(t.mode==='kg'){
     return {title:'Knowledge graph · KG review',hint:'KG-only condition: review the graph structure without text explanation.'};
@@ -2675,7 +2675,7 @@ function renderTask3CluePanel(){
         ? 'Review the question and use Regenerate when ready.'
         : 'Review the question, then use Regenerate if you want to inspect a revised version. Node hover explains the clinical clues; edges are labels only.';
     } else {
-      sub.textContent = 'Regenerated version loaded. You can compare it using Text or KG + Text support.';
+      sub.textContent = 'Regenerated version loaded. You can compare it using Text or KG+Text support.';
     }
   }
   const btn=document.getElementById('task3ClueEditBtn');
@@ -2737,8 +2737,8 @@ function updateTask3SupportSwitch(){
   const t=tasks[currentTask]||{};
   if(sub){
     sub.textContent=t.regenerated
-      ? 'Regenerated version: choose text or KG + Text support. Enriched hover text is controlled inside the graph.'
-      : 'Choose text or KG + Text support. Use Regenerate to load a revised version.';
+      ? 'Regenerated version: choose Text or KG+Text support. Enriched hover text is controlled inside the graph.'
+      : 'Choose Text or KG+Text support. Use Regenerate to load a revised version.';
   }
   const textBtn=document.getElementById('supportModeText');
   const kgBtn=document.getElementById('supportModeKg');
@@ -2746,10 +2746,8 @@ function updateTask3SupportSwitch(){
   if(kgBtn) kgBtn.classList.toggle('active',task3SupportMode!=='text');
   const chip=document.getElementById('navChip');
   if(chip){
-    const label=task3SupportMode==='text'?'Text':'KG + Text';
-    chip.textContent=(tasks[currentTask]&&tasks[currentTask].regenerated)
-      ? `Regenerated version · ${label}`
-      : label;
+    const label=task3SupportMode==='text'?'Text':'KG+Text';
+    chip.textContent=`Explanation: ${label}`;
   }
 }
 
@@ -2824,7 +2822,7 @@ function applyRegenerate(){
     // loadTask(3) already re-renders the right support panel and Task 3 switch.
     loadTask(3);
     const n=removedClues.length;
-    showToast(n?`Regenerated version loaded with ${n} selected clue(s) removed or weakened.`:'Regenerated version loaded. You can inspect it with Text or KG + Text support.');
+    showToast(n?`Regenerated version loaded with ${n} selected clue(s) removed or weakened.`:'Regenerated version loaded. You can inspect it with Text or KG+Text support.');
   }catch(err){
     console.error(err);
     alert('Regeneration failed: '+(err&&err.message?err.message:err));

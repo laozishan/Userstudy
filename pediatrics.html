@@ -427,7 +427,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);fon
     <label class="issue"><input type="checkbox" value="missing_key_information"><div><strong>Missing key information</strong><span>The vignette lacks information needed to reach the answer.</span></div></label>
     <label class="issue"><input type="checkbox" value="multiple_defensible_answers"><div><strong>Multiple defensible answers</strong><span>More than one option can be reasonably justified.</span></div></label>
     <div class="label" style="margin-top:16px">Additional notes (optional)</div>
-    <textarea class="review-textarea" id="rejectOptionalNote" placeholder="Optional comments for the rejected question"></textarea>
+    <textarea class="review-textarea" id="rejectOptionalNote" placeholder="Any additional notes for this question?"></textarea>
     <div class="modal-footer"><button class="btn" onclick="closeReject()" style="background:var(--surface2);border:1px solid var(--border)">Cancel</button><button class="btn reject" onclick="submitReject()">Submit feedback</button></div>
   </div>
 </div>
@@ -441,7 +441,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);fon
     <label class="issue"><input type="checkbox" value="direct_answer_cue"><div><strong>Direct answer cue</strong><span>The item points too directly to croup through the steeple sign and the final parent question.</span></div></label>
     <label class="issue"><input type="checkbox" value="explicit_negative_exclusion"><div><strong>Explicit negative distractor elimination</strong><span>Negative findings such as no drooling or dysphagia make competing diagnoses too easy to reject.</span></div></label>
     <div class="label" style="margin-top:16px">Additional notes (optional)</div>
-    <textarea class="review-textarea" id="regenerateFreeText" placeholder="Any additional notes for the revised question or KG?"></textarea>
+    <textarea class="review-textarea" id="regenerateFreeText" placeholder="Any additional notes for this question?"></textarea>
     <div class="study-note" id="selectedClueSummary" style="margin-top:14px"></div>
     <div class="modal-footer"><button class="btn" onclick="closeRegenerate()" style="background:var(--surface2);border:1px solid var(--border)">Cancel</button><button class="btn accept" onclick="applyRegenerate()">Generate revised version</button></div>
   </div>
@@ -536,12 +536,12 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);fon
     <div class="nav-logo" onclick="goSetup()" title="Back to setup">Med<span>MCQ</span></div>
     <div class="nav-divider"></div>
     <div class="task-tabs">
-      <button class="nav-tab active" id="navTab1" onclick="loadTask(1)">Task 1 <span class="pill text">Text only</span></button>
-      <button class="nav-tab" id="navTab2" onclick="loadTask(2)">Task 2 <span class="pill kg">KG ± hover</span></button>
-      <button class="nav-tab" id="navTab3" onclick="loadTask(3)">Task 3 <span class="pill both">KG + Text</span></button>
+      <button class="nav-tab active" id="navTab1" onclick="loadTask(1)">Task 1 <span class="pill text">Text</span></button>
+      <button class="nav-tab" id="navTab2" onclick="loadTask(2)">Task 2 <span class="pill kg">KG</span></button>
+      <button class="nav-tab" id="navTab3" onclick="loadTask(3)">Task 3 <span class="pill both">KG+Text</span></button>
     </div>
     <div class="nav-meta">
-      <span class="meta-chip" id="navChip">Explanation: Text only</span>
+      <span class="meta-chip" id="navChip">Explanation: Text</span>
       <button class="bank-btn" onclick="openBank()">Question bank <span class="bank-count" id="navBankCount">0</span></button>
       <button class="back-nav-btn" onclick="goSetup()">← Setup</button>
     </div>
@@ -614,7 +614,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);fon
           </div>
           <div class="mode-toggle-wrap">
             <button class="support-mode-btn" id="supportModeText" onclick="setTask3SupportMode('text')">Text</button>
-            <button class="support-mode-btn" id="supportModeKg" onclick="setTask3SupportMode('kg')">KG + Text</button>
+            <button class="support-mode-btn" id="supportModeKg" onclick="setTask3SupportMode('kg')">KG+Text</button>
           </div>
         </div>
         <div id="kgBoard" class="reasoning-board"></div>
@@ -692,7 +692,7 @@ function confirmPicker(){closePicker();}
 // ══════════════════════════════════════════════════════════════
 const tasks={
 1:{
-  title:'Task 1 — Textual explanation only',chip:'Explanation: Text only',
+  title:'Task 1 — Textual explanation only',chip:'Explanation: Text',
   condition:'Primary ciliary dyskinesia · Chronic wet cough · text explanation only',mode:'text',
   difficulty:'Easy',target:'Primary ciliary dyskinesia',source:"Nelson's Essentials · Chronic Wet Cough",correct:'C',
   question_stem:'What is the most likely diagnosis?',
@@ -713,7 +713,7 @@ const tasks={
   ]
 },
 2:{
-  title:'Task 2 — Knowledge graph explanation only',chip:'Explanation: KG only',
+  title:'Task 2 — Knowledge graph explanation only',chip:'Explanation: KG',
   condition:'Cystic fibrosis · Chronic wet cough · KG explanation only',mode:'kg',
   difficulty:'Medium',target:'Cystic fibrosis',source:"Nelson's Essentials · Chronic Wet Cough",correct:'B',
   question_stem:'What is the most likely diagnosis?',
@@ -787,7 +787,7 @@ const tasks={
   }
 },
 3:{
-  title:'Task 3 — Question refinement',chip:'Explanation: KG support',
+  title:'Task 3 — Question refinement',chip:'Explanation: KG+Text',
   condition:'Croup · question refinement task',mode:'both',regenerated:false,
   difficulty:'Easy',target:'Croup',source:"Nelson's Essentials · Acute Stridor",correct:'C',
   question_stem:'What is the most likely diagnosis?',
@@ -842,7 +842,7 @@ const tasks={
 };
 
 const task3ImprovedTemplate={
-  title:'Task 3 — Regenerated question review',chip:'Regenerated version · KG + Text support',
+  title:'Task 3 — Regenerated question review',chip:'Explanation: KG+Text',
   condition:'Croup · regenerated item · expert-selected support mode',mode:'both',regenerated:true,
   difficulty:'Medium',target:'Croup',source:"Nelson's Essentials · Acute Stridor",correct:'C',
   question_stem:'What is the most likely diagnosis?',
@@ -965,12 +965,10 @@ function getHeaderCopy(){
     if(task3SupportMode==='text'){
       return {title:'Text explanation · Question review',hint:'Text support is selected. Switch to KG to view the knowledge graph.'};
     }
-    return {title:'Knowledge graph · KG + Text support',hint:'KG + Text support is selected. Use the enriched text switch inside the graph if hover reasoning is needed.'};
+    return {title:'Knowledge graph · KG+Text support',hint:'KG+Text support is selected. Use the enriched text switch inside the graph if hover reasoning is needed.'};
   }
   if(t.mode==='kg'){
-    return kgExplainOpen
-      ? {title:'Knowledge graph · KG review',hint:'Hover explanation is enabled. Move over nodes for concise clinical rationale.'}
-      : {title:'Knowledge graph · KG review',hint:'KG-only condition: review the graph structure without text explanation.'};
+    return {title:'Knowledge graph · KG review',hint:'KG-only condition: review the graph structure without text explanation.'};
   }
   if(t.mode==='both'){
     return kgExplainOpen
@@ -2366,7 +2364,7 @@ function miniEvidenceRationale(card,eid,role='against'){
   return `${phrase} does not fit the expected mechanism or clinical pattern of ${card.target}.`;
 }
 
-function miniNodeSvg({x,y,label,type='evidence',cls='',attrs='',maxW=112,minW=74,font=9.5,dashed=false,dragKey='',cardIndex=0}){
+function miniNodeSvg({x,y,label,type='evidence',cls='',attrs='',maxW=122,minW=82,font=10.5,dashed=false,dragKey='',cardIndex=0}){
   const c=type==='distractor'
     ? {fill:'#eef2f6',stroke:'#667085',text:'#26313f'}
     : type==='expected'
@@ -2401,15 +2399,15 @@ function miniEvidenceLayout(count){
   return[{x:18,y:18},{x:110,y:18},{x:202,y:18}];
 }
 function miniRoleLayout(role,count){
-  // Node positions are padded away from the top/bottom of the mini graph.
-  // The graph viewBox is taller than before, so expected nodes and 3-item against stacks no longer touch the bottom edge.
+  // Keep evidence, expected-pattern, and distractor nodes in separate bands
+  // so edge labels do not sit on top of nodes in the mini explanations.
   if(role==='supports'){
-    if(count<=1)return[{x:78,y:56}];
-    return[{x:78,y:42},{x:78,y:88}];
+    if(count<=1)return[{x:44,y:44}];
+    return[{x:44,y:30},{x:44,y:82}];
   }
-  if(count<=1)return[{x:78,y:146}];
-  if(count===2)return[{x:78,y:128},{x:78,y:174}];
-  return[{x:78,y:112},{x:78,y:154},{x:78,y:196}];
+  if(count<=1)return[{x:44,y:132}];
+  if(count===2)return[{x:44,y:118},{x:44,y:176}];
+  return[{x:44,y:92},{x:44,y:150},{x:44,y:208}];
 }
 
 function renderExcludeCards(){
@@ -2437,7 +2435,7 @@ function renderExcludeCards(){
       const label=ev?ev.short||cleanLabel(ev.label):eid;
       const {x,y}=miniRoleLayout(role,ids.length)[j];
       const title=(role==='supports'?'Supports plausibility: ':'Argues against: ')+label;
-      const node=miniNodeSvg({x,y,label,type:role==='against'?'against':'evidence',cls:'mini-evidence-node',attrs:`data-evid="${esc(eid)}" data-role="${esc(role)}" data-explanation="${esc(miniEvidenceRationale(c,eid,role))}" data-title="${esc(title)}"`,maxW:104,minW:78,font:9.6,dragKey:`${role}-${eid}`,cardIndex:i});
+      const node=miniNodeSvg({x,y,label,type:role==='against'?'against':'evidence',cls:'mini-evidence-node',attrs:`data-evid="${esc(eid)}" data-role="${esc(role)}" data-explanation="${esc(miniEvidenceRationale(c,eid,role))}" data-title="${esc(title)}"`,maxW:118,minW:86,font:10.5,dragKey:`${role}-${eid}`,cardIndex:i});
       return {eid,node,role};
     });
     const supportItems=makeEvItems(supportIds,'supports');
@@ -2445,9 +2443,9 @@ function renderExcludeCards(){
     const evItems=[...supportItems,...againstItems];
     const evidenceNodes=evItems.map(x=>x.node.svg).join('');
     const expected=hasExpected
-      ? miniNodeSvg({x:224,y:158,label:c.expected,type:'expected',dashed:true,cls:'mini-expected-node',attrs:`data-explanation="${esc(c.expectedExplanation||'Expected distractor pattern is not established by this vignette.')}" data-title="${esc('Expected but not established: '+cleanLabel(c.expected))}"`,maxW:128,minW:104,font:9.1,dragKey:'expected',cardIndex:i})
+      ? miniNodeSvg({x:248,y:204,label:c.expected,type:'expected',dashed:true,cls:'mini-expected-node',attrs:`data-explanation="${esc(c.expectedExplanation||'Expected distractor pattern is not established by this vignette.')}" data-title="${esc('Expected but not established: '+cleanLabel(c.expected))}"`,maxW:142,minW:112,font:10.5,dragKey:'expected',cardIndex:i})
       : null;
-    const dist=miniNodeSvg({x:hasExpected?356:170,y:hasExpected?96:90,label:c.target,type:'distractor',cls:'mini-distractor-node',attrs:`data-explanation="${esc(c.explanation||'')}" data-title="${esc('Distractor: '+c.target)}"`,maxW:hasExpected?96:118,minW:84,font:9.2,dragKey:'distractor',cardIndex:i});
+    const dist=miniNodeSvg({x:hasExpected?414:212,y:hasExpected?110:100,label:c.target,type:'distractor',cls:'mini-distractor-node',attrs:`data-explanation="${esc(c.explanation||'')}" data-title="${esc('Distractor: '+c.target)}"`,maxW:hasExpected?118:132,minW:92,font:10.5,dragKey:'distractor',cardIndex:i});
     const miniEdgeLabel=(x,y,text,color)=>{
       const w=text==='argues_against'?72:(text==='expected_in'?64:54);
       return `<g class="mini-edge-label" transform="translate(${x-w/2},${y-8})"><rect x="0" y="0" width="${w}" height="15" rx="7.5"/><text x="${w/2}" y="10.8" text-anchor="middle" fill="${color}">${text}</text></g>`;
@@ -2467,9 +2465,9 @@ function renderExcludeCards(){
     const supportTargetYs=supportItems.map((_,idx)=>dist.cy-13+(idx-(supportItems.length-1)/2)*7);
     const againstTargetYs=againstItems.map((_,idx)=>dist.cy+6+(idx-(againstItems.length-1)/2)*9);
     const edgeLines=hasExpected
-      ? supportItems.map(({node,eid},idx)=>softCurve(node,supportTargetYs[idx],'#1a6b3c','miniArrowGreen',{midX:286,width:1.45,relation:'supports',label:'supports',title:'supports',explain:miniEvidenceRationale(c,eid,'supports')})).join('')
-        + againstItems.map(({node,eid},idx)=>softCurve(node,againstTargetYs[idx],'#8a2d2d','miniArrowRed',{midX:286,width:1.45,relation:'argues_against',label:'argues_against',title:'argues_against',explain:miniEvidenceRationale(c,eid,'against')})).join('')
-        + softCurve(expected,dist.cy+22,'#9b8f84','miniArrowDash',{midX:330,width:1.25,dash:true,relation:'expected_in',label:'expected_in',title:'expected_in',explain:c.expectedExplanation||'Expected distractor pattern is not established by this vignette.',labelX:(expected.right+dist.left)/2+6,labelY:(expected.cy+dist.cy+22)/2-2})
+      ? supportItems.map(({node,eid},idx)=>softCurve(node,supportTargetYs[idx],'#1a6b3c','miniArrowGreen',{midX:334,width:1.45,relation:'supports',label:'supports',title:'supports',explain:miniEvidenceRationale(c,eid,'supports'),labelY:node.cy+8})).join('')
+        + againstItems.map(({node,eid},idx)=>softCurve(node,againstTargetYs[idx],'#8a2d2d','miniArrowRed',{midX:334,width:1.45,relation:'argues_against',label:'argues_against',title:'argues_against',explain:miniEvidenceRationale(c,eid,'against'),labelY:node.cy-8})).join('')
+        + softCurve(expected,dist.cy+28,'#9b8f84','miniArrowDash',{midX:374,width:1.25,dash:true,relation:'expected_in',label:'expected_in',title:'expected_in',explain:c.expectedExplanation||'Expected distractor pattern is not established by this vignette.',labelX:(expected.right+dist.left)/2+4,labelY:expected.cy-16})
       : evItems.map(({node,role,eid})=>{
           const color=role==='supports'?'#1a6b3c':'#8a2d2d';
           const rel=role==='supports'?'supports':'argues_against';
@@ -2479,7 +2477,7 @@ function renderExcludeCards(){
     const midLabels='';
     return`<div class="mini-distractor-card" data-letter="${esc(c.letter||'')}" data-focus='${JSON.stringify(focus)}' data-explanation="${esc(c.explanation||'')}" data-target="${esc(c.target)}">
       <div class="mini-distractor-head"><div class="mini-distractor-title">${esc(c.letter?`${c.letter}. ${c.target}`:c.target)}</div></div>
-      <svg class="mini-distractor-svg" viewBox="0 0 ${hasExpected?460:330} ${hasExpected?250:170}" xmlns="http://www.w3.org/2000/svg">
+      <svg class="mini-distractor-svg" viewBox="0 0 ${hasExpected?560:380} ${hasExpected?300:220}" xmlns="http://www.w3.org/2000/svg">
         <defs>
           <marker id="miniArrowGreen${i}" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#1a6b3c"/></marker>
           <marker id="miniArrowRed${i}" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#8a2d2d"/></marker>
@@ -2602,7 +2600,7 @@ function renderTask3CluePanel(){
         ? 'Review the question and use Regenerate when ready.'
         : 'Review the question, then use Regenerate if you want to inspect a revised version. Node hover explains the clinical clues; edges are labels only.';
     } else {
-      sub.textContent = 'Regenerated version loaded. You can compare it using Text or KG + Text support.';
+      sub.textContent = 'Regenerated version loaded. You can compare it using Text or KG+Text support.';
     }
   }
   const btn=document.getElementById('task3ClueEditBtn');
@@ -2665,8 +2663,8 @@ function updateTask3SupportSwitch(){
   const t=tasks[currentTask]||{};
   if(sub){
     sub.textContent=t.regenerated
-      ? 'Regenerated version: choose text or KG + Text support. Enriched hover text is controlled inside the graph.'
-      : 'Choose text or KG + Text support. Use Regenerate to load a revised version.';
+      ? 'Regenerated version: choose Text or KG+Text support. Enriched hover text is controlled inside the graph.'
+      : 'Choose Text or KG+Text support. Use Regenerate to load a revised version.';
   }
   const textBtn=document.getElementById('supportModeText');
   const kgBtn=document.getElementById('supportModeKg');
@@ -2674,10 +2672,8 @@ function updateTask3SupportSwitch(){
   if(kgBtn) kgBtn.classList.toggle('active',task3SupportMode!=='text');
   const chip=document.getElementById('navChip');
   if(chip){
-    const label=task3SupportMode==='text'?'Text':'KG + Text';
-    chip.textContent=(tasks[currentTask]&&tasks[currentTask].regenerated)
-      ? `Regenerated version · ${label}`
-      : label;
+    const label=task3SupportMode==='text'?'Text':'KG+Text';
+    chip.textContent=`Explanation: ${label}`;
   }
 }
 
@@ -2752,7 +2748,7 @@ function applyRegenerate(){
     // loadTask(3) already re-renders the right support panel and Task 3 switch.
     loadTask(3);
     const n=removedClues.length;
-    showToast(n?`Regenerated version loaded with ${n} selected clue(s) removed or weakened.`:'Regenerated version loaded. You can inspect it with Text or KG + Text support.');
+    showToast(n?`Regenerated version loaded with ${n} selected clue(s) removed or weakened.`:'Regenerated version loaded. You can inspect it with Text or KG+Text support.');
   }catch(err){
     console.error(err);
     alert('Regeneration failed: '+(err&&err.message?err.message:err));
