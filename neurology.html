@@ -802,19 +802,15 @@ const tasks={
      tooltip:'The absence of a clean focal motor or language deficit weakens lacunar or arterial MCA infarction and fits diffuse venous congestion.'},
   ],
   mechs:[
-    {id:'m_risk', label:'Postpartum hypercoagulability',        nodeType:'mechanism', layer:'risk', from:['cf1'],
-     tooltip:'Postpartum physiology increases coagulation factor levels and reduces fibrinolysis, creating a prothrombotic state that predisposes to dural sinus thrombosis.'},
-    {id:'m_core', label:'Dural sinus thrombosis',              nodeType:'mechanism', layer:'core', from:['m_risk'],
-     tooltip:'Postpartum hypercoagulability promotes thrombus formation in a dural sinus. This single upstream event drives two parallel downstream consequences: impaired venous drainage raising ICP, and cortical venous congestion lowering the seizure threshold.'},
-    {id:'m_icp',  label:'Raised ICP',                          nodeType:'mechanism', layer:'consequence', from:['m_core','cf2','cf3'],
-     tooltip:'Dural sinus thrombosis impairs venous drainage and CSF resorption, raising intracranial pressure. The downstream clinical expression is progressive headache, vomiting, and papilledema.'},
-    {id:'m_sz',   label:'Cortical irritation',                  nodeType:'mechanism', layer:'consequence', from:['m_core','cf4'],
-     tooltip:'Cortical venous congestion lowers the seizure threshold and can produce a generalized tonic-clonic seizure without requiring a primary arterial-territory infarct.'},
+    {id:'m_icp',  label:'Venous outflow obstruction / raised ICP', nodeType:'mechanism', from:['cf1','cf2','cf3'],
+     tooltip:'Thrombosis of a dural sinus impairs CSF resorption and venous drainage, raising intracranial pressure. The postpartum hypercoagulable state is the predisposing mechanism; progressive headache and bilateral papilledema are its direct manifestations.'},
+    {id:'m_sz',   label:'Cortical venous irritation',              nodeType:'mechanism', from:['cf4'],
+     tooltip:'Venous congestion or focal venous infarction irritates cortex directly, lowering the seizure threshold. A new generalized seizure without persistent focal deficit distinguishes venous from arterial cortical injury.'},
   ],
   dx:{
     id:'dx', label:'Cerebral venous sinus thrombosis', nodeType:'diagnosis',
     from:['m_icp','m_sz'],
-    tooltip:'CVST is supported by a single upstream dural sinus thrombosis mechanism that explains both raised-ICP symptoms and signs, plus seizure from cortical venous congestion in a postpartum hypercoagulable patient.'
+    tooltip:'CVST unifies raised intracranial pressure from venous outflow obstruction, driven by postpartum hypercoagulability and supported by papilledema and progressive headache, with cortical venous irritation causing a new seizure without a clean arterial-territory focal deficit.'
   },
   excludeCards:[
     {target:'Migraine with aura',
@@ -890,19 +886,15 @@ const task3ImprovedTemplate={
      tooltip:'Rhythmic right-hand shaking for 90 seconds followed by postictal confusion is most consistent with a focal motor seizure localising to the left motor cortex. Importantly, strength and language remain intact afterward, distinguishing this from a completed arterial infarct.'},
   ],
   mechs:[
-    {id:'m_risk', label:'Postpartum hypercoagulability',            nodeType:'mechanism', layer:'risk', from:['cf1'],
-     tooltip:'Postpartum physiology sustains a prothrombotic state beyond the first week. This provides the predisposing mechanism for dural sinus thrombosis even at three weeks.'},
-    {id:'m_core', label:'Dural sinus thrombosis',                  nodeType:'mechanism', layer:'core', from:['m_risk'],
-     tooltip:'Postpartum hypercoagulability promotes thrombus formation in a dural sinus. This single upstream event drives two parallel downstream consequences: impaired venous drainage raising ICP, and cortical venous congestion lowering the seizure threshold.'},
-    {id:'m_icp',  label:'Raised ICP',                              nodeType:'mechanism', layer:'consequence', from:['m_core','cf2'],
-     tooltip:'CVST impairs CSF resorption and venous drainage, raising intracranial pressure. Without papilledema to confirm raised ICP directly, the mechanism is inferred from two days of progressively worsening diffuse headache with vomiting — a pattern that should prompt consideration of venous outflow obstruction in the postpartum context.'},
-    {id:'m_sz',   label:'Cortical irritation',                     nodeType:'mechanism', layer:'consequence', from:['m_core','cf3'],
-     tooltip:'Venous congestion or focal venous infarction can irritate cortex and generate a focal seizure without leaving a persistent motor or language deficit. This distinguishes venous from arterial cortical injury: a left MCA infarct would typically produce lasting aphasia or hemiparesis.'},
+    {id:'m_icp',  label:'Venous outflow obstruction / raised ICP', nodeType:'mechanism', from:['cf1','cf2'],
+     tooltip:'Postpartum hypercoagulability promotes thrombus formation in a dural sinus, impairing venous drainage and CSF resorption. The resulting raised ICP manifests as progressively worsening diffuse headache and vomiting over two days.'},
+    {id:'m_sz',   label:'Cortical venous irritation',              nodeType:'mechanism', from:['cf3'],
+     tooltip:'Venous congestion or focal venous infarction can irritate cortex and generate a focal seizure without leaving a persistent motor or language deficit. This distinguishes venous from arterial cortical injury.'},
   ],
   dx:{
     id:'dx', label:'Cerebral venous sinus thrombosis', nodeType:'diagnosis',
     from:['m_icp','m_sz'],
-    tooltip:'CVST is supported by a single upstream dural sinus thrombosis mechanism. The diagnosis rests on convergence between postpartum thrombotic risk, raised-ICP symptoms inferred from progressive headache and vomiting, and focal cortical seizure from venous congestion without a persistent arterial deficit.'
+    tooltip:'CVST integrates two converging pathways: raised ICP from venous outflow obstruction driven by postpartum hypercoagulability, and focal cortical seizure from venous congestion without a persistent arterial deficit. No single pathway is conclusive alone; the diagnosis rests on their convergence in the postpartum prothrombotic context.'
   },
   excludeCards:[
     {target:'Reversible cerebral vasoconstriction syndrome (RCVS)',
@@ -949,7 +941,7 @@ let kgExplainOpen=true;
 let editOpen=false;
 let focusedKgNodeId=null;
 let selectedGraphItem=null;
-let kgNodeDragOffsets=JSON.parse(localStorage.getItem('pediatric_mcq_node_drag_offsets_v20')||'{}');
+let kgNodeDragOffsets=JSON.parse(localStorage.getItem('pediatric_mcq_node_drag_offsets_v21')||'{}');
 let miniGraphDragOffsets=JSON.parse(localStorage.getItem('pediatric_mcq_mini_drag_offsets_v31')||'{}');
 let activeMiniDrag=null;
 let suppressNextMiniClick=false;
@@ -1100,7 +1092,7 @@ function getDraggableNodePosition(id,cx,cy){
 }
 function setDraggableNodeOffset(id,dx,dy){
   kgNodeDragOffsets[dragOffsetKey(id)]={x:dx,y:dy};
-  localStorage.setItem('pediatric_mcq_node_drag_offsets_v20',JSON.stringify(kgNodeDragOffsets));
+  localStorage.setItem('pediatric_mcq_node_drag_offsets_v21',JSON.stringify(kgNodeDragOffsets));
 }
 function miniDragKey(cardIndex,nodeId){return `${currentTask}:mini:${cardIndex}:${nodeId}`;}
 function getMiniDragOffset(cardIndex,nodeId){
@@ -1940,7 +1932,7 @@ function defaultFindingToMechanismRelation(findingLabel,mechanismLabel){
     if(f.includes('papilledema'))return 'sign_of';
     return 'supports';
   }
-  if(m.includes('cortical irritation'))return 'supports';
+  if(m.includes('cortical')&&m.includes('irritation'))return 'supports';
   return 'causes';
 }
 
@@ -1961,7 +1953,7 @@ function defaultDiagnosisRelation(nodeRecord,dxLabel){
   if(label.includes('chronic lung disease'))return 'complication_of';
   if(label.includes('subglottic oedema'))return 'pathophysiology_of';
   if(label.includes('danger signs absent'))return 'helps_exclude';
-  if(type==='mech'&&(label.includes('raised icp')||label.includes('cortical irritation')))return 'feature_of';
+  if(type==='mech'&&(label.includes('raised icp')||(label.includes('cortical')&&label.includes('irritation'))))return 'feature_of';
   if(type==='finding')return 'finding_of';
   if(type==='mech')return 'pathophysiology_of';
   if(type==='pattern')return 'finding_of';
@@ -2082,13 +2074,6 @@ function renderKG(){
   const cfYSpread=ySpread(cfCount,graphH,70);
   const cfYMap={};
   visibleFindings.forEach((cf,fi)=>{ cfYMap[cf.id]=cfYSpread[fi]||graphH/2; });
-  if(hasMechanismLayers && currentTask===3){
-    const hasFourFindings=visibleFindings.some(cf=>cf.id==='cf4');
-    const fixedCfY=hasFourFindings
-      ? {cf1:70,cf2:150,cf3:230,cf4:310}
-      : {cf1:70,cf2:165,cf3:290};
-    visibleFindings.forEach(cf=>{ if(fixedCfY[cf.id])cfYMap[cf.id]=clampY(fixedCfY[cf.id]); });
-  }
 
   const pFallback=ySpread(pCount,graphH,60);
   const pYMap={};
@@ -2108,13 +2093,6 @@ function renderKG(){
       : ((currentTask===3 && m.id==='m1')?-28:(mCount===1?-18:(i%2?18:-18)));
     mYMap[m.id]=clampY(base+mechOffset);
   });
-  if(hasMechanismLayers && currentTask===3){
-    const hasFourFindings=visibleFindings.some(cf=>cf.id==='cf4');
-    const fixedMechY=hasFourFindings
-      ? {m_risk:70,m_core:135,m_icp:175,m_sz:310}
-      : {m_risk:70,m_core:140,m_icp:170,m_sz:290};
-    visibleMechs.forEach(m=>{ if(fixedMechY[m.id])mYMap[m.id]=clampY(fixedMechY[m.id]); });
-  }
   const dxSourceMap={...cfYMap,...pYMap,...mYMap};
   const dxBase=avgKnown(kg.dx.from,dxSourceMap,graphH/2);
   const dxY=[clampY(dxBase-8)];
