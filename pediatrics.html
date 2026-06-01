@@ -49,7 +49,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);fon
 /* ══ TOP NAV ══ */
 #appPage{display:none}
 .topnav{position:sticky;top:0;z-index:10;background:var(--surface);border-bottom:1px solid var(--border);height:var(--nav-h);display:flex;align-items:center;padding:0 22px;gap:18px}
-.nav-logo{font-family:'DM Serif Display',serif;font-size:18px;white-space:nowrap}.nav-logo span{color:var(--accent);font-style:italic}
+.nav-logo{font-family:'DM Serif Display',serif;font-size:18px;white-space:nowrap;cursor:pointer}.nav-logo span{color:var(--accent);font-style:italic}
 .nav-divider{width:1px;height:22px;background:var(--border);flex-shrink:0}
 .task-tabs{display:flex;gap:6px;flex:1}
 .nav-tab{padding:6px 14px;border:1px solid var(--border);border-radius:999px;font-family:inherit;font-size:12px;font-weight:700;cursor:pointer;background:var(--surface2);color:var(--text2);transition:.14s;white-space:nowrap;display:flex;align-items:center;gap:7px}
@@ -96,6 +96,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);fon
 .option{display:flex;gap:10px;align-items:flex-start;padding:9px 11px;border:1px solid transparent;border-radius:10px;margin-bottom:7px;cursor:pointer;transition:.12s}
 .option:hover{background:var(--surface2);border-color:var(--border)}
 .option.correct{background:var(--correct-bg);border-color:var(--correct-border)}
+.option.linked{border-color:var(--accent);box-shadow:0 0 0 2px rgba(45,95,138,.14);background:#f7fbff}
 .letter{width:24px;height:24px;border-radius:50%;border:1.5px solid var(--border2);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;flex-shrink:0}
 .correct .letter{background:var(--correct);border-color:var(--correct);color:white}
 .badge{font-size:10px;font-weight:800;border-radius:20px;padding:2px 8px;background:var(--correct);color:white;margin-left:auto}
@@ -196,9 +197,9 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);fon
 .exclude-target{flex:1;border-radius:10px;padding:8px 10px;font-size:11px;line-height:1.35;font-weight:700;text-align:center;background:#eef4fb;border:2px solid #2d5f8a;color:#234a6d}
 .mini-distractor-card{border:1px solid var(--border);border-radius:12px;background:#fff;overflow:hidden;cursor:pointer;transition:.14s}
 .mini-distractor-card:hover{border-color:var(--accent);box-shadow:0 4px 14px rgba(45,95,138,.10)}
+.mini-distractor-card.linked{border-color:var(--accent);box-shadow:0 0 0 2px rgba(45,95,138,.16),0 4px 14px rgba(45,95,138,.10)}
 .mini-distractor-head{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 10px;border-bottom:1px solid var(--border);background:var(--surface2)}
 .mini-distractor-title{font-size:13px;font-weight:900;color:var(--text)}
-.mini-distractor-chip{font-size:11px;font-weight:900;border-radius:999px;background:var(--reject-bg);color:var(--reject);padding:2px 8px;white-space:nowrap}
 .mini-distractor-svg{width:100%;height:250px;display:block;background:#fff}
 .mini-evidence-node{cursor:pointer}
 .mini-evidence-node rect{transition:.12s}
@@ -214,6 +215,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);fon
 
 /* path text */
 .path-text{font-size:11px;color:var(--text3);font-style:italic}
+.main-graph-hover-hint{display:none;margin:8px 0 0;padding:7px 9px;border-top:1px solid var(--border);font-size:11px;font-weight:800;color:var(--text3);letter-spacing:.02em}
 .explain-control{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;gap:12px;box-shadow:0 1px 4px rgba(0,0,0,.04)}
 .explain-control-title{font-size:12px;font-weight:800;color:var(--text2)}
 .explain-control-sub{font-size:11px;color:var(--text3);margin-top:2px}
@@ -531,12 +533,12 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);fon
 <div id="appPage">
   <!-- TOP NAV -->
   <nav class="topnav">
-    <div class="nav-logo">Med<span>MCQ</span></div>
+    <div class="nav-logo" onclick="goSetup()" title="Back to setup">Med<span>MCQ</span></div>
     <div class="nav-divider"></div>
     <div class="task-tabs">
       <button class="nav-tab active" id="navTab1" onclick="loadTask(1)">Task 1 <span class="pill text">Text only</span></button>
       <button class="nav-tab" id="navTab2" onclick="loadTask(2)">Task 2 <span class="pill kg">KG ± hover</span></button>
-      <button class="nav-tab" id="navTab3" onclick="loadTask(3)">Task 3 <span class="pill both">Regenerate</span></button>
+      <button class="nav-tab" id="navTab3" onclick="loadTask(3)">Task 3 <span class="pill both">KG + Text</span></button>
     </div>
     <div class="nav-meta">
       <span class="meta-chip" id="navChip">Explanation: Text only</span>
@@ -612,7 +614,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);fon
           </div>
           <div class="mode-toggle-wrap">
             <button class="support-mode-btn" id="supportModeText" onclick="setTask3SupportMode('text')">Text</button>
-            <button class="support-mode-btn" id="supportModeKg" onclick="setTask3SupportMode('kg')">KG</button>
+            <button class="support-mode-btn" id="supportModeKg" onclick="setTask3SupportMode('kg')">KG + Text</button>
           </div>
         </div>
         <div id="kgBoard" class="reasoning-board"></div>
@@ -622,6 +624,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);fon
           <span class="prov-key"><span class="prov-dot kg"></span>KG: mapped/base knowledge node</span>
           <span class="prov-key llm-prov"><span class="prov-dot llm"></span>LLM: hover text explains the edge</span>
         </div>
+        <div class="main-graph-hover-hint" id="mainGraphHoverHint">Hover on nodes to see the explanation.</div>
         <div class="right-text-panel delayed-panel" id="kgTextPanel">
           <div class="right-text-panel-head">
             <div class="right-text-panel-title">Text explanation</div>
@@ -839,7 +842,7 @@ const tasks={
 };
 
 const task3ImprovedTemplate={
-  title:'Task 3 — Regenerated question review',chip:'Regenerated version · KG support',
+  title:'Task 3 — Regenerated question review',chip:'Regenerated version · KG + Text support',
   condition:'Croup · regenerated item · expert-selected support mode',mode:'both',regenerated:true,
   difficulty:'Medium',target:'Croup',source:"Nelson's Essentials · Acute Stridor",correct:'C',
   question_stem:'What is the most likely diagnosis?',
@@ -933,6 +936,7 @@ function initUIRefs(){
   UI.kgHint=document.getElementById('kgHint');
   UI.kgPanelTitle=document.getElementById('kgPanelTitle');
   UI.navChip=document.getElementById('navChip');
+  UI.mainGraphHoverHint=document.getElementById('mainGraphHoverHint');
 }
 initUIRefs();
 function setDisplay(el,value){ if(el) el.style.display=value; }
@@ -961,9 +965,7 @@ function getHeaderCopy(){
     if(task3SupportMode==='text'){
       return {title:'Text explanation · Question review',hint:'Text support is selected. Switch to KG to view the knowledge graph.'};
     }
-    return kgExplainOpen
-      ? {title:'Knowledge graph · KG + enriched text support',hint:'KG is selected. Enriched hover text is on; hover over nodes for rationale.'}
-      : {title:'Knowledge graph · KG support',hint:'KG is selected. Use the enriched text switch inside the graph if extra hover reasoning is needed.'};
+    return {title:'Knowledge graph · KG + Text support',hint:'KG + Text support is selected. Use the enriched text switch inside the graph if hover reasoning is needed.'};
   }
   if(t.mode==='kg'){
     return kgExplainOpen
@@ -992,6 +994,7 @@ function renderRightSupportPanel({rerenderGraph=false}={}){
 
   if(!explanationVisible){
     setDisplay(UI.kgBoard,'none');
+    setDisplay(UI.mainGraphHoverHint,'none');
     setDisplay(UI.kgExcludeWrap,'none');
     setDisplay(UI.pathText,'none');
     setDisplay(UI.rightTextPanel,'none');
@@ -1016,6 +1019,7 @@ function renderRightSupportPanel({rerenderGraph=false}={}){
   }
 
   setDisplay(UI.kgBoard,showKg?'block':'none');
+  setDisplay(UI.mainGraphHoverHint,(showKg&&kgExplainOpen)?'block':'none');
   setDisplay(UI.pathText,showKg?'block':'none');
   if(!showKg){
     setDisplay(UI.kgExcludeWrap,'none');
@@ -1305,10 +1309,26 @@ function renderOptions(){
   Object.entries(t.options).forEach(([letter,text])=>{
     const row=document.createElement('div');
     row.className='option '+(letter===t.correct?'correct':'');
-    row.onclick=()=>{document.querySelectorAll('.option').forEach(o=>o.style.outline='');row.style.outline='2px solid var(--accent)';};
+    row.dataset.optionLetter=letter;
+    row.addEventListener('mouseenter',()=>setLinkedDistractorState(letter,true));
+    row.addEventListener('mouseleave',()=>setLinkedDistractorState(letter,false));
+    row.onclick=()=>{document.querySelectorAll('.option').forEach(o=>o.style.outline='');row.style.outline='2px solid var(--accent)';setLinkedDistractorState(letter,true,true);setTimeout(()=>setLinkedDistractorState(letter,false,true),1200);};
     row.innerHTML=`<div class="letter">${letter}</div><div>${esc(text)}</div>${letter===t.correct?'<div class="badge">Correct</div>':''}`;
     el.appendChild(row);
   });
+}
+
+function setLinkedDistractorState(letter,on,skipOption=false){
+  if(!letter)return;
+  if(!skipOption)document.querySelectorAll(`.option[data-option-letter="${letter}"]`).forEach(el=>el.classList.toggle('linked',!!on));
+  document.querySelectorAll(`.mini-distractor-card[data-letter="${letter}"]`).forEach(el=>el.classList.toggle('linked',!!on));
+}
+function focusOptionFromDistractor(letter){
+  if(!letter)return;
+  const option=document.querySelector(`.option[data-option-letter="${letter}"]`);
+  setLinkedDistractorState(letter,true);
+  if(option)option.scrollIntoView({behavior:'smooth',block:'center'});
+  setTimeout(()=>setLinkedDistractorState(letter,false),1400);
 }
 
 function toggleTextExplain(){
@@ -2399,7 +2419,7 @@ function renderExcludeCards(){
   const rawCards=(t.kgData&&t.kgData.excludeCards)||[];
   const cards=(t.distractors||[]).map(d=>{
     const found=rawCards.find(c=>cleanLabel(c.target).toLowerCase()===cleanLabel(d.disease).toLowerCase());
-    return found||{target:d.disease,focus:[],explanation:d.incorrect||''};
+    return found?{...found,letter:d.letter}:{target:d.disease,letter:d.letter,focus:[],explanation:d.incorrect||''};
   });
   if(!explanationVisible||!cards.length||t.mode==='text'){wrap.style.display='none';box.innerHTML='';return;}
   wrap.style.display='block';
@@ -2457,8 +2477,8 @@ function renderExcludeCards(){
           return `<g class="mini-edge"><path d="M${node.cx},${node.cy+20} C${node.cx},66 ${targetX},62 ${targetX},${targetY}" fill="none" stroke="${color}" stroke-width="1.35" marker-end="url(#miniArrow${role==='supports'?'Green':'Red'}${i})"/>${miniEdgeLabel((node.cx+targetX)/2,(node.cy+targetY)/2,rel,color)}</g>`;
         }).join('');
     const midLabels='';
-    return`<div class="mini-distractor-card" data-focus='${JSON.stringify(focus)}' data-explanation="${esc(c.explanation||'')}" data-target="${esc(c.target)}">
-      <div class="mini-distractor-head"><div class="mini-distractor-title">${esc(c.target)}</div><div class="mini-distractor-chip">excluded</div></div>
+    return`<div class="mini-distractor-card" data-letter="${esc(c.letter||'')}" data-focus='${JSON.stringify(focus)}' data-explanation="${esc(c.explanation||'')}" data-target="${esc(c.target)}">
+      <div class="mini-distractor-head"><div class="mini-distractor-title">${esc(c.letter?`${c.letter}. ${c.target}`:c.target)}</div></div>
       <svg class="mini-distractor-svg" viewBox="0 0 ${hasExpected?460:330} ${hasExpected?250:170}" xmlns="http://www.w3.org/2000/svg">
         <defs>
           <marker id="miniArrowGreen${i}" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#1a6b3c"/></marker>
@@ -2475,10 +2495,12 @@ function renderExcludeCards(){
   }).join('');
 
   document.querySelectorAll('.mini-distractor-card').forEach(card=>{
-    const focus=JSON.parse(card.getAttribute('data-focus')||'[]');
+    const letter=card.getAttribute('data-letter')||'';
     const explanation=card.getAttribute('data-explanation')||'';
     const targetText=card.getAttribute('data-target')||'Distractor';
-    card.addEventListener('click',()=>{if(suppressNextMiniClick){suppressNextMiniClick=false;return;} hideTooltip();scrollToVignette(focus);});
+    card.addEventListener('mouseenter',()=>setLinkedDistractorState(letter,true));
+    card.addEventListener('mouseleave',()=>setLinkedDistractorState(letter,false));
+    card.addEventListener('click',()=>{if(suppressNextMiniClick){suppressNextMiniClick=false;return;} hideTooltip();focusOptionFromDistractor(letter);});
   });
 
   // Mini-edge hover is intentionally disabled; node hover carries the clinical rationale.
@@ -2580,7 +2602,7 @@ function renderTask3CluePanel(){
         ? 'Review the question and use Regenerate when ready.'
         : 'Review the question, then use Regenerate if you want to inspect a revised version. Node hover explains the clinical clues; edges are labels only.';
     } else {
-      sub.textContent = 'Regenerated version loaded. You can compare it using text, KG, or KG + enriched text.';
+      sub.textContent = 'Regenerated version loaded. You can compare it using Text or KG + Text support.';
     }
   }
   const btn=document.getElementById('task3ClueEditBtn');
@@ -2643,8 +2665,8 @@ function updateTask3SupportSwitch(){
   const t=tasks[currentTask]||{};
   if(sub){
     sub.textContent=t.regenerated
-      ? 'Regenerated version: choose text or KG support. Enriched hover text is controlled inside the KG.'
-      : 'Choose text or KG support. Use Regenerate to load a revised version.';
+      ? 'Regenerated version: choose text or KG + Text support. Enriched hover text is controlled inside the graph.'
+      : 'Choose text or KG + Text support. Use Regenerate to load a revised version.';
   }
   const textBtn=document.getElementById('supportModeText');
   const kgBtn=document.getElementById('supportModeKg');
@@ -2652,7 +2674,7 @@ function updateTask3SupportSwitch(){
   if(kgBtn) kgBtn.classList.toggle('active',task3SupportMode!=='text');
   const chip=document.getElementById('navChip');
   if(chip){
-    const label=task3SupportMode==='text'?'Text':(kgExplainOpen?'KG + enriched text':'KG');
+    const label=task3SupportMode==='text'?'Text':'KG + Text';
     chip.textContent=(tasks[currentTask]&&tasks[currentTask].regenerated)
       ? `Regenerated version · ${label}`
       : label;
@@ -2730,7 +2752,7 @@ function applyRegenerate(){
     // loadTask(3) already re-renders the right support panel and Task 3 switch.
     loadTask(3);
     const n=removedClues.length;
-    showToast(n?`Regenerated version loaded with ${n} selected clue(s) removed or weakened.`:'Regenerated version loaded. You can inspect it with Text, KG, or KG + enriched text.');
+    showToast(n?`Regenerated version loaded with ${n} selected clue(s) removed or weakened.`:'Regenerated version loaded. You can inspect it with Text or KG + Text support.');
   }catch(err){
     console.error(err);
     alert('Regeneration failed: '+(err&&err.message?err.message:err));
