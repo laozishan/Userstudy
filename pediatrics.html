@@ -437,9 +437,9 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);fon
   <div class="modal-box">
     <div style="display:flex;justify-content:space-between;align-items:center"><div class="modal-title">Regenerate this question</div><button class="btn" onclick="closeRegenerate()" style="background:var(--surface2);border:1px solid var(--border)">×</button></div>
     <div class="label" style="margin-top:16px">Problem category</div>
-    <label class="issue"><input type="checkbox" value="answer_cue_stacking"><div><strong>Correct-answer cue stacking</strong><span>Too many classic croup clues are stacked in one vignette: toddler age, viral prodrome, barky cough, stridor, and hoarseness.</span></div></label>
-    <label class="issue"><input type="checkbox" value="direct_answer_cue"><div><strong>Direct answer cue</strong><span>The item points too directly to croup through the steeple sign and the final parent question.</span></div></label>
-    <label class="issue"><input type="checkbox" value="explicit_negative_exclusion"><div><strong>Explicit negative distractor elimination</strong><span>Negative findings such as no drooling or dysphagia make competing diagnoses too easy to reject.</span></div></label>
+    <label class="issue"><input type="checkbox" value="answer_cue_stacking"><div><strong>Correct-answer cue stacking</strong><span>Too many converging clues point to the keyed answer before meaningful clinical reasoning is needed.</span></div></label>
+    <label class="issue"><input type="checkbox" value="direct_answer_cue"><div><strong>Direct answer cue</strong><span>One clue makes the main diagnostic pathway too explicit or too easy to recognize.</span></div></label>
+    <label class="issue"><input type="checkbox" value="explicit_negative_exclusion"><div><strong>Explicit negative distractor elimination</strong><span>Negative findings make one or more distractors too easy to rule out.</span></div></label>
     <div class="label" style="margin-top:16px">Additional notes (optional)</div>
     <textarea class="review-textarea" id="regenerateFreeText" placeholder="Any additional notes for this question?"></textarea>
     <div class="study-note" id="selectedClueSummary" style="margin-top:14px"></div>
@@ -2644,10 +2644,9 @@ function updateRegenerationIssueDefaults(){
   const selectedIds=[...task3SelectedCluesToRemove];
   const checks=modal.querySelectorAll('input[type="checkbox"][value]');
   checks.forEach(input=>{
-    if(input.value==='too_much_evidence') input.checked=selectedIds.length>=3;
-    if(input.value==='answer_named') input.checked=selectedIds.includes('ev_named');
-    if(input.value==='too_obvious') input.checked=selectedIds.includes('ev_named')||selectedIds.includes('ev_bark');
-    if(input.value==='weak_distractors') input.checked=selectedIds.includes('ev_swallow')||selectedIds.includes('ev_well');
+    if(input.value==='answer_cue_stacking') input.checked=selectedIds.length>=3;
+    if(input.value==='direct_answer_cue') input.checked=selectedIds.includes('ev_named')||selectedIds.includes('ev_steeple');
+    if(input.value==='explicit_negative_exclusion') input.checked=selectedIds.includes('ev_swallow')||selectedIds.includes('ev_well');
   });
   updateSelectedClueSummary();
 }
