@@ -788,8 +788,12 @@ const tasks={
      tooltip:'A headache that builds gradually over days is phenotypically distinct from the sudden thunderclap onset typical of RCVS. This progressive pattern supports raised ICP from venous outflow obstruction rather than cerebral vasospasm.'},
   ],
   findings:[
-    {id:'cf1', label:'Postpartum raised-ICP pattern', nodeType:'history',  from:['ev1','ev2','ev8','ev5'],
-     tooltip:'Postpartum hypercoagulability supplies the thrombotic risk context, while progressive headache, vomiting, and bilateral papilledema form one raised-intracranial-pressure pattern.'},
+    {id:'cf1', label:'Postpartum hypercoagulable state', nodeType:'history',  from:['ev1'],
+     tooltip:'The postpartum period is a prothrombotic state and a major risk context for CVST in young women. Day 5 is within the peak risk window.'},
+    {id:'cf2', label:'Progressive headache + vomiting',  nodeType:'symptom',  from:['ev2','ev8'],
+     tooltip:'A headache beginning the day after delivery and escalating over days, accompanied by vomiting, fits raised intracranial pressure from impaired venous drainage rather than a primary headache disorder.'},
+    {id:'cf3', label:'Bilateral papilledema',            nodeType:'sign',     from:['ev5'],
+     tooltip:'Bilateral papilledema is objective evidence of raised intracranial pressure. In a postpartum patient with progressive headache, this strongly supports venous outflow obstruction.'},
     {id:'cf4', label:'Generalized tonic-clonic seizure', nodeType:'symptom',  from:['ev3'],
      tooltip:'A new generalized seizure in the postpartum period is consistent with CVST: venous congestion raises cortical excitability and venous infarction can generate a seizure focus.'},
     {id:'cf5', label:'No fever',                         nodeType:'exclusion',from:['ev4'], hiddenInMain:true,
@@ -798,7 +802,7 @@ const tasks={
      tooltip:'The absence of a clean focal motor or language deficit weakens lacunar or arterial MCA infarction and fits diffuse venous congestion.'},
   ],
   mechs:[
-    {id:'m_icp',  label:'Raised intracranial pressure', nodeType:'mechanism', from:['cf1'],
+    {id:'m_icp',  label:'Raised intracranial pressure', nodeType:'mechanism', from:['cf1','cf2','cf3'],
      tooltip:'Thrombosis of a dural sinus impairs CSF resorption and venous drainage, raising intracranial pressure. The postpartum hypercoagulable state is the predisposing mechanism; progressive headache and bilateral papilledema are its direct manifestations.'},
     {id:'m_sz',   label:'Cortical irritation from venous congestion',              nodeType:'mechanism', from:['cf4'],
      tooltip:'Venous congestion or focal venous infarction irritates cortex directly, lowering the seizure threshold. A new generalized seizure without persistent focal deficit distinguishes venous from arterial cortical injury.'},
@@ -874,13 +878,15 @@ const task3ImprovedTemplate={
     {id:'ev6',  label:'Different from usual headache',       short:'Different headache',   phrase:'different in character',                                        hiddenInMain:true},
   ],
   findings:[
-    {id:'cf1', label:'Postpartum progressive headache + vomiting', nodeType:'history',  from:['ev1','ev2','ev3'],
-     tooltip:'Postpartum prothrombotic risk plus a diffuse, gradually intensifying headache with vomiting creates a compact raised-ICP pattern, even without fundoscopic confirmation of papilledema.'},
+    {id:'cf1', label:'Postpartum prothrombotic risk',         nodeType:'history',  from:['ev1'],
+     tooltip:'Three weeks postpartum remains within the hypercoagulable risk window for CVST. The risk is lower than the first week but still clinically significant, especially without another unifying diagnosis.'},
+    {id:'cf2', label:'Progressive pressure-like headache + vomiting', nodeType:'symptom', from:['ev2','ev3'],
+     tooltip:'A diffuse, gradually intensifying headache with vomiting over two days suggests raised intracranial pressure. Without fundoscopic confirmation of papilledema, the raised-ICP inference rests on headache phenotype and vomiting alone — requiring integration with postpartum risk and seizure type.'},
     {id:'cf3', label:'Focal motor seizure with postictal state', nodeType:'symptom', from:['ev4','ev5'],
      tooltip:'Rhythmic right-hand shaking for 90 seconds followed by postictal confusion is most consistent with a focal motor seizure localising to the left motor cortex. Importantly, strength and language remain intact afterward, distinguishing this from a completed arterial infarct.'},
   ],
   mechs:[
-    {id:'m_icp',  label:'Raised intracranial pressure', nodeType:'mechanism', from:['cf1'],
+    {id:'m_icp',  label:'Raised intracranial pressure', nodeType:'mechanism', from:['cf1','cf2'],
      tooltip:'Postpartum hypercoagulability promotes thrombus formation in a dural sinus, impairing venous drainage and CSF resorption. The resulting raised ICP manifests as progressively worsening diffuse headache and vomiting over two days.'},
     {id:'m_sz',   label:'Cortical irritation from venous congestion',              nodeType:'mechanism', from:['cf3'],
      tooltip:'Venous congestion or focal venous infarction can irritate cortex and generate a focal seizure without leaving a persistent motor or language deficit. This distinguishes venous from arterial cortical injury.'},
@@ -935,7 +941,7 @@ let kgExplainOpen=true;
 let editOpen=false;
 let focusedKgNodeId=null;
 let selectedGraphItem=null;
-let kgNodeDragOffsets=JSON.parse(localStorage.getItem('pediatric_mcq_node_drag_offsets_v22')||'{}');
+let kgNodeDragOffsets=JSON.parse(localStorage.getItem('pediatric_mcq_node_drag_offsets_v23')||'{}');
 let miniGraphDragOffsets=JSON.parse(localStorage.getItem('pediatric_mcq_mini_drag_offsets_v31')||'{}');
 let activeMiniDrag=null;
 let suppressNextMiniClick=false;
@@ -1086,7 +1092,7 @@ function getDraggableNodePosition(id,cx,cy){
 }
 function setDraggableNodeOffset(id,dx,dy){
   kgNodeDragOffsets[dragOffsetKey(id)]={x:dx,y:dy};
-  localStorage.setItem('pediatric_mcq_node_drag_offsets_v22',JSON.stringify(kgNodeDragOffsets));
+  localStorage.setItem('pediatric_mcq_node_drag_offsets_v23',JSON.stringify(kgNodeDragOffsets));
 }
 function miniDragKey(cardIndex,nodeId){return `${currentTask}:mini:${cardIndex}:${nodeId}`;}
 function getMiniDragOffset(cardIndex,nodeId){
