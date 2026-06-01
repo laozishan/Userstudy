@@ -1250,12 +1250,9 @@ function prettyTooltipTitle(title){
     complication_of:'Complication of',
     sign_of:'Sign of',
     finding_of:'Finding of',
-    feature_of:'Feature of',
     risk_factor_for:'Risk factor for',
     predisposes_to:'Predisposes to',
     explains:'Explains',
-    supports:'Supports',
-    causes:'Causes',
     localizes_to:'Localizes to',
     has_pathophysiology:'Has pathophysiology'
   };
@@ -1832,7 +1829,7 @@ function contextRelationForFocusedNode(kg,focusId,contextLabel){
   // Mechanism-centered context: mechanisms often explain or cause downstream findings
   if(rec && rec.type==='mech'){
     if(label.includes('cftr') || label.includes('viral') || label.includes('dynein') || label.includes('ciliary')) return 'driven by';
-    if(label.includes('blocked') || label.includes('dehydrated') || label.includes('thick') || label.includes('oedema')) return 'causes';
+    if(label.includes('blocked') || label.includes('dehydrated') || label.includes('thick') || label.includes('oedema')) return 'leads to';
     if(label.includes('malabsorption') || label.includes('steator') || label.includes('poor growth') || label.includes('infection') || label.includes('bronchiectasis')) return 'results in';
     return 'mechanistically linked';
   }
@@ -1928,7 +1925,7 @@ function defaultFindingToMechanismRelation(findingLabel,mechanismLabel){
   if(f.includes('digital clubbing')&&m.includes('chronic lung'))return 'sign_of';
   if(f.includes('bruit'))return 'sign_of';
   if(f.includes('amaurosis')||f.includes('tia'))return 'manifestation_of';
-  if(f.includes('uri')&&m.includes('viral'))return 'causes';
+  if(f.includes('uri')&&m.includes('viral'))return 'manifestation_of';
   if(f.includes('subglottic airway')&&m.includes('subglottic oedema'))return 'has_pathophysiology';
   if(f.includes('subglottic')&&m.includes('subglottic'))return 'associated_with';
   if(m.includes('raised icp')||m.includes('intracranial pressure')){
