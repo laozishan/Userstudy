@@ -1920,20 +1920,24 @@ function relationProvenance(edgeId,relation){
 function defaultFindingToMechanismRelation(findingLabel,mechanismLabel){
   const f=cleanLabel(findingLabel).toLowerCase();
   const m=cleanLabel(mechanismLabel).toLowerCase();
+  if(f.includes('risk')||f.includes('hypercoagul')||f.includes('atherosclerotic risk'))return 'risk_factor_for';
   if(f.includes('failure')&&m.includes('pancreatic'))return 'manifestation_of';
   if(f.includes('steator')&&m.includes('pancreatic'))return 'manifestation_of';
   if(f.includes('respiratory infection')&&m.includes('mucociliary'))return 'manifestation_of';
   if(f.includes('productive cough')&&m.includes('mucociliary'))return 'manifestation_of';
   if(f.includes('digital clubbing')&&m.includes('chronic lung'))return 'sign_of';
+  if(f.includes('bruit'))return 'sign_of';
+  if(f.includes('amaurosis')||f.includes('tia'))return 'manifestation_of';
   if(f.includes('uri')&&m.includes('viral'))return 'causes';
   if(f.includes('subglottic airway')&&m.includes('subglottic oedema'))return 'has_pathophysiology';
   if(f.includes('subglottic')&&m.includes('subglottic'))return 'associated_with';
   if(m.includes('raised icp')||m.includes('intracranial pressure')){
     if(f.includes('papilledema'))return 'sign_of';
-    return 'supports';
+    if(f.includes('headache')||f.includes('vomiting'))return 'manifestation_of';
+    return 'risk_factor_for';
   }
-  if(m.includes('cortical')&&m.includes('irritation'))return 'supports';
-  return 'causes';
+  if(m.includes('cortical')&&m.includes('irritation'))return 'manifestation_of';
+  return 'manifestation_of';
 }
 
 function defaultEvidenceToFindingRelation(findingLabel){
@@ -1953,7 +1957,6 @@ function defaultDiagnosisRelation(nodeRecord,dxLabel){
   if(label.includes('chronic lung disease'))return 'complication_of';
   if(label.includes('subglottic oedema'))return 'pathophysiology_of';
   if(label.includes('danger signs absent'))return 'helps_exclude';
-  if(type==='mech'&&(label.includes('raised icp')||label.includes('intracranial pressure')||(label.includes('cortical')&&label.includes('irritation'))))return 'feature_of';
   if(type==='finding')return 'finding_of';
   if(type==='mech')return 'pathophysiology_of';
   if(type==='pattern')return 'finding_of';
