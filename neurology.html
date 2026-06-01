@@ -200,7 +200,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);fon
 .mini-distractor-card.linked{border-color:var(--accent);box-shadow:0 0 0 2px rgba(45,95,138,.16),0 4px 14px rgba(45,95,138,.10)}
 .mini-distractor-head{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 10px;border-bottom:1px solid var(--border);background:var(--surface2)}
 .mini-distractor-title{font-size:13px;font-weight:900;color:var(--text)}
-.mini-distractor-svg{width:100%;height:300px;display:block;background:#fff;overflow:visible}
+.mini-distractor-svg{width:100%;height:340px;display:block;background:#fff;overflow:visible}
 .mini-evidence-node{cursor:pointer}
 .mini-evidence-node rect{transition:.12s}
 .mini-evidence-node:hover rect{stroke-width:2.4}
@@ -949,8 +949,8 @@ let kgExplainOpen=true;
 let editOpen=false;
 let focusedKgNodeId=null;
 let selectedGraphItem=null;
-let kgNodeDragOffsets=JSON.parse(localStorage.getItem('pediatric_mcq_node_drag_offsets_v19')||'{}');
-let miniGraphDragOffsets=JSON.parse(localStorage.getItem('pediatric_mcq_mini_drag_offsets_v30')||'{}');
+let kgNodeDragOffsets=JSON.parse(localStorage.getItem('pediatric_mcq_node_drag_offsets_v20')||'{}');
+let miniGraphDragOffsets=JSON.parse(localStorage.getItem('pediatric_mcq_mini_drag_offsets_v31')||'{}');
 let activeMiniDrag=null;
 let suppressNextMiniClick=false;
 let suppressNextGraphClick=false;
@@ -1100,7 +1100,7 @@ function getDraggableNodePosition(id,cx,cy){
 }
 function setDraggableNodeOffset(id,dx,dy){
   kgNodeDragOffsets[dragOffsetKey(id)]={x:dx,y:dy};
-  localStorage.setItem('pediatric_mcq_node_drag_offsets_v19',JSON.stringify(kgNodeDragOffsets));
+  localStorage.setItem('pediatric_mcq_node_drag_offsets_v20',JSON.stringify(kgNodeDragOffsets));
 }
 function miniDragKey(cardIndex,nodeId){return `${currentTask}:mini:${cardIndex}:${nodeId}`;}
 function getMiniDragOffset(cardIndex,nodeId){
@@ -1108,7 +1108,7 @@ function getMiniDragOffset(cardIndex,nodeId){
 }
 function setMiniDragOffset(cardIndex,nodeId,dx,dy){
   miniGraphDragOffsets[miniDragKey(cardIndex,nodeId)]={x:dx,y:dy};
-  localStorage.setItem('pediatric_mcq_mini_drag_offsets_v30',JSON.stringify(miniGraphDragOffsets));
+  localStorage.setItem('pediatric_mcq_mini_drag_offsets_v31',JSON.stringify(miniGraphDragOffsets));
 }
 function getDragBaseFromElement(el){
   return {
@@ -1258,8 +1258,10 @@ function prettyTooltipTitle(title){
     complication_of:'Complication of',
     sign_of:'Sign of',
     finding_of:'Finding of',
+    feature_of:'Feature of',
     risk_factor_for:'Risk factor for',
     predisposes_to:'Predisposes to',
+    explains:'Explains',
     supports:'Supports',
     causes:'Causes',
     localizes_to:'Localizes to',
@@ -1934,6 +1936,11 @@ function defaultFindingToMechanismRelation(findingLabel,mechanismLabel){
   if(f.includes('uri')&&m.includes('viral'))return 'causes';
   if(f.includes('subglottic airway')&&m.includes('subglottic oedema'))return 'has_pathophysiology';
   if(f.includes('subglottic')&&m.includes('subglottic'))return 'associated_with';
+  if(m.includes('raised icp')){
+    if(f.includes('papilledema'))return 'sign_of';
+    return 'supports';
+  }
+  if(m.includes('cortical irritation'))return 'supports';
   return 'causes';
 }
 
@@ -1954,6 +1961,7 @@ function defaultDiagnosisRelation(nodeRecord,dxLabel){
   if(label.includes('chronic lung disease'))return 'complication_of';
   if(label.includes('subglottic oedema'))return 'pathophysiology_of';
   if(label.includes('danger signs absent'))return 'helps_exclude';
+  if(type==='mech'&&(label.includes('raised icp')||label.includes('cortical irritation')))return 'feature_of';
   if(type==='finding')return 'finding_of';
   if(type==='mech')return 'pathophysiology_of';
   if(type==='pattern')return 'finding_of';
@@ -2049,7 +2057,7 @@ function renderKG(){
   const H=graphH+LEGEND_H;
 
   const SIDE_PAD=130;
-  const colNames=['cf',...(pCount>0?['pattern']:[]),...(hasMechanismLayers?['mechRisk','mechCore','mechConsequence']:['mech']),'dx'];
+  const colNames=['cf',...(pCount>0?['pattern']:[]),...(hasMechanismLayers?['mechUp','mechDown']:['mech']),'dx'];
   const colSpacing=(W-SIDE_PAD*2)/(colNames.length-1);
   const COL={};
   colNames.forEach((name,i)=>{ COL[name]=SIDE_PAD+i*colSpacing; });
@@ -2074,6 +2082,13 @@ function renderKG(){
   const cfYSpread=ySpread(cfCount,graphH,70);
   const cfYMap={};
   visibleFindings.forEach((cf,fi)=>{ cfYMap[cf.id]=cfYSpread[fi]||graphH/2; });
+  if(hasMechanismLayers && currentTask===3){
+    const hasFourFindings=visibleFindings.some(cf=>cf.id==='cf4');
+    const fixedCfY=hasFourFindings
+      ? {cf1:70,cf2:150,cf3:230,cf4:310}
+      : {cf1:70,cf2:165,cf3:290};
+    visibleFindings.forEach(cf=>{ if(fixedCfY[cf.id])cfYMap[cf.id]=clampY(fixedCfY[cf.id]); });
+  }
 
   const pFallback=ySpread(pCount,graphH,60);
   const pYMap={};
@@ -2089,10 +2104,17 @@ function renderKG(){
     let base=avgKnown(m.from,srcMap,mFallback[i]||graphH/2);
     if(hasMechanismLayers && m.layer==='core')base=graphH/2;
     const mechOffset=hasMechanismLayers
-      ? (m.layer==='consequence' && m.id==='m_icp'?-35:(m.layer==='consequence' && m.id==='m_sz'?35:0))
+      ? 0
       : ((currentTask===3 && m.id==='m1')?-28:(mCount===1?-18:(i%2?18:-18)));
     mYMap[m.id]=clampY(base+mechOffset);
   });
+  if(hasMechanismLayers && currentTask===3){
+    const hasFourFindings=visibleFindings.some(cf=>cf.id==='cf4');
+    const fixedMechY=hasFourFindings
+      ? {m_risk:70,m_core:135,m_icp:175,m_sz:310}
+      : {m_risk:70,m_core:140,m_icp:170,m_sz:290};
+    visibleMechs.forEach(m=>{ if(fixedMechY[m.id])mYMap[m.id]=clampY(fixedMechY[m.id]); });
+  }
   const dxSourceMap={...cfYMap,...pYMap,...mYMap};
   const dxBase=avgKnown(kg.dx.from,dxSourceMap,graphH/2);
   const dxY=[clampY(dxBase-8)];
@@ -2132,7 +2154,7 @@ function renderKG(){
     nodeMap[p.id]=n;nodesSvg+=n.svg;
   });
   const mechXFor=m=>hasMechanismLayers
-    ? COL[m.layer==='risk'?'mechRisk':(m.layer==='core'?'mechCore':'mechConsequence')]
+    ? COL[m.layer==='consequence'?'mechDown':'mechUp']
     : COL.mech;
   visibleMechs.forEach((m,i)=>{
     const pos=getDraggableNodePosition(m.id,mechXFor(m),mYMap[m.id]);
@@ -2163,7 +2185,11 @@ function renderKG(){
       if(!nodeMap[cfId]||!nodeMap[m.id])return;
       const srcRecord=getNodeRecord(kg,cfId);
       const src=srcRecord?.node;
-      const defaultRelation=srcRecord?.type==='mech'?'pathophysiology_of':defaultFindingToMechanismRelation(src?src.label:cfId,m.label);
+      const srcLabel=cleanLabel(src?src.label:cfId).toLowerCase();
+      const mechLabel=cleanLabel(m.label).toLowerCase();
+      const defaultRelation=srcRecord?.type==='mech'
+        ? (srcLabel.includes('hypercoagul')&&mechLabel.includes('dural')?'predisposes_to':'explains')
+        : defaultFindingToMechanismRelation(src?src.label:cfId,m.label);
       const tooltip=isInteractive?`${relationSentence(src?src.label:cfId,defaultRelation,m.label)} ${m.tooltip||''}`:null;
       const eid=edgeIdFor(cfId,m.id,defaultRelation);
       edgesSvg+=makeEdge(nodeMap[cfId],nodeMap[m.id],getEdgeLabel(eid,defaultRelation),'#1a7a7a',
@@ -2488,12 +2514,12 @@ function miniRoleLayout(role,count){
   // supports at the top, against-evidence in the middle, expected-pattern at
   // the lower middle, and the distractor target on the right.
   if(role==='supports'){
-    if(count<=1)return[{x:42,y:34}];
-    return[{x:42,y:22},{x:42,y:64}];
+    if(count<=1)return[{x:42,y:28}];
+    return[{x:42,y:18},{x:42,y:64}];
   }
-  if(count<=1)return[{x:42,y:82}];
-  if(count===2)return[{x:42,y:72},{x:42,y:122}];
-  return[{x:42,y:50},{x:42,y:100},{x:42,y:150}];
+  if(count<=1)return[{x:42,y:122}];
+  if(count===2)return[{x:42,y:112},{x:42,y:164}];
+  return[{x:42,y:104},{x:42,y:154},{x:42,y:204}];
 }
 
 function renderExcludeCards(){
@@ -2529,7 +2555,7 @@ function renderExcludeCards(){
     const evItems=[...supportItems,...againstItems];
     const evidenceNodes=evItems.map(x=>x.node.svg).join('');
     const expected=hasExpected
-      ? miniNodeSvg({x:226,y:186,label:c.expected,type:'expected',dashed:true,cls:'mini-expected-node',attrs:`data-explanation="${esc(c.expectedExplanation||'Expected distractor pattern is not established by this vignette.')}" data-title="${esc('Expected but not established: '+cleanLabel(c.expected))}"`,maxW:128,minW:104,font:11,dragKey:'expected',cardIndex:i})
+      ? miniNodeSvg({x:226,y:238,label:c.expected,type:'expected',dashed:true,cls:'mini-expected-node',attrs:`data-explanation="${esc(c.expectedExplanation||'Expected distractor pattern is not established by this vignette.')}" data-title="${esc('Expected but not established: '+cleanLabel(c.expected))}"`,maxW:128,minW:104,font:11,dragKey:'expected',cardIndex:i})
       : null;
     const dist=miniNodeSvg({x:hasExpected?406:188,y:hasExpected?90:104,label:c.target,type:'distractor',cls:'mini-distractor-node',attrs:`data-explanation="${esc(c.explanation||'')}" data-title="${esc('Distractor: '+c.target)}"`,maxW:hasExpected?96:118,minW:84,font:11,dragKey:'distractor',cardIndex:i});
     const miniEdgeLabel=(x,y,text,color)=>{
@@ -2563,7 +2589,7 @@ function renderExcludeCards(){
     const midLabels='';
     return`<div class="mini-distractor-card" data-letter="${esc(c.letter||'')}" data-focus='${JSON.stringify(focus)}' data-explanation="${esc(c.explanation||'')}" data-target="${esc(c.target)}">
       <div class="mini-distractor-head"><div class="mini-distractor-title">${esc(c.letter?`${c.letter}. ${c.target}`:c.target)}</div></div>
-      <svg class="mini-distractor-svg" viewBox="0 0 ${hasExpected?540:360} ${hasExpected?260:190}" xmlns="http://www.w3.org/2000/svg">
+      <svg class="mini-distractor-svg" viewBox="0 0 ${hasExpected?540:360} ${hasExpected?320:210}" xmlns="http://www.w3.org/2000/svg">
         <defs>
           <marker id="miniArrowGreen${i}" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#1a6b3c"/></marker>
           <marker id="miniArrowRed${i}" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#8a2d2d"/></marker>
