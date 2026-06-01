@@ -283,6 +283,10 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);fon
 .bank-card h4{font-size:13px;margin-bottom:6px}
 .bank-card p{font-size:12px;color:var(--text2);margin-bottom:8px}
 .bank-actions{display:flex;gap:8px}
+.bank-tabs{display:flex;gap:8px;margin:16px 0 14px;border-bottom:1px solid var(--border);padding-bottom:10px}
+.bank-tab{border:1px solid var(--border);background:var(--surface2);border-radius:999px;padding:8px 14px;font-family:inherit;font-size:12px;font-weight:900;color:var(--text2);cursor:pointer}
+.bank-tab.active{background:var(--accent);border-color:var(--accent);color:white}
+.bank-tab-count{opacity:.78;margin-left:4px}
 .picker-modal{position:fixed;inset:0;background:rgba(0,0,0,.38);display:none;align-items:center;justify-content:center;z-index:50}
 .picker-modal.open{display:flex}
 .picker-box{background:#fff;width:min(660px,94vw);max-height:80vh;border-radius:18px;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(0,0,0,.2)}
@@ -2806,7 +2810,9 @@ function applyRegenerate(){
 // ══════════════════════════════════════════════════════════════
 // ACCEPT / BANK / REJECT
 // ══════════════════════════════════════════════════════════════
+let activeBankTab='saved';
 function acceptQuestion(){
+  activeBankTab='saved';
   const bank=readBank('saved');
   const t=tasks[currentTask];
   bank.push(makeBankEntry('saved'));
@@ -2814,8 +2820,9 @@ function acceptQuestion(){
   renderBank();
   showToast('Accepted and saved to question bank');
 }
-function openBank(){renderBank();document.getElementById('bankModal').classList.add('open');}
+function openBank(tab){if(tab)activeBankTab=tab;renderBank();document.getElementById('bankModal').classList.add('open');}
 function closeBank(){document.getElementById('bankModal').classList.remove('open');}
+function setBankTab(tab){activeBankTab=tab;renderBank();}
 function bankDomain(){return location.pathname.toLowerCase().endsWith('/pediatrics.html')?'pediatrics':'neurology';}
 function bankKey(kind){return kind==='rejected'?`resp_mcq_rejected_bank_${bankDomain()}`:`resp_mcq_saved_bank_${bankDomain()}`;}
 function readBank(kind){return JSON.parse(localStorage.getItem(bankKey(kind))||'[]');}
@@ -2844,11 +2851,16 @@ function renderBank(){
   const rejected=readBank('rejected');
   if(count)count.textContent=saved.length+rejected.length;
   if(list){
-    const renderSection=(title,items,kind,empty)=>`
-      <div class="card-label" style="margin:${kind==='saved'?'0':'18px'} 0 10px">${title}</div>
+    const kind=activeBankTab==='rejected'?'rejected':'saved';
+    const items=kind==='saved'?saved:rejected;
+    const empty=kind==='saved'?'No accepted questions yet.':'No rejected questions yet.';
+    list.innerHTML=`
+      <div class="bank-tabs" role="tablist" aria-label="Question bank">
+        <button class="bank-tab ${kind==='saved'?'active':''}" role="tab" aria-selected="${kind==='saved'}" onclick="setBankTab('saved')">Accepted <span class="bank-tab-count">${saved.length}</span></button>
+        <button class="bank-tab ${kind==='rejected'?'active':''}" role="tab" aria-selected="${kind==='rejected'}" onclick="setBankTab('rejected')">Rejected <span class="bank-tab-count">${rejected.length}</span></button>
+      </div>
       ${items.length?items.map((q,i)=>renderBankCard(q,i,kind)).join(''):`<div class="study-note">${empty}</div>`}
     `;
-    list.innerHTML=renderSection('Saved questions',saved,'saved','No saved questions yet.')+renderSection('Rejected questions',rejected,'rejected','No rejected questions yet.');
   }
 }
 function renderBankCard(q,i,kind){
@@ -2886,6 +2898,7 @@ function submitReject(){
     label:input.closest('.issue')?.querySelector('strong')?.textContent||input.value
   }));
   const note=(document.getElementById('rejectOptionalNote')?.value||'').trim();
+  activeBankTab='rejected';
   const bank=readBank('rejected');
   bank.push(makeBankEntry('rejected',{issues,note}));
   writeBank('rejected',bank);
