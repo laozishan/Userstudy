@@ -2282,6 +2282,16 @@ function miniEvidenceRationale(card,eid,role='against'){
       if(evId==='ev1')return 'Postpartum status is a shared risk factor for both CVST and RCVS, keeping RCVS in the differential at first glance.';
       if(evId==='ev4')return 'A focal seizure can occur with postpartum RCVS, so this finding creates overlap before the headache phenotype is weighed.';
     }
+    if(target.includes('acute bacterial meningitis')){
+      if(evId==='ev8')return 'Vomiting can accompany meningitis through meningeal irritation or raised intracranial pressure, so infection remains a consideration before the full pattern is weighed.';
+      if(evId==='ev3')return 'Seizure can occur in severe meningitis, which is why this diagnosis stays in the differential despite the postpartum thrombotic context.';
+    }
+    if(target.includes('left mca territory infarction')){
+      if(evId==='ev4')return 'A focal right-hand motor seizure localizes to the left hemisphere, so a left cortical arterial lesion is a reasonable early consideration.';
+    }
+    if(target.includes('migraine')){
+      if(evId==='ev6')return 'A prior headache history can make migraine plausible at first glance, but this episode is different and has seizure-level features.';
+    }
     if(target.includes('primary ciliary')){
       if(evId==='ev3'||evId==='ev4')return 'Recurrent lower-respiratory infections fit impaired mucociliary clearance and recurrent bacterial infection, so PCD remains a reasonable respiratory differential.';
     }
@@ -2309,6 +2319,49 @@ function miniEvidenceRationale(card,eid,role='against'){
       if(evId.includes('stridor'))return 'Upper-airway obstruction can occur with retropharyngeal abscess, though the localization should be pharyngeal/deep neck.';
     }
     return `${phrase} is compatible with this distractor and keeps it in the differential at first pass.`;
+  }
+
+  if(target.includes('right internal carotid')){
+    if(evId==='ev3')return 'Right hand weakness localizes to the left cerebral hemisphere, so the laterality argues against a right ICA source.';
+    if(evId==='ev1')return 'Transient left monocular darkness localizes to the left retinal or ophthalmic circulation, not the right carotid system.';
+    if(evId==='ev6')return 'A bruit below the left jaw localizes the large-artery lesion to the left carotid, making a right ICA lesion unlikely.';
+  }
+  if(target.includes('left posterior cerebral')){
+    if(evId==='ev1')return 'Monocular curtain-like vision loss is retinal/ophthalmic ischemia; PCA disease would produce a homonymous visual field deficit from occipital cortex.';
+    if(evId==='ev3')return 'Right hand weakness points to left anterior circulation motor pathways rather than an isolated left PCA syndrome.';
+    if(evId==='ev6')return 'A left cervical carotid bruit supports extracranial carotid stenosis, not posterior cerebral artery stenosis.';
+  }
+  if(target.includes('superior sagittal sinus')){
+    if(evId==='ev1')return 'Recurrent monocular retinal ischemia is an arterial carotid clue rather than a venous sinus thrombosis pattern.';
+    if(evId==='ev6')return 'A focal left carotid bruit supports large-artery stenosis and does not localize to the dural venous sinuses.';
+    if(evId==='ev7')return 'The absence of seizure or migraine-like episodes weakens venous or cortical mimic explanations for these transient events.';
+  }
+  if(target.includes('thalamoperforator')){
+    if(evId==='ev3')return 'Right hand weakness localizes leftward, whereas a right thalamoperforator lesion would be expected to affect the left body.';
+    if(evId==='ev1')return 'Small deep perforator disease does not explain recurrent ipsilateral monocular retinal ischemia.';
+    if(evId==='ev6')return 'A cervical carotid bruit points to extracranial large-artery disease rather than a small deep thalamic perforator.';
+  }
+  if(target.includes('migraine with aura')){
+    if(evId==='ev5')return 'Papilledema is objective evidence of raised intracranial pressure and should not be attributed to uncomplicated migraine aura.';
+    if(evId==='ev3')return 'A new generalized seizure in the postpartum period is a red flag for secondary intracranial pathology rather than typical migraine aura.';
+  }
+  if(target.includes('lacunar')){
+    if(evId==='ev2')return 'A progressively worsening headache is not the usual presentation of an internal capsule lacunar syndrome.';
+    if(evId==='ev5')return 'Papilledema indicates raised intracranial pressure, which is outside the expected small-vessel lacunar pattern.';
+    if(evId==='ev6')return 'Lacunar internal capsule infarction should produce a focal motor or sensorimotor syndrome; the vignette lacks that pattern.';
+  }
+  if(target.includes('acute bacterial meningitis')){
+    if(evId==='ev4')return 'Absence of fever weakens bacterial meningitis, especially when the remaining clues form a postpartum venous thrombosis pattern.';
+    if(evId==='ev7')return 'Near-normal temperature makes acute bacterial meningitis less coherent than CVST in this postpartum presentation.';
+  }
+  if(target.includes('reversible cerebral vasoconstriction')){
+    if(evId==='ev_rcvs')return 'A gradually progressive headache over days argues against RCVS, which classically presents with sudden thunderclap headaches.';
+    if(evId==='ev5')return 'Papilledema supports raised intracranial pressure from venous outflow obstruction rather than the usual vasospastic RCVS phenotype.';
+    if(evId==='ev2')return 'The diffuse pressure-like headache progressively intensifies over two days, which is less typical for the abrupt thunderclap pattern of RCVS.';
+  }
+  if(target.includes('left mca territory infarction')){
+    if(evId==='ev9')return 'Intact strength, language, and visual fields after the event argue against a completed left MCA territory infarct.';
+    if(evId==='ev1')return 'The postpartum prothrombotic context with progressive headache shifts the mechanism toward venous thrombosis rather than primary arterial MCA infarction.';
   }
 
   if(target.includes('primary ciliary')){
@@ -2351,7 +2404,7 @@ function miniEvidenceRationale(card,eid,role='against'){
     if(evId.includes('bark'))return 'Barking cough and hoarseness favor subglottic croup, not retropharyngeal abscess.';
     if(evId.includes('well'))return 'Comfortable, non-toxic appearance is not the expected deep neck infection pattern.';
   }
-  return `${phrase} does not fit the expected mechanism or clinical pattern of ${card.target}.`;
+  return `${phrase} points away from ${card.target} when integrated with the rest of the vignette.`;
 }
 
 function miniNodeSvg({x,y,label,type='evidence',cls='',attrs='',maxW=112,minW=74,font=11,dashed=false,dragKey='',cardIndex=0}){
