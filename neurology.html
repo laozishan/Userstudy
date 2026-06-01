@@ -739,12 +739,12 @@ const tasks={
     ],
     findings:[
       {id:'cf1',label:'Amaurosis fugax',nodeType:'symptom',from:['ev1'],tooltip:'Transient monocular darkness is amaurosis fugax, reflecting retinal ischemia from the ipsilateral ophthalmic artery, a branch of the ICA.'},
-      {id:'cf2',label:'Left hemispheric motor TIA',nodeType:'symptom',from:['ev3'],tooltip:'Right hand weakness localizes to transient ischemia in the left motor cortex or corticospinal tract, supplied by the left ICA/MCA circulation.'},
+      {id:'cf2',label:'Left hemispheric motor TIA',nodeType:'symptom',from:['ev3'],tooltip:'Right hand weakness localizes to transient ischemia in the left motor cortex within the left anterior circulation, compatible with left ICA/MCA cortical perfusion.'},
       {id:'cf3',label:'Large-artery atherosclerotic risk',nodeType:'history',from:['ev4'],tooltip:'Long-term smoking with hypercholesterolemia supports large-artery atherosclerotic disease, the mechanism underlying ICA stenosis.'},
       {id:'cf4',label:'Left carotid bruit',nodeType:'sign',from:['ev6'],mergedEvidence:'ev6',tooltip:'A soft bruit just below the left jaw is an auscultatory sign of turbulent flow in the left carotid artery, localizing the lesion to the left ICA.'},
     ],
     mechs:[
-      {id:'m1',label:'Left ICA atherosclerotic stenosis',nodeType:'mechanism',from:['cf1','cf2','cf3','cf4'],tooltip:'Amaurosis fugax plus a contralateral hand TIA localize to the left ICA; the bruit supports the anatomic side and the risk factors support atherosclerotic stenosis.'}
+      {id:'m1',label:'Atherosclerotic plaque formation',nodeType:'mechanism',from:['cf1','cf2','cf3','cf4'],tooltip:'Smoking and hypercholesterolemia support large-artery plaque formation. Plaque at the left carotid bifurcation/proximal ICA can embolize to the ipsilateral retina and reduce left anterior-circulation perfusion.'}
     ],
     dx:{id:'dx',label:'Left internal carotid artery stenosis',nodeType:'diagnosis',from:['m1'],tooltip:'Left ICA stenosis unifies ipsilateral amaurosis fugax, contralateral right hand weakness, a left cervical bruit, and atherosclerotic vascular risk.'},
     excludeCards:[
@@ -802,9 +802,9 @@ const tasks={
      tooltip:'The absence of a clean focal motor or language deficit weakens lacunar or arterial MCA infarction and fits diffuse venous congestion.'},
   ],
   mechs:[
-    {id:'m_icp',  label:'Venous outflow obstruction / raised ICP', nodeType:'mechanism', from:['cf1','cf2','cf3'],
+    {id:'m_icp',  label:'Raised intracranial pressure', nodeType:'mechanism', from:['cf1','cf2','cf3'],
      tooltip:'Thrombosis of a dural sinus impairs CSF resorption and venous drainage, raising intracranial pressure. The postpartum hypercoagulable state is the predisposing mechanism; progressive headache and bilateral papilledema are its direct manifestations.'},
-    {id:'m_sz',   label:'Cortical venous irritation',              nodeType:'mechanism', from:['cf4'],
+    {id:'m_sz',   label:'Cortical irritation from venous congestion',              nodeType:'mechanism', from:['cf4'],
      tooltip:'Venous congestion or focal venous infarction irritates cortex directly, lowering the seizure threshold. A new generalized seizure without persistent focal deficit distinguishes venous from arterial cortical injury.'},
   ],
   dx:{
@@ -882,13 +882,13 @@ const task3ImprovedTemplate={
      tooltip:'Three weeks postpartum remains within the hypercoagulable risk window for CVST. The risk is lower than the first week but still clinically significant, especially without another unifying diagnosis.'},
     {id:'cf2', label:'Progressive pressure-like headache + vomiting', nodeType:'symptom', from:['ev2','ev3'],
      tooltip:'A diffuse, gradually intensifying headache with vomiting over two days suggests raised intracranial pressure. Without fundoscopic confirmation of papilledema, the raised-ICP inference rests on headache phenotype and vomiting alone — requiring integration with postpartum risk and seizure type.'},
-    {id:'cf3', label:'Focal motor seizure with postictal state', nodeType:'sign', from:['ev4','ev5'],
+    {id:'cf3', label:'Focal motor seizure with postictal state', nodeType:'symptom', from:['ev4','ev5'],
      tooltip:'Rhythmic right-hand shaking for 90 seconds followed by postictal confusion is most consistent with a focal motor seizure localising to the left motor cortex. Importantly, strength and language remain intact afterward, distinguishing this from a completed arterial infarct.'},
   ],
   mechs:[
-    {id:'m_icp',  label:'Venous outflow obstruction / raised ICP', nodeType:'mechanism', from:['cf1','cf2'],
+    {id:'m_icp',  label:'Raised intracranial pressure', nodeType:'mechanism', from:['cf1','cf2'],
      tooltip:'Postpartum hypercoagulability promotes thrombus formation in a dural sinus, impairing venous drainage and CSF resorption. The resulting raised ICP manifests as progressively worsening diffuse headache and vomiting over two days.'},
-    {id:'m_sz',   label:'Cortical venous irritation',              nodeType:'mechanism', from:['cf3'],
+    {id:'m_sz',   label:'Cortical irritation from venous congestion',              nodeType:'mechanism', from:['cf3'],
      tooltip:'Venous congestion or focal venous infarction can irritate cortex and generate a focal seizure without leaving a persistent motor or language deficit. This distinguishes venous from arterial cortical injury.'},
   ],
   dx:{
