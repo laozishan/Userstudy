@@ -762,7 +762,7 @@ const tasks={
     dx:{id:'dx',label:'Cystic fibrosis',nodeType:'diagnosis',from:['m1','m2','m3'],
       tooltip:'The strongest CF synthesis is multi-system: pancreatic insufficiency explains greasy stools and poor growth, while impaired airway clearance explains recurrent pneumonia, wet cough, crackles, and clubbing.'},
     excludeCards:[
-      {cue:'Recurrent pneumonia + wet cough',target:'Primary ciliary dyskinesia',supports:['ev3','ev4'],against:['ev2','ev6'],
+      {cue:'Recurrent pneumonia + wet cough',target:'Primary ciliary dyskinesia',supports:['ev3'],against:['ev2','ev6'],
         expected:'Neonatal RD\nrecurrent otitis media',
         expectedExplanation:'PCD often has neonatal respiratory distress and recurrent otitis media. These expected PCD clues are not established in the vignette.',
         explanation:'PCD is plausible because recurrent pneumonia and chronic wet cough can result from impaired mucociliary clearance. It is ruled out by the separate gastrointestinal malabsorption pattern, which PCD does not cause.'},
@@ -2063,7 +2063,7 @@ function renderKG(){
     const mechOffset=(currentTask===3 && m.id==='m1')?-28:(mCount===1?-18:(i%2?18:-18));
     mYMap[m.id]=clampY(base+mechOffset);
     if(currentTask===3 && kg.dx?.label==='Croup' && (m.id==='m_croup' || m.id==='m_subglottic')){
-      mYMap[m.id]=clampY(mYMap[m.id]+18,70);
+      mYMap[m.id]=clampY(mYMap[m.id]+(m.id==='m_croup'?30:18),70);
     }
   });
   const dxSourceMap={...cfYMap,...pYMap,...mYMap};
