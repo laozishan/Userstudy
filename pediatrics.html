@@ -129,6 +129,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);fon
 .kg-panel-title{font-size:12px;font-weight:900;text-transform:uppercase;letter-spacing:.7px;color:var(--text3);white-space:nowrap}
 .kg-hint{font-size:12px;color:var(--text3);font-style:italic;max-width:620px}
 .kg-hint:empty{display:none}
+.task3-header-toggle{display:none;align-items:center;gap:6px}
 
 /* Text explanation in right col (Task 1) */
 .right-text-panel{background:var(--surface);border:1px solid var(--border);border-radius:16px;overflow:hidden}
@@ -220,7 +221,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);fon
 .explain-control-title{font-size:12px;font-weight:800;color:var(--text2)}
 .explain-control-sub{font-size:11px;color:var(--text3);margin-top:2px}
 
-/* Task 3 support mode switch */
+/* Task 3 view toggle */
 .task3-support-switch{display:none;background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:12px 16px;align-items:center;justify-content:space-between;gap:12px;box-shadow:0 1px 4px rgba(0,0,0,.04)}
 .task3-support-left{min-width:210px}
 .task3-support-title{font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:.7px;color:var(--text3)}
@@ -601,20 +602,14 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);fon
     <div class="right-col">
       <div class="kg-panel">
         <div class="kg-panel-head">
-          <div class="kg-panel-title" id="kgPanelTitle">Knowledge graph · Reasoning support</div>
+          <div class="kg-panel-title" id="kgPanelTitle">Knowledge graph</div>
           <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;justify-content:flex-end">
-            <div class="kg-hint" id="kgHint">Click nodes to reveal nearby knowledge</div>
+            <div class="kg-hint" id="kgHint"></div>
+            <div class="task3-header-toggle" id="task3SupportSwitch" aria-label="Task 3 view">
+              <button class="support-mode-btn" id="supportModeText" onclick="setTask3SupportMode('text')">Text</button>
+              <button class="support-mode-btn" id="supportModeKg" onclick="setTask3SupportMode('kg')">KG</button>
+            </div>
             <button class="explain-btn" id="kgHeaderExplainBtn" onclick="toggleHeaderExplain()" style="display:none">Hide explanation</button>
-          </div>
-        </div>
-        <div class="task3-support-switch" id="task3SupportSwitch">
-          <div class="task3-support-left">
-            <div class="task3-support-title">Task 3 support mode</div>
-            <div class="task3-support-sub" id="task3SupportSub">Review the question, then use Regenerate if you want to inspect a revised version. Node hover explains the clinical clues; edges are labels only.</div>
-          </div>
-          <div class="mode-toggle-wrap">
-            <button class="support-mode-btn" id="supportModeText" onclick="setTask3SupportMode('text')">Text</button>
-            <button class="support-mode-btn" id="supportModeKg" onclick="setTask3SupportMode('kg')">KG+Text</button>
           </div>
         </div>
         <div id="kgBoard" class="reasoning-board"></div>
@@ -643,7 +638,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);fon
         <!-- Text explanation panel (Task 1 only, in right col) -->
         <div class="right-text-panel" id="rightTextPanel" style="display:none">
           <div class="right-text-panel-head">
-            <div class="right-text-panel-title">Reasoning support — Text explanation</div>
+            <div class="right-text-panel-title">Text explanation</div>
             <button class="explain-btn" id="explainBtn" onclick="toggleTextExplain()">Hide explanation</button>
           </div>
           <div class="right-text-body" id="rightTextBody">
@@ -954,28 +949,10 @@ function shouldShowTextPanel(){
 function getHeaderCopy(){
   const t=tasks[currentTask];
   if(!t) return {title:'Reasoning support',hint:''};
-  if(!explanationVisible){
-    const revised=!!t.revised || revisedTasks.has(currentTask);
-    return {
-      title: revised ? 'Reasoning support · disabled after revision' : 'Reasoning support · hidden',
-      hint: revised ? 'Explanation is disabled after revision.' : 'Explanation is hidden. Use “Show explanation” to reopen the support panel.'
-    };
-  }
-  if(currentTask===3){
-    if(task3SupportMode==='text'){
-      return {title:'Text explanation · Question review',hint:'Text support is selected. Switch to KG to view the knowledge graph.'};
-    }
-    return {title:'Knowledge graph · KG+Text support',hint:'KG+Text support is selected. Use the enriched text switch inside the graph if hover reasoning is needed.'};
-  }
-  if(t.mode==='kg'){
-    return {title:'Knowledge graph · KG review',hint:'KG-only condition: review the graph structure without text explanation.'};
-  }
-  if(t.mode==='both'){
-    return kgExplainOpen
-      ? {title:'Knowledge graph · KG explanation',hint:'Hover explanation is enabled. Move over nodes for concise clinical rationale.'}
-      : {title:'Knowledge graph · KG explanation',hint:'Graph is visible without hover text. Turn on hover explanation if needed.'};
-  }
-  return {title:'Reasoning support · Text explanation',hint:'Text-only condition: review the written explanation without the KG.'};
+  if(currentTask===3) return {title:task3SupportMode==='text'?'Text explanation':'Knowledge graph + Text',hint:''};
+  if(t.mode==='kg') return {title:'Knowledge graph',hint:''};
+  if(t.mode==='both') return {title:'Knowledge graph + Text',hint:''};
+  return {title:'Text explanation',hint:''};
 }
 function updateSupportHeader(){
   const copy=getHeaderCopy();
@@ -2591,18 +2568,6 @@ function handleExcludeClick(card,focus){
 
 
 function renderTask3CluePanel(){
-  const t=tasks[currentTask]||{};
-  const show=currentTask===3 && !t.regenerated;
-  const sub=document.getElementById('task3SupportSub');
-  if(sub && currentTask===3){
-    if(show){
-      sub.textContent = task3ClueEditMode
-        ? 'Review the question and use Regenerate when ready.'
-        : 'Review the question, then use Regenerate if you want to inspect a revised version. Node hover explains the clinical clues; edges are labels only.';
-    } else {
-      sub.textContent = 'Regenerated version loaded. You can compare it using Text or KG+Text support.';
-    }
-  }
   const btn=document.getElementById('task3ClueEditBtn');
   if(btn){
     btn.textContent='Regenerate available';
@@ -2658,20 +2623,13 @@ function updateTask3SupportSwitch(){
   const isTask3=currentTask===3 && explanationVisible;
   sw.style.display=isTask3?'flex':'none';
   if(!isTask3)return;
-  const sub=document.getElementById('task3SupportSub');
-  const t=tasks[currentTask]||{};
-  if(sub){
-    sub.textContent=t.regenerated
-      ? 'Regenerated version: choose Text or KG+Text support. Enriched hover text is controlled inside the graph.'
-      : 'Choose Text or KG+Text support. Use Regenerate to load a revised version.';
-  }
   const textBtn=document.getElementById('supportModeText');
   const kgBtn=document.getElementById('supportModeKg');
   if(textBtn) textBtn.classList.toggle('active',task3SupportMode==='text');
   if(kgBtn) kgBtn.classList.toggle('active',task3SupportMode!=='text');
   const chip=document.getElementById('navChip');
   if(chip){
-    const label=task3SupportMode==='text'?'Text':'KG+Text';
+    const label=task3SupportMode==='text'?'Text':'KG';
     chip.textContent=`Explanation: ${label}`;
   }
 }
@@ -2747,7 +2705,7 @@ function applyRegenerate(){
     // loadTask(3) already re-renders the right support panel and Task 3 switch.
     loadTask(3);
     const n=removedClues.length;
-    showToast(n?`Regenerated version loaded with ${n} selected clue(s) removed or weakened.`:'Regenerated version loaded. You can inspect it with Text or KG+Text support.');
+    showToast(n?`Regenerated version loaded with ${n} selected clue(s) removed or weakened.`:'Regenerated version loaded.');
   }catch(err){
     console.error(err);
     alert('Regeneration failed: '+(err&&err.message?err.message:err));
