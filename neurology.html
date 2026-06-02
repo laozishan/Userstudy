@@ -791,22 +791,22 @@ const tasks={
     {id:'cf3', label:'Bilateral papilledema',            nodeType:'sign',     from:['ev5'],
      tooltip:'Bilateral papilledema is objective evidence of raised intracranial pressure. In a postpartum patient with progressive headache, this strongly supports venous outflow obstruction.'},
     {id:'cf4', label:'Generalized tonic-clonic seizure', nodeType:'symptom',  from:['ev3'],
-     tooltip:'A new generalized seizure in the postpartum period is consistent with CVST: venous congestion raises cortical excitability and venous infarction can generate a seizure focus.'},
+     tooltip:'A new seizure in the postpartum period fits CVST because venous congestion can irritate the cortex.'},
     {id:'cf5', label:'No fever',                         nodeType:'exclusion',from:['ev4'], hiddenInMain:true,
      tooltip:'Absence of fever weakens acute bacterial meningitis as the primary explanation.'},
     {id:'cf6', label:'No arterial-territory focal deficit', nodeType:'exclusion', from:['ev6'], hiddenInMain:true,
-     tooltip:'The absence of a clean focal motor or language deficit weakens lacunar or arterial MCA infarction and fits diffuse venous congestion.'},
+     tooltip:'No persistent focal motor, language, or visual deficit makes an arterial-territory stroke less likely.'},
   ],
   mechs:[
     {id:'m_icp',  label:'Raised intracranial pressure', nodeType:'mechanism', from:['cf1','cf2','cf3'],
-     tooltip:'Thrombosis of a dural sinus impairs CSF resorption and venous drainage, raising intracranial pressure. The postpartum hypercoagulable state is the predisposing mechanism; progressive headache and bilateral papilledema are its direct manifestations.'},
+     tooltip:'A dural venous sinus clot blocks venous drainage and CSF resorption, raising intracranial pressure. This explains the progressive headache, vomiting, and bilateral papilledema.'},
     {id:'m_sz',   label:'Cortical irritation from venous congestion',              nodeType:'mechanism', from:['cf4'],
-     tooltip:'Venous congestion or focal venous infarction irritates cortex directly, lowering the seizure threshold. A new generalized seizure without persistent focal deficit distinguishes venous from arterial cortical injury.'},
+     tooltip:'Venous congestion can irritate the cortex and trigger a seizure. The lack of a persistent focal deficit makes arterial stroke less likely.'},
   ],
   dx:{
     id:'dx', label:'Cerebral venous sinus thrombosis', nodeType:'diagnosis',
     from:['m_icp','m_sz'],
-    tooltip:'CVST unifies raised intracranial pressure from venous outflow obstruction, driven by postpartum hypercoagulability and supported by papilledema and progressive headache, with cortical venous irritation causing a new seizure without a clean arterial-territory focal deficit.'
+    tooltip:'CVST best links the postpartum clotting risk with raised intracranial pressure and a new seizure. The key pattern is progressive headache, papilledema, vomiting, and seizure without a clear arterial-stroke deficit.'
   },
   excludeCards:[
     {target:'Migraine with aura',
@@ -883,14 +883,14 @@ const task3ImprovedTemplate={
   ],
   mechs:[
     {id:'m_icp',  label:'Raised intracranial pressure', nodeType:'mechanism', from:['cf1','cf2'],
-     tooltip:'Postpartum hypercoagulability promotes thrombus formation in a dural sinus, impairing venous drainage and CSF resorption. The resulting raised ICP manifests as progressively worsening diffuse headache and vomiting over two days.'},
+     tooltip:'Postpartum hypercoagulability can produce a dural venous sinus clot. Blocked venous drainage raises intracranial pressure, explaining the progressive diffuse headache and vomiting.'},
     {id:'m_sz',   label:'Cortical irritation from venous congestion',              nodeType:'mechanism', from:['cf3'],
-     tooltip:'Venous congestion or focal venous infarction can irritate cortex and generate a focal seizure without leaving a persistent motor or language deficit. This distinguishes venous from arterial cortical injury.'},
+     tooltip:'Venous congestion can irritate the cortex and cause a focal seizure. The normal strength and language afterward make completed arterial stroke less likely.'},
   ],
   dx:{
     id:'dx', label:'Cerebral venous sinus thrombosis', nodeType:'diagnosis',
     from:['m_icp','m_sz'],
-    tooltip:'CVST integrates two converging pathways: raised ICP from venous outflow obstruction driven by postpartum hypercoagulability, and focal cortical seizure from venous congestion without a persistent arterial deficit. No single pathway is conclusive alone; the diagnosis rests on their convergence in the postpartum prothrombotic context.'
+    tooltip:'CVST is the best fit because one diagnosis explains both pathways: postpartum clotting risk with raised intracranial pressure, plus venous cortical irritation causing seizure without a lasting arterial-territory deficit.'
   },
   excludeCards:[
     {target:'Reversible cerebral vasoconstriction syndrome (RCVS)',
