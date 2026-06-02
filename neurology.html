@@ -740,9 +740,9 @@ const tasks={
       {id:'cf4',label:'Left carotid bruit',nodeType:'sign',from:['ev6'],mergedEvidence:'ev6',tooltip:'A soft bruit just below the left jaw is an auscultatory sign of turbulent flow in the left carotid artery, localizing the lesion to the left ICA.'},
     ],
     mechs:[
-      {id:'m1',label:'Atherosclerotic plaque formation',nodeType:'mechanism',from:['cf1','cf2','cf3','cf4'],tooltip:'Smoking and hypercholesterolemia support large-artery plaque formation. Plaque at the left carotid bifurcation/proximal ICA can embolize to the ipsilateral retina and reduce left anterior-circulation perfusion.'}
+      {id:'m1',label:'Atherosclerotic plaque formation',nodeType:'mechanism',from:['cf1','cf2','cf3','cf4'],tooltip:'Smoking and hypercholesterolemia make carotid plaque plausible. A left ICA plaque can send emboli to the left retina and the left anterior circulation, explaining left-eye vision loss and right-hand weakness.'}
     ],
-    dx:{id:'dx',label:'Left internal carotid artery stenosis',nodeType:'diagnosis',from:['m1'],tooltip:'Left ICA stenosis unifies ipsilateral amaurosis fugax, contralateral right hand weakness, a left cervical bruit, and atherosclerotic vascular risk.'},
+    dx:{id:'dx',label:'Left internal carotid artery stenosis',nodeType:'diagnosis',from:['m1'],tooltip:'The side pattern fits left ICA stenosis: left-eye symptoms and a left carotid bruit point to the left carotid, while right-hand weakness points to the left hemisphere.'},
     excludeCards:[
       {target:'Right internal carotid artery stenosis',supports:[],against:['ev3','ev1','ev6'],expected:'Right eye symptoms\nor left body weakness',expectedExplanation:'Right ICA stenosis is expected to cause right monocular ischemia or left-sided hemispheric symptoms.',explanation:'Right ICA disease is directionally wrong: right hand weakness localizes to the left hemisphere, and the left eye/left bruit point to left ICA.'},
       {target:'Left posterior cerebral artery stenosis',supports:[],against:['ev1','ev3','ev6'],expected:'Homonymous visual field loss\noccipital syndrome',expectedExplanation:'PCA stenosis causes contralateral homonymous visual field symptoms, not monocular retinal ischemia.',explanation:'Monocular curtain-like visual loss, right hand weakness, and a carotid bruit point to ICA/anterior circulation rather than PCA.'},
