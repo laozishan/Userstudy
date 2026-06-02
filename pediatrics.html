@@ -310,6 +310,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);fon
 
 /* KG disabled state */
 .kg-disabled-msg{display:flex;align-items:center;justify-content:center;height:220px;color:var(--text3);font-size:13px;font-style:italic;border:1px dashed var(--border2);border-radius:14px}
+.kg-revision-note{height:62px;margin:0;background:var(--surface);font-size:12px}
 
 
 
@@ -968,7 +969,12 @@ function renderRightSupportPanel({rerenderGraph=false}={}){
   setDisplay(UI.task3SupportSwitch,(currentTask===3 && explanationVisible)?'flex':'none');
 
   if(!explanationVisible){
-    setDisplay(UI.kgBoard,'none');
+    const isRevised=!!t.revised || revisedTasks.has(currentTask);
+    setDisplay(UI.kgHeaderExplainBtn,isRevised?'none':'flex');
+    setDisplay(UI.kgBoard,isRevised?'block':'none');
+    if(UI.kgBoard){
+      UI.kgBoard.innerHTML=isRevised?'<div class="kg-disabled-msg kg-revision-note">Explanation is disabled after revision.</div>':'';
+    }
     setDisplay(UI.mainGraphHoverHint,'none');
     setDisplay(UI.kgExcludeWrap,'none');
     setDisplay(UI.pathText,'none');
@@ -2673,9 +2679,9 @@ function renderActions(){
   const isRegenerated=!!(t&&t.regenerated);
   if(isTask3 && !isRegenerated){
     actions.innerHTML=`
-      <button class="btn reject" onclick="openRegenerate()">Regenerate</button>
-      <button class="btn edit-btn" onclick="toggleEdit()" id="editBtn">Revise</button>
       <button class="btn accept" onclick="acceptQuestion()">Accept &amp; Save</button>
+      <button class="btn reject" onclick="openReject()">Reject</button>
+      <button class="btn edit-btn" onclick="openRegenerate()">Regenerate</button>
     `;
   } else if(isTask3 && isRegenerated){
     actions.innerHTML=`
