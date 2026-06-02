@@ -1998,10 +1998,15 @@ function renderKG(){
 
   const visibleEvidence=(kg.evidence||[]).filter(ev=>!ev.hiddenInMain);
   const visibleFindings=(kg.findings||[]).filter(f=>!f.hiddenInMain && !task3EvidenceIsRemoved(f.from));
+  const lowerCoughNodeId=currentTask===3 && kg.dx?.label==='Croup'
+    ? (visibleFindings.some(f=>f.id==='cf_bark')?'cf_bark':(visibleFindings.some(f=>f.id==='cf_cough')?'cf_cough':null))
+    : null;
+  const barkLowerLayout=!!lowerCoughNodeId;
+  const leftColumnFindings=barkLowerLayout?visibleFindings.filter(f=>f.id!==lowerCoughNodeId):visibleFindings;
   const visiblePatterns=(kg.patterns||[]).filter(p=>!p.hiddenInMain);
   const visibleMechs=(kg.mechs||[]).filter(m=>!m.hiddenInMain);
   const W=1180,LEGEND_H=44;
-  const cfCount=visibleFindings.length,pCount=visiblePatterns.length,mCount=visibleMechs.length;
+  const cfCount=leftColumnFindings.length,pCount=visiblePatterns.length,mCount=visibleMechs.length;
   const NODE_H=52, GROUP_GAP=34;
   const totalBandH=Math.max(cfCount,1)*NODE_H + Math.max(cfCount-1,0)*GROUP_GAP;
   const graphH=Math.max(totalBandH+120, 360);
@@ -2032,7 +2037,10 @@ function renderKG(){
 
   const cfYSpread=ySpread(cfCount,graphH,70);
   const cfYMap={};
-  visibleFindings.forEach((cf,fi)=>{ cfYMap[cf.id]=cfYSpread[fi]||graphH/2; });
+  leftColumnFindings.forEach((cf,fi)=>{ cfYMap[cf.id]=cfYSpread[fi]||graphH/2; });
+  if(barkLowerLayout){
+    cfYMap[lowerCoughNodeId]=clampY(graphH-86,70);
+  }
 
   const pFallback=ySpread(pCount,graphH,60);
   const pYMap={};
@@ -2076,7 +2084,8 @@ function renderKG(){
     const mergedMeta=evidIds.length?{evid:evidIds.join('|')}:{evid:cf.mergedEvidence||undefined};
     const canEditDelete=false;
     const deleteSelected=evidIds.some(id=>task3SelectedCluesToRemove.has(id));
-    const pos=getDraggableNodePosition(cf.id,COL.cf,cfYMap[cf.id]);
+    const baseX=(barkLowerLayout && cf.id===lowerCoughNodeId) ? COL.mech+(COL.dx-COL.mech)*0.38 : COL.cf;
+    const pos=getDraggableNodePosition(cf.id,baseX,cfYMap[cf.id]);
     const nodeMeta=isInteractive?{interactive:true,tooltip:cf.tooltip,tooltipTitle:semanticTypeLabel(cf,'finding'),showDeleteControl:canEditDelete,deleteSelected,...mergedMeta,...focusMeta(cf.id)}:{showDeleteControl:canEditDelete,deleteSelected,...mergedMeta,...focusMeta(cf.id)};
     const n=makeNode(cf.id,semanticTypeFor(cf,'finding'),cf.label,pos.cx,pos.cy,nodeMeta);
     nodeMap[cf.id]=n;nodesSvg+=n.svg;
