@@ -1247,7 +1247,7 @@ function loadTask(n){
   task3ClueEditMode=false; editOpen=false; focusedKgNodeId=null; selectedGraphItem=null;
   const t=tasks[n];
   const isRevised=!!(t&&t.revised) || revisedTasks.has(n);
-  explanationVisible = true;
+  explanationVisible = !isRevised;
   // Task 2 starts in KG-only mode: graph visible, hover text disabled.
   // Task 3 hover text depends on the selected support mode.
   kgExplainOpen = (n===2 || n===3) ? false : true;
@@ -1418,7 +1418,7 @@ function saveEdits(){
   if(correctEl)t.correct=correctEl.value;
   t.revised=true;
   revisedTasks.add(currentTask);
-  explanationVisible=true;
+  explanationVisible=false;
   editOpen=false;
   loadTask(currentTask);
   showToast('Edits saved.');
