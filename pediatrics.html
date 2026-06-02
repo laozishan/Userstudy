@@ -2084,8 +2084,9 @@ function renderKG(){
     const mergedMeta=evidIds.length?{evid:evidIds.join('|')}:{evid:cf.mergedEvidence||undefined};
     const canEditDelete=false;
     const deleteSelected=evidIds.some(id=>task3SelectedCluesToRemove.has(id));
-    const baseX=(barkLowerLayout && cf.id===lowerCoughNodeId) ? COL.mech+(COL.dx-COL.mech)*0.38 : COL.cf;
-    const pos=getDraggableNodePosition(cf.id,baseX,cfYMap[cf.id]);
+    const isLowerCoughNode=barkLowerLayout && cf.id===lowerCoughNodeId;
+    const baseX=isLowerCoughNode ? COL.mech+(COL.dx-COL.mech)*0.38 : COL.cf;
+    const pos=isLowerCoughNode ? {cx:baseX,cy:cfYMap[cf.id]} : getDraggableNodePosition(cf.id,baseX,cfYMap[cf.id]);
     const nodeMeta=isInteractive?{interactive:true,tooltip:cf.tooltip,tooltipTitle:semanticTypeLabel(cf,'finding'),showDeleteControl:canEditDelete,deleteSelected,...mergedMeta,...focusMeta(cf.id)}:{showDeleteControl:canEditDelete,deleteSelected,...mergedMeta,...focusMeta(cf.id)};
     const n=makeNode(cf.id,semanticTypeFor(cf,'finding'),cf.label,pos.cx,pos.cy,nodeMeta);
     nodeMap[cf.id]=n;nodesSvg+=n.svg;
