@@ -439,9 +439,9 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);fon
   <div class="modal-box">
     <div style="display:flex;justify-content:space-between;align-items:center"><div class="modal-title">Regenerate this question</div><button class="btn" onclick="closeRegenerate()" style="background:var(--surface2);border:1px solid var(--border)">×</button></div>
     <div class="label" style="margin-top:16px">Problem category</div>
-    <label class="issue"><input type="checkbox" value="answer_cue_stacking"><div><strong>Correct-answer cue stacking</strong><span>Too many converging clues point to the keyed answer before meaningful clinical reasoning is needed.</span></div></label>
-    <label class="issue"><input type="checkbox" value="direct_answer_cue"><div><strong>Direct answer cue</strong><span>One clue makes the main diagnostic pathway too explicit or too easy to recognize.</span></div></label>
-    <label class="issue"><input type="checkbox" value="explicit_negative_exclusion"><div><strong>Explicit negative distractor elimination</strong><span>Negative findings make one or more distractors too easy to rule out.</span></div></label>
+    <label class="issue"><input type="checkbox" value="answer_cue_stacking"><div><strong>Too many clues for the answer</strong><span>Multiple findings point directly to the correct answer.</span></div></label>
+    <label class="issue"><input type="checkbox" value="direct_answer_cue"><div><strong>Distractors ruled out too easily</strong><span>The vignette makes alternative diagnoses easy to exclude.</span></div></label>
+    <label class="issue"><input type="checkbox" value="explicit_negative_exclusion"><div><strong>Not enough diagnostic reasoning</strong><span>The case can be solved without meaningful differential diagnosis.</span></div></label>
     <div class="label" style="margin-top:16px">Additional notes (optional)</div>
     <textarea class="review-textarea" id="regenerateFreeText" placeholder="Any additional notes for this question?"></textarea>
     <div class="study-note" id="selectedClueSummary" style="margin-top:14px"></div>
