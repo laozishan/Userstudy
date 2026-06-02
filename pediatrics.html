@@ -949,7 +949,7 @@ function shouldShowTextPanel(){
 function getHeaderCopy(){
   const t=tasks[currentTask];
   if(!t) return {title:'Reasoning support',hint:''};
-  if(currentTask===3) return {title:task3SupportMode==='text'?'Text explanation':'Knowledge graph + Text',hint:''};
+  if(currentTask===3) return {title:task3SupportMode==='text'?'Text explanation':'Knowledge graph',hint:''};
   if(t.mode==='kg') return {title:'Knowledge graph',hint:''};
   if(t.mode==='both') return {title:'Knowledge graph + Text',hint:''};
   return {title:'Text explanation',hint:''};
@@ -2041,6 +2041,11 @@ function renderKG(){
   if(barkLowerLayout){
     cfYMap[lowerCoughNodeId]=clampY(graphH-86,70);
   }
+  if(currentTask===3 && kg.dx?.label==='Croup'){
+    ['cf_stridor','cf_upper'].forEach(id=>{
+      if(Number.isFinite(cfYMap[id])) cfYMap[id]=clampY(cfYMap[id]+30,70);
+    });
+  }
 
   const pFallback=ySpread(pCount,graphH,60);
   const pYMap={};
@@ -2056,6 +2061,9 @@ function renderKG(){
     const base=avgKnown(m.from,srcMap,mFallback[i]||graphH/2);
     const mechOffset=(currentTask===3 && m.id==='m1')?-28:(mCount===1?-18:(i%2?18:-18));
     mYMap[m.id]=clampY(base+mechOffset);
+    if(currentTask===3 && kg.dx?.label==='Croup' && (m.id==='m_croup' || m.id==='m_subglottic')){
+      mYMap[m.id]=clampY(mYMap[m.id]+18,70);
+    }
   });
   const dxSourceMap={...cfYMap,...pYMap,...mYMap};
   const dxBase=avgKnown(kg.dx.from,dxSourceMap,graphH/2);
@@ -2085,8 +2093,9 @@ function renderKG(){
     const canEditDelete=false;
     const deleteSelected=evidIds.some(id=>task3SelectedCluesToRemove.has(id));
     const isLowerCoughNode=barkLowerLayout && cf.id===lowerCoughNodeId;
+    const isAdjustedAirwayNode=currentTask===3 && kg.dx?.label==='Croup' && (cf.id==='cf_stridor' || cf.id==='cf_upper');
     const baseX=isLowerCoughNode ? COL.mech+(COL.dx-COL.mech)*0.38 : COL.cf;
-    const pos=isLowerCoughNode ? {cx:baseX,cy:cfYMap[cf.id]} : getDraggableNodePosition(cf.id,baseX,cfYMap[cf.id]);
+    const pos=(isLowerCoughNode || isAdjustedAirwayNode) ? {cx:baseX,cy:cfYMap[cf.id]} : getDraggableNodePosition(cf.id,baseX,cfYMap[cf.id]);
     const nodeMeta=isInteractive?{interactive:true,tooltip:cf.tooltip,tooltipTitle:semanticTypeLabel(cf,'finding'),showDeleteControl:canEditDelete,deleteSelected,...mergedMeta,...focusMeta(cf.id)}:{showDeleteControl:canEditDelete,deleteSelected,...mergedMeta,...focusMeta(cf.id)};
     const n=makeNode(cf.id,semanticTypeFor(cf,'finding'),cf.label,pos.cx,pos.cy,nodeMeta);
     nodeMap[cf.id]=n;nodesSvg+=n.svg;
@@ -2098,7 +2107,8 @@ function renderKG(){
     nodeMap[p.id]=n;nodesSvg+=n.svg;
   });
   visibleMechs.forEach((m,i)=>{
-    const pos=getDraggableNodePosition(m.id,COL.mech,mYMap[m.id]);
+    const isAdjustedCroupMech=currentTask===3 && kg.dx?.label==='Croup' && (m.id==='m_croup' || m.id==='m_subglottic');
+    const pos=isAdjustedCroupMech ? {cx:COL.mech,cy:mYMap[m.id]} : getDraggableNodePosition(m.id,COL.mech,mYMap[m.id]);
     const n=makeNode(m.id,semanticTypeFor(m,'mech'),m.label,pos.cx,pos.cy,
       isInteractive?{interactive:true,tooltip:m.tooltip,tooltipTitle:semanticTypeLabel(m,'mech'),...focusMeta(m.id)}:focusMeta(m.id));
     nodeMap[m.id]=n;nodesSvg+=n.svg;
