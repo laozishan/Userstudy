@@ -1327,13 +1327,13 @@ function renderTextExplanation(){
   const t=tasks[currentTask];
   const why=document.getElementById('textWhy');
   why.innerHTML=`<div class="why-title">Why "${esc(t.options[t.correct])}" is correct</div><ul class="evidence-list">${t.supporting.map(e=>`<li><strong>"${esc(e.phrase)}"</strong> — ${esc(e.why)}</li>`).join('')}</ul>`;
-  document.getElementById('textDistractors').innerHTML=t.distractors.map(d=>`<div class="dc"><h4>${esc(d.disease)}</h4><p><strong>Plausible:</strong> ${esc(d.plausible)}</p><p><strong>Why incorrect:</strong> ${esc(d.incorrect)}</p></div>`).join('');
+  document.getElementById('textDistractors').innerHTML=t.distractors.map(d=>`<div class="dc"><h4>${esc(d.disease)}</h4><p><strong>Looks plausible:</strong> ${esc(d.plausible)}</p><p><strong>Less likely because:</strong> ${esc(d.incorrect)}</p></div>`).join('');
 }
 
 function renderKgTextExplanation(){
   const t=tasks[currentTask];
   document.getElementById('kgTextWhy').innerHTML=`<div class="why-title">Why "${esc(t.options[t.correct])}" is correct</div><ul class="evidence-list">${t.supporting.map(e=>`<li><strong>"${esc(e.phrase)}"</strong> — ${esc(e.why)}</li>`).join('')}</ul>`;
-  document.getElementById('kgTextDistractors').innerHTML=t.distractors.map(d=>`<div class="dc"><h4>${esc(d.disease)}</h4><p><strong>Plausible:</strong> ${esc(d.plausible)}</p><p><strong>Why incorrect:</strong> ${esc(d.incorrect)}</p></div>`).join('');
+  document.getElementById('kgTextDistractors').innerHTML=t.distractors.map(d=>`<div class="dc"><h4>${esc(d.disease)}</h4><p><strong>Looks plausible:</strong> ${esc(d.plausible)}</p><p><strong>Less likely because:</strong> ${esc(d.incorrect)}</p></div>`).join('');
 }
 
 function isCurrentTaskRevised(){
