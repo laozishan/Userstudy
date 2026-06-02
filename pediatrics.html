@@ -2039,11 +2039,11 @@ function renderKG(){
   const cfYMap={};
   leftColumnFindings.forEach((cf,fi)=>{ cfYMap[cf.id]=cfYSpread[fi]||graphH/2; });
   if(barkLowerLayout){
-    cfYMap[lowerCoughNodeId]=clampY(graphH-86,70);
+    cfYMap[lowerCoughNodeId]=clampY(graphH-76,70);
   }
   if(currentTask===3 && kg.dx?.label==='Croup'){
     ['cf_stridor','cf_upper'].forEach(id=>{
-      if(Number.isFinite(cfYMap[id])) cfYMap[id]=clampY(cfYMap[id]+30,70);
+      if(Number.isFinite(cfYMap[id])) cfYMap[id]=clampY(cfYMap[id]+20,70);
     });
   }
 
