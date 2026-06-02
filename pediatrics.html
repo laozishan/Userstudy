@@ -2379,8 +2379,8 @@ function miniNodeSvg({x,y,label,type='evidence',cls='',attrs='',maxW=122,minW=82
   const clean=cleanLabel(label);
   const w=Math.max(minW,Math.min(maxW,textWidthEstimate(clean,font)+18));
   const maxChars=Math.max(8,Math.floor((w-14)/(font*0.58)));
-  const lines=wrapText(clean,maxChars).slice(0,type==='expected'?3:2);
-  const h=type==='expected'?(lines.length>2?50:(lines.length>1?38:30)):(lines.length>1?38:30);
+  const lines=wrapText(clean,maxChars).slice(0,3);
+  const h=lines.length>2?50:(lines.length>1?38:30);
   const off=dragKey?getMiniDragOffset(cardIndex,dragKey):{x:0,y:0};
   x=x+(off.x||0); y=y+(off.y||0);
   const dragAttrs=dragKey?` data-mini-card="${cardIndex}" data-mini-node="${esc(dragKey)}" data-base-x="${x-(off.x||0)}" data-base-y="${y-(off.y||0)}" data-dx="${off.x||0}" data-dy="${off.y||0}"`:'';
